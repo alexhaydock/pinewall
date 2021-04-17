@@ -1,0 +1,75 @@
+FROM docker.io/arm64v8/alpine:3.13
+
+# Bind mount a directory into /tmp/images when running this image to output a built iso into it
+
+####################################
+#  _____ _   ___     __ __     ___    ____  ____  
+# | ____| \ | \ \   / / \ \   / / \  |  _ \/ ___| 
+# |  _| |  \| |\ \ / /   \ \ / / _ \ | |_) \___ \ 
+# | |___| |\  | \ V /     \ V / ___ \|  _ < ___) |
+# |_____|_| \_|  \_/       \_/_/   \_\_| \_\____/ 
+#                                                 
+####################################
+
+# Do not include a trailing slash in repo URL
+# Note that not all mirrors mirror all architectures
+ENV ALPINEREPO=https://dl-cdn.alpinelinux.org/alpine
+ENV ALPINEVER=3.13
+
+ENV PROFILENAME=pinewall_rpi
+ENV TARGETARCH=aarch64
+
+####################################
+
+RUN apk --no-cache add \
+  alpine-conf \
+  alpine-sdk \
+  apk-tools \
+  build-base \
+  busybox \
+  dosfstools \
+  fakeroot \
+  grub-efi \
+  mtools \
+  squashfs-tools \
+  sudo \
+  tzdata \
+  xorriso
+
+# We can't use the build/builder user that most examples use because
+# then it can't access the pseudo device that xorriso creates during
+# the ISO build process:
+#     https://stackoverflow.com/a/58297342
+RUN addgroup root abuild
+
+RUN mkdir /tmp/abuild
+WORKDIR /tmp/abuild
+
+RUN abuild-keygen -i -a
+
+RUN git clone https://gitlab.alpinelinux.org/alpine/aports.git
+
+RUN chmod +x /tmp/abuild/aports/scripts/mkimage.sh
+
+WORKDIR /tmp/abuild/aports/scripts
+
+RUN mkdir /tmp/images
+
+# Add our custom profile
+COPY mkimg.$PROFILENAME.sh /tmp/abuild/aports/scripts/mkimg.$PROFILENAME.sh
+RUN chmod +x /tmp/abuild/aports/scripts/mkimg.$PROFILENAME.sh
+
+# Add our custom APK overlay
+COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
+RUN chmod +x /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
+
+# Add in all our configs
+COPY etc/ /tmp/etc/
+
+# Run an APK update so we have a recent cache in the Docker image
+# (if we don't do this then the "apk fetch" stages of the build that fetch packages
+# like the Raspberry Pi bootloader will fail).
+RUN apk update
+
+# Run the build when we run the container
+CMD ["sh", "-c", "./mkimage.sh --tag v$ALPINEVER --outdir /tmp/images --workdir /tmp/cache --arch $TARGETARCH --repository $ALPINEREPO/v$ALPINEVER/main --repository $ALPINEREPO/v$ALPINEVER/community --profile $PROFILENAME"]

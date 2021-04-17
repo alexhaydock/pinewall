@@ -1,0 +1,20 @@
+auto lo
+iface lo inet loopback
+
+# Upstream WAN interface
+auto eth1
+iface eth1 inet dhcp
+        hostname gateway
+
+# Default untagged LAN interface
+auto eth0
+iface eth0 inet static
+        address 10.10.10.1
+        netmask 255.255.255.0
+
+# VLAN interface
+auto vlan301
+iface vlan301 inet static
+	address 10.2.0.1
+	netmask 255.255.255.0
+	vlan-raw-device eth0

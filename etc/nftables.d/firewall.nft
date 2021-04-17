@@ -1,0 +1,23 @@
+table inet firewall {
+
+    # INPUT CHAIN
+    chain input {
+        type filter hook input priority filter; policy accept;
+
+        # rules go here #
+    }
+
+    # FORWARD CHAIN
+    chain forward {
+        type filter hook forward priority filter; policy accept;
+    
+        # rules go here #
+    }
+
+    # OUTPUT CHAIN
+    chain output {
+        type filter hook output priority filter; policy accept;
+
+        # rules go here #
+    }
+}
