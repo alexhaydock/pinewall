@@ -93,7 +93,7 @@ These steps are to be performed over SSH. You could do these from the console te
 
 ### Configuring DNS-over-TLS forwarding resolver with unbound
 * Install `unbound`:
-  * `sudo apk --no-cache install unbound`
+  * `sudo apk --no-cache add unbound`
 * Install `unbound.conf` from this repo:
   * `sudo nano /etc/unbound/unbound.conf`
 * Enable and start `unbound`:
