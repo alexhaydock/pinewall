@@ -25,6 +25,12 @@ Linux also seems to have the better networking stack these days (which Netgate s
 If I had to pick a proper vendor-supported Linux-based routing platform to use, I would pick [VyOS](https://vyos.io/), the still-developed OSS fork of Brocade's Vyatta. But hey -- a home or SoHO firewall/gateway device is actually pretty a pretty simple set of features -- why not just build one from scratch? That idea became this project.
 
 
+## Official Repository Links
+
+* https://gitlab.com/pinewall/pinewall
+* https://github.com/alexhaydock/pinewall
+
+
 ## What's the goal?
 
 The core goals of this project are simplicity and minimalism. I want it to be my home router/gateway and nothing more.
