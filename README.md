@@ -60,26 +60,27 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 
 ## Feature matrix
 
-| Feature                           | Alpine Package      | Alpine Repo | Notes                                           |
-|-----------------------------------|---------------------|-------------|-------------------------------------------------|
-| Firewall                          | nftables            | main        | Working.                                        |
-| 802.1Q VLANs                      | ifupdown-ng         | main        | Working.                                        |
-| DHCP Server                       | dhcp-server-vanilla | main        | Working.                                        |
-| DHCP Reservations                 | dhcp-server-vanilla | main        | Working.                                        |
-| DNS Server (Upstream via DoT)     | unbound             | main        | Working.                                        |
-| DNSSEC                            | unbound             | main        | Working.                                        |
-| DNS Cache                         | unbound             | main        | Working.                                        |
-| NTP Server                        | chronyd             | main        | Working.                                        |
-| Port Forwarding (Destination NAT) | nftables            | main        | Working.                                        |
-| Performance Testing               | iperf3              | main        | Working.                                        |
-| VPN (Client only, no routing)     | wireguard-tools-wg  | main        | Working.                                        |
-| Static Port NAT for Games         | nftables            | main        | Working.                                        |
-| Remote Wireshark                  | tcpdump             | main        | Working.                                        |
-| Bandwidth Monitoring              | vnstat              | community   | Working.                                        |
-| mDNS Proxy                        | avahi, dbus         | main        | Working.                                        |
-| Log Shipping                      | Splunk UF           | not in repo | Not started.                                    |
-| UPnP Daemon                       | miniupnpd           | community   | Rejected. (Not compatible with `nftables` yet). |
+| Feature                           | Alpine Package      | Alpine Repo | Notes            |
+|-----------------------------------|---------------------|-------------|------------------|
+| Firewall                          | nftables            | main        | Working          |
+| 802.1Q VLANs                      | ifupdown-ng         | main        | Working          |
+| DHCP Server                       | dhcp-server-vanilla | main        | Working          |
+| DHCP Reservations                 | dhcp-server-vanilla | main        | Working          |
+| DNS Server (Upstream via DoT)     | unbound             | main        | Working          |
+| DNSSEC                            | unbound             | main        | Working          |
+| DNS Cache                         | unbound             | main        | Working          |
+| NTP Server                        | chronyd             | main        | Working          |
+| Port Forwarding (Destination NAT) | nftables            | main        | Working          |
+| Performance Testing               | iperf3              | main        | Working          |
+| VPN (Client only, no routing)     | wireguard-tools-wg  | main        | Working          |
+| Static Port NAT for Games         | nftables            | main        | Working          |
+| Remote Wireshark                  | tcpdump             | main        | Working          |
+| Bandwidth Monitoring              | vnstat              | community   | Working          |
+| mDNS Proxy                        | avahi, dbus         | main        | Working          |
+| Log Shipping                      | Splunk UF           | not in repo | Not started      |
+| UPnP Daemon                       | miniupnpd           | community   | Rejected`*`      |
 
+`*` The `miniupnpd` 2.1 stable release shipped by Alpine 3.13 is not yet compatible with `nftables`, though upstream has been working on this support for a while and it seems to be planned for the 2.2 branch. I'll revisit this when Alpine start shipping `miniupnpd` 2.2+.
 
 ## Every package added on top of the Alpine "Standard" profile by Pinewall
 
