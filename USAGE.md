@@ -123,9 +123,9 @@ EOF
 mkfs.vfat /dev/sdx1
 ```
 
-# Fix for black screen on boot:
-#   - https://gitlab.alpinelinux.org/alpine/aports/-/issues/12368
-#   - https://gitlab.alpinelinux.org/alpine/aports/-/issues/12031
+Fix for black screen on boot:
+  - https://gitlab.alpinelinux.org/alpine/aports/-/issues/12368
+  - https://gitlab.alpinelinux.org/alpine/aports/-/issues/12031
 ```sh
 fatlabel /dev/sdx1 PINEWALL
 ```
