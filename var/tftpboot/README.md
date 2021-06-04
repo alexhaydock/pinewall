@@ -10,26 +10,25 @@ cp -v /usr/share/syslinux/{pxelinux.0,menu.c32,vesamenu.c32,ldlinux.c32,libcom32
 ```
 
 ### Secure Boot shim
+Start Fedora container:
 ```
-sudo dnf install shim-x64 grub2-efi-x64
+podman run --rm -it -v "$(pwd)/var/tftpboot/uefi:/host:rw,Z" fedora:34
+```
 
-mkdir -p ./var/tftpboot/uefi
+Inside container:
+```
+sudo dnf install -y shim-x64 grub2-efi-x64
 
-sudo cp -v /boot/efi/EFI/redhat/shimx64.efi ./var/tftpboot/uefi/
-
-# shim always wants the grub executable in the TFTP root regardless of where the shim is located
-# See: https://github.com/rhboot/shim/issues/111#issuecomment-522791605
-sudo cp -v /boot/efi/EFI/redhat/grubx64.efi ./var/tftpboot/
-
+sudo cp -v /boot/efi/EFI/fedora/{shimx64.efi,grubx64.efi} /host
 ```
 
 ### Kernel and initrd
 ```
 mkdir -p ./var/tftpboot/f34
 
-wget https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/images/pxeboot/initrd.img -o ./var/tftpboot/f34/initrd.img
+wget https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/images/pxeboot/initrd.img -O ./var/tftpboot/f34/initrd.img
 
-wget https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/images/pxeboot/vmlinuz -o ./var/tftpboot/f34/vmlinuz
+wget https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/images/pxeboot/vmlinuz -O ./var/tftpboot/f34/vmlinuz
 ```
 
 ### TODO
