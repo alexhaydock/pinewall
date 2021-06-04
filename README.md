@@ -77,6 +77,7 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | Remote Wireshark                  | tcpdump             | main        | Working          |
 | Bandwidth Monitoring              | vnstat              | community   | Working          |
 | mDNS Proxy                        | avahi, dbus         | main        | Working          |
+| TFTP Server                       | tftp-hpa            | main        | WIP              |
 | Log Shipping                      | Splunk UF           | not in repo | Not started      |
 | UPnP Daemon                       | miniupnpd           | community   | Rejected`*`      |
 
@@ -100,6 +101,7 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | nload               | main      | optional              |
 | sudo                | main      | core                  |
 | tcpdump             | main      | optional              |
+| tftp-hpa            | main      | optional              |
 | unbound             | main      | core                  |
 | vnstat              | community | optional              |
 | wireguard-tools-wg  | main      | optional              |

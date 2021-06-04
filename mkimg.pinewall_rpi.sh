@@ -25,6 +25,7 @@ profile_pinewall_rpi() {
     openssh
     sudo
     tcpdump
+    tftp-hpa
     unbound
     vnstat
     wireguard-tools-wg

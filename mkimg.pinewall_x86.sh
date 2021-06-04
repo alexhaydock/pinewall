@@ -26,6 +26,7 @@ profile_pinewall_x86() {
     openssh
     sudo
     tcpdump
+    tftp-hpa
     unbound
     vnstat
     wireguard-tools-wg
