@@ -78,7 +78,7 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | Bandwidth Monitoring              | vnstat              | community   | Working          |
 | mDNS Proxy                        | avahi, dbus         | main        | Working          |
 | TFTP Server (for PXE clients)     | tftp-hpa            | main        | Working          |
-| Caching Proxy (for PXE clients)   | nginx            | main        | Working          |
+| Caching Proxy (for PXE clients)   | nginx               | main        | Working          |
 | Log Shipping                      | Splunk UF           | not in repo | Not started      |
 | UPnP Daemon                       | miniupnpd           | community   | Rejected`*`      |
 
