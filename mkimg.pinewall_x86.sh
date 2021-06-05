@@ -20,9 +20,9 @@ profile_pinewall_x86() {
     ethtool
     htop
     iperf3
-    lighttpd
     nano
     nftables
+    nginx
     nload
     openssh
     sudo

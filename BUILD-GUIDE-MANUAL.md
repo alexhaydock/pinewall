@@ -117,19 +117,11 @@ These steps are to be performed over SSH. You could do these from the console te
 * `sudo rc-update add in.tftpd`
 * `sudo rc-service in.tftpd start`
 
-### Configure and enable lighttpd to serve content to PXE clients (optional)
-* `sudo apk --no-cache add lighttpd`
-* `sudo rc-update add lighttpd`
-* `sudo rc-service lighttpd start`
-
-### Sync Fedora content into webserver dir to serve with lighttpd for booting over PXE (optional)
-```sh
-sudo mkdir -p /var/www/localhost/htdocs/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/
-
-sudo chown -cR lighttpd:lighttpd /var/www/localhost/htdocs
-
-sudo -u lighttpd rsync -avsh --delete --progress rsync://rsync.mirrorservice.org/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/ /var/www/localhost/htdocs/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/
-```
+### Configure and enable nginx to cache content for PXE clients (optional)
+* `sudo apk --no-cache add nginx`
+* `sudo rc-update add nginx`
+* `sudo rc-service nginx start`
+* Add the config in this repo into `/etc/nginx/http.d/default.conf` to act as a reverse proxy for `www.mirrorservice.org` caching a maximum of `100GB` into `/var/cache/nginx`.
 
 ### Functional Router
 * At this point, if you did everything correctly and (mainly) if your `nftables` rules and `dhcpd` configs are correct, then you should pretty much have a fully functional router/gateway platform that provides routing, firewalling, DHCP, DNS, and NTP.

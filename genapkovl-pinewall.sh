@@ -69,9 +69,9 @@ dhcp-server-vanilla
 ethtool
 htop
 iperf3
-lighttpd
 nano
 nftables
+nginx
 nload
 openssh
 openssl
