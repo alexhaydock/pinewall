@@ -123,6 +123,18 @@ These steps are to be performed over SSH. You could do these from the console te
 * `sudo rc-service nginx start`
 * Add the config in this repo into `/etc/nginx/http.d/default.conf` to act as a reverse proxy for `www.mirrorservice.org` caching a maximum of `100GB` into `/var/cache/nginx`.
 
+### Manually configuring other installed clients to use the local repo (optional)
+Example using an already-installed Fedora system:
+```sh
+sudo sed -i 's,^metalink=https://mirrors.fedoraproject.org,#metalink=https://mirrors.fedoraproject.org,g' /etc/yum.repos.d/*.repo
+
+sudo sed -i 's,#baseurl=http://download.example/pub,baseurl=http://10.10.10.1/sites/dl.fedoraproject.org/pub,g' /etc/yum.repos.d/*.repo
+
+sudo dnf clean all
+
+sudo dnf upgrade
+```
+
 ### Functional Router
 * At this point, if you did everything correctly and (mainly) if your `nftables` rules and `dhcpd` configs are correct, then you should pretty much have a fully functional router/gateway platform that provides routing, firewalling, DHCP, DNS, and NTP.
 * Anything beyond this point is optional.
