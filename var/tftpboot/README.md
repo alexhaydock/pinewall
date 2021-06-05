@@ -12,7 +12,7 @@ cp -v /usr/share/syslinux/{pxelinux.0,menu.c32,vesamenu.c32,ldlinux.c32,libcom32
 ### Secure Boot shim
 Start Fedora container:
 ```
-podman run --rm -it -v "$(pwd)/var/tftpboot/uefi:/host:rw,Z" fedora:34
+podman run --rm -it -v "$(pwd)/var/tftpboot:/host:rw,Z" fedora:34
 ```
 
 Inside container:
