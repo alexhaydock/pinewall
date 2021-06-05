@@ -112,10 +112,24 @@ These steps are to be performed over SSH. You could do these from the console te
   * `sudo chronyc -N sources`
   * `sudo chronyc -N authdata`  # If we're using NTS
 
-### Configure and enable TFTP server
+### Configure and enable TFTP server for booting PXE clients (optional)
 * `sudo apk --no-cache add tftp-hpa`
 * `sudo rc-update add in.tftpd`
 * `sudo rc-service in.tftpd start`
+
+### Configure and enable lighttpd to serve content to PXE clients (optional)
+* `sudo apk --no-cache add lighttpd`
+* `sudo rc-update add lighttpd`
+* `sudo rc-service lighttpd start`
+
+### Sync Fedora content into webserver dir to serve with lighttpd for booting over PXE (optional)
+```sh
+sudo mkdir -p /var/www/localhost/htdocs/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/
+
+sudo chown -cR lighttpd:lighttpd /var/www/localhost/htdocs
+
+sudo -u lighttpd rsync -avsh --delete --progress rsync://rsync.mirrorservice.org/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/ /var/www/localhost/htdocs/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/
+```
 
 ### Functional Router
 * At this point, if you did everything correctly and (mainly) if your `nftables` rules and `dhcpd` configs are correct, then you should pretty much have a fully functional router/gateway platform that provides routing, firewalling, DHCP, DNS, and NTP.

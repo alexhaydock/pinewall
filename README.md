@@ -77,7 +77,8 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | Remote Wireshark                  | tcpdump             | main        | Working          |
 | Bandwidth Monitoring              | vnstat              | community   | Working          |
 | mDNS Proxy                        | avahi, dbus         | main        | Working          |
-| TFTP Server                       | tftp-hpa            | main        | WIP              |
+| TFTP Server (for PXE clients)     | tftp-hpa            | main        | Working          |
+| Web Server (for PXE clients)      | lighttpd            | main        | Working          |
 | Log Shipping                      | Splunk UF           | not in repo | Not started      |
 | UPnP Daemon                       | miniupnpd           | community   | Rejected`*`      |
 
@@ -96,6 +97,7 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | ethtool             | main      | optional              |
 | htop                | main      | optional              |
 | iperf3              | main      | optional              |
+| lighttpd            | main      | optional              |
 | nano                | main      | optional              |
 | nftables            | main      | core                  |
 | nload               | main      | optional              |

@@ -19,6 +19,7 @@ profile_pinewall_rpi() {
     ethtool
     htop
     iperf3
+    lighttpd
     nano
     nftables
     nload
