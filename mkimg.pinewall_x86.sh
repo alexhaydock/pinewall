@@ -22,10 +22,12 @@ profile_pinewall_x86() {
     iperf3
     nano
     nftables
+    nginx
     nload
     openssh
     sudo
     tcpdump
+    tftp-hpa
     unbound
     vnstat
     wireguard-tools-wg

@@ -63,7 +63,7 @@ These steps are to be performed over SSH. You could do these from the console te
   * And uncomment the community repository line to enable it.
   * `sudo apk --no-cache add open-vm-tools open-vm-tools-guestinfo open-vm-tools-deploypkg`
   * `sudo rc-service open-vm-tools start`
-  * `sudo rc-update add open-vm-tools boot`
+  * `sudo rc-update add open-vm-tools`
 
 ### Configure VLANs / network interfaces
 * Install network interface config:
@@ -71,7 +71,7 @@ These steps are to be performed over SSH. You could do these from the console te
 
 ### Configure and enable DHCP Server
 * Ensure `dhcpd` starts with the system:
-  * `sudo rc-update add dhcpd boot`
+  * `sudo rc-update add dhcpd`
 * Remember to add our dhcpd config:
   * `sudo nano /etc/dhcp/dhcpd.conf`
 * At this point **(optional)** if your `dhcpd.conf` is fully populated, you should be able to reconfigure your LAN client and reboot the Alpine Router and your LAN client should pull an IP address from the DHCP range configured in the `dhcp.conf` for the router.
@@ -89,7 +89,7 @@ These steps are to be performed over SSH. You could do these from the console te
 * Apply the new rules and cross your fingers that nothing breaks:
   * `sudo /etc/nftables.nft`
 * Ensure that `nftables` loads our rules on boot:
-  * `sudo rc-update add nftables boot`
+  * `sudo rc-update add nftables`
 
 ### Configuring DNS-over-TLS forwarding resolver with unbound
 * Install `unbound`:
@@ -98,7 +98,7 @@ These steps are to be performed over SSH. You could do these from the console te
   * `sudo nano /etc/unbound/unbound.conf`
 * Enable and start `unbound`:
   * `sudo rc-service unbound start`
-  * `sudo rc-update add unbound boot`
+  * `sudo rc-update add unbound`
 
 ### Configure NTP server with chronyd
 * `chronyd` is installed by default as part of the base Alpine install.
@@ -111,6 +111,29 @@ These steps are to be performed over SSH. You could do these from the console te
 * Check status with:
   * `sudo chronyc -N sources`
   * `sudo chronyc -N authdata`  # If we're using NTS
+
+### Configure and enable TFTP server for booting PXE clients (optional)
+* `sudo apk --no-cache add tftp-hpa`
+* `sudo rc-update add in.tftpd`
+* `sudo rc-service in.tftpd start`
+
+### Configure and enable nginx to cache content for PXE clients (optional)
+* `sudo apk --no-cache add nginx`
+* `sudo rc-update add nginx`
+* `sudo rc-service nginx start`
+* Add the config in this repo into `/etc/nginx/http.d/default.conf` to act as a reverse proxy for `www.mirrorservice.org` caching a maximum of `100GB` into `/var/cache/nginx`.
+
+### Manually configuring other installed clients to use the local repo (optional)
+Example using an already-installed Fedora system:
+```sh
+sudo sed -i 's,^metalink=https://mirrors.fedoraproject.org,#metalink=https://mirrors.fedoraproject.org,g' /etc/yum.repos.d/*.repo
+
+sudo sed -i 's,#baseurl=http://download.example/pub,baseurl=http://10.10.10.1/sites/dl.fedoraproject.org/pub,g' /etc/yum.repos.d/*.repo
+
+sudo dnf clean all
+
+sudo dnf upgrade
+```
 
 ### Functional Router
 * At this point, if you did everything correctly and (mainly) if your `nftables` rules and `dhcpd` configs are correct, then you should pretty much have a fully functional router/gateway platform that provides routing, firewalling, DHCP, DNS, and NTP.
@@ -154,7 +177,7 @@ PermitRootLogin prohibit-password
   * A full copy of this file is stored in `/etc/init.d` in this repo.
 * Start and enable `iperf3`:
   * `sudo rc-service iperf3 start`
-  * `sudo rc-update add iperf3 boot`
+  * `sudo rc-update add iperf3`
 
 ### Configure and enable WireGuard client (optional)
 * Install WireGuard:
@@ -203,7 +226,7 @@ iface wg0 inet static
   * `sudo sed -i 's/^Interface ""/Interface "eth1"/g' /etc/vnstat.conf`
 * Start and enable `vnstat`:
   * `sudo rc-service vnstatd start`
-  * `sudo rc-update add vnstatd boot`
+  * `sudo rc-update add vnstatd`
 * After waiting a while for the database to populate, we can view our stats with a simple:
   * `vnstat`
 
@@ -214,7 +237,7 @@ By default, these logs get fed to the kernel log and can be read with `dmesg`. W
   * `sudo apk --no-cache add ulogd`
 * Start and enable the service:
   * `sudo rc-service ulogd start`
-  * `sudo rc-update add ulogd boot`
+  * `sudo rc-update add ulogd`
 
 ### Enabling Avahi to proxy mDNS/Bonjour/AirPlay/etc between VLANs (optional)
 * Install `avahi`:
@@ -223,7 +246,7 @@ By default, these logs get fed to the kernel log and can be read with `dmesg`. W
   * `sudo nano /etc/avahi/avahi-daemon.conf`
 * Start and enable Avahi service:
   * `sudo rc-service avahi-daemon start`
-  * `sudo rc-update add avahi-daemon boot`
+  * `sudo rc-update add avahi-daemon`
 * Install Avahi Tools on your local machine and check things are working:
   * `sudo dnf install avahi-tools`
   * `avahi-browse --all --verbose --terminate`
