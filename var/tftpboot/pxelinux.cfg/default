@@ -1,0 +1,13 @@
+default vesamenu.c32
+prompt 1
+timeout 600
+
+label local
+menu label Boot from ^local drive
+menu default
+localboot 0xffff
+
+label linux
+menu label ^Install Fedora 34
+kernel f34/vmlinuz
+append initrd=f34/initrd.img inst.stage2=https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/ ip=dhcp

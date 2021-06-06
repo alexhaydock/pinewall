@@ -71,11 +71,13 @@ htop
 iperf3
 nano
 nftables
+nginx
 nload
 openssh
 openssl
 sudo
 tcpdump
+tftp-hpa
 unbound
 vnstat
 wireguard-tools-wg
