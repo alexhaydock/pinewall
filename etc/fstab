@@ -1,0 +1,14 @@
+## THIS IS NOT A COMPLETE FSTAB FILE ##
+##     IT IS A TRUNCATED EXAMPLE     ##
+##  DO NOT REPLACE FSTAB WITH THIS   ##
+
+
+# Mount RHEL ISO for HTTP server to serve for PXE boot clients.
+#
+# This requires manual mounting with:
+#
+#   sudo mount /var/www/localhost/htdocs/tools/rhel-mounted
+#
+# It will not be auto-mounted on boot.
+#
+/var/www/localhost/htdocs/tools/rhel-iso/rhel-8.4-x86_64-dvd.iso /var/www/localhost/htdocs/tools/rhel-mounted iso9660 noauto,ro 0 0
