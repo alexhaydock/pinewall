@@ -91,8 +91,12 @@ These steps are to be performed over SSH. You could do these from the console te
 * Ensure that `nftables` loads our rules on boot:
   * `sudo rc-update add nftables`
 
-### Configuring DNS-over-TLS forwarding resolver with unbound
-* Install `unbound`:
+### Downloading root hints file for DNS (required to use our Unbound config)
+* `sudo apk --no-cache add dns-root-hints`
+* `sudo /usr/bin/update-dns-root-hints`
+
+### Configuring DNS-over-TLS forwarding resolver with Unbound
+* Install Unbound:
   * `sudo apk --no-cache add unbound`
 * Install `unbound.conf` from this repo:
   * `sudo nano /etc/unbound/unbound.conf`
@@ -102,8 +106,6 @@ These steps are to be performed over SSH. You could do these from the console te
 
 ### Configure NTP server with chronyd
 * `chronyd` is installed by default as part of the base Alpine install.
-* If we are on Alpine 3.13 and we want to use NTS with `chrony`, we need the newest version of the package.
-* We can install this with `sudo apk update && sudo apk add chrony@edge`
 * Install our custom config:
   * `sudo nano /etc/chrony/chrony.conf`
 * Restart `chronyd`:

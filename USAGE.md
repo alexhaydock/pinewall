@@ -67,7 +67,7 @@
 * To upgrade the system:
   * `sudo apk update && sudo apk upgrade`
 * If we upgrade Alpine to a new point release, we should make sure to check the Release Notes for the specific release:
-  * https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.13.0
+  * https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.14.0
 * Commit notes for upgraded packages in `main` repo.
   * So there aren't super detailed release notes for each package release, but the packages move slowly enough that you can generally track everything in `main` by running a search on the Alpine `abuild` repo:
   * https://git.alpinelinux.org/aports/log/?qt=grep&q=main%2F
@@ -144,5 +144,5 @@ mount /dev/sdx1 /tmp/alpineusb
 
 Extract Pinewall onto the bootable partition you've created:
 ```sh
-sudo tar -xvf alpine-pinewall_rpi-v3.13-aarch64.tar.gz --no-same-owner -C /tmp/alpineusb && sync
+sudo tar -xvf alpine-pinewall_rpi-v3.14-aarch64.tar.gz --no-same-owner -C /tmp/alpineusb && sync
 ```

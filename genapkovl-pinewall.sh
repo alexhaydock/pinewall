@@ -66,6 +66,7 @@ chrony
 conntrack-tools
 dbus
 dhcp-server-vanilla
+dns-root-hints
 ethtool
 htop
 iperf3

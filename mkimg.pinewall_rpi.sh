@@ -16,6 +16,7 @@ profile_pinewall_rpi() {
     conntrack-tools
     dbus
     dhcp-server-vanilla
+    dns-root-hints
     ethtool
     htop
     iperf3
