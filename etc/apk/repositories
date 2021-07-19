@@ -11,13 +11,5 @@
 #
 
 # Stable Repos
-https://dl-cdn.alpinelinux.org/alpine/v3.13/main
-https://dl-cdn.alpinelinux.org/alpine/v3.13/community
-
-# Edge Repos (will only be used if we specifically force APK to install a package from these)
-#
-# Example:
-#   sudo apk update && sudo apk add chrony@edge
-#
-@edge https://dl-cdn.alpinelinux.org/alpine/edge/main
-@edgecommunity https://dl-cdn.alpinelinux.org/alpine/edge/community
+https://dl-cdn.alpinelinux.org/alpine/v3.14/main
+https://dl-cdn.alpinelinux.org/alpine/v3.14/community

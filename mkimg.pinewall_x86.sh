@@ -17,6 +17,7 @@ profile_pinewall_x86() {
     conntrack-tools
     dbus
     dhcp-server-vanilla
+    dns-root-hints
     ethtool
     htop
     iperf3

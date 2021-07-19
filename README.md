@@ -1,3 +1,5 @@
+> WARNING: The project in this repo is not yet considered "production-ready". Use at your own risk.
+
 ```
 
      /\ /\          ____  _                          _ _ 
@@ -9,12 +11,7 @@
   
        A minimal Alpine Linux home Firewall / Router.
 
-
 ```
-
-
-> WARNING: The project in this repo is not yet considered "production-ready". Use at your own risk.
-
 
 ## Introduction
 
@@ -62,23 +59,24 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 
 | Feature                           | Alpine Package      | Alpine Repo | Notes            |
 |-----------------------------------|---------------------|-------------|------------------|
-| Firewall                          | nftables            | main        | Working          |
 | 802.1Q VLANs                      | ifupdown-ng         | main        | Working          |
-| DHCP Server                       | dhcp-server-vanilla | main        | Working          |
+| Bandwidth Monitoring              | vnstat              | community   | Working          |
+| Caching Proxy (for PXE clients)   | nginx               | main        | Working          |
 | DHCP Reservations                 | dhcp-server-vanilla | main        | Working          |
+| DHCP Server                       | dhcp-server-vanilla | main        | Working          |
+| DNS Cache                         | unbound             | main        | Working          |
+| DNS Root Hints (for Unbound)      | dns-root-hints      | main        | Working          |
 | DNS Server (Upstream via DoT)     | unbound             | main        | Working          |
 | DNSSEC                            | unbound             | main        | Working          |
-| DNS Cache                         | unbound             | main        | Working          |
-| NTP Server                        | chronyd             | main        | Working          |
-| Port Forwarding (Destination NAT) | nftables            | main        | Working          |
-| Performance Testing               | iperf3              | main        | Working          |
-| VPN (Client only, no routing)     | wireguard-tools-wg  | main        | Working          |
-| Static Port NAT for Games         | nftables            | main        | Working          |
-| Remote Wireshark                  | tcpdump             | main        | Working          |
-| Bandwidth Monitoring              | vnstat              | community   | Working          |
+| Firewall                          | nftables            | main        | Working          |
 | mDNS Proxy                        | avahi, dbus         | main        | Working          |
+| NTP Server                        | chronyd             | main        | Working          |
+| Performance Testing               | iperf3              | main        | Working          |
+| Port Forwarding (Destination NAT) | nftables            | main        | Working          |
+| Remote Wireshark                  | tcpdump             | main        | Working          |
+| Static Port NAT for Games         | nftables            | main        | Working          |
 | TFTP Server (for PXE clients)     | tftp-hpa            | main        | Working          |
-| Caching Proxy (for PXE clients)   | nginx               | main        | Working          |
+| VPN (Client only, no routing)     | wireguard-tools-wg  | main        | Working          |
 | Log Shipping                      | Splunk UF           | not in repo | Not started      |
 | UPnP Daemon                       | miniupnpd           | community   | Rejected`*`      |
 
@@ -94,6 +92,7 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | conntrack-tools     | main      | optional              |
 | dbus                | main      | dependency (of avahi) |
 | dhcp-server-vanilla | main      | core                  |
+| dns-root-hints      | main      | core                  |
 | ethtool             | main      | optional              |
 | htop                | main      | optional              |
 | iperf3              | main      | optional              |

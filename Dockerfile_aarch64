@@ -1,4 +1,4 @@
-FROM docker.io/arm64v8/alpine:3.13
+FROM docker.io/arm64v8/alpine:3.14
 
 # Bind mount a directory into /tmp/images when running this image to output a built iso into it
 
@@ -14,7 +14,7 @@ FROM docker.io/arm64v8/alpine:3.13
 # Do not include a trailing slash in repo URL
 # Note that not all mirrors mirror all architectures
 ENV ALPINEREPO=https://dl-cdn.alpinelinux.org/alpine
-ENV ALPINEVER=3.13
+ENV ALPINEVER=3.14
 
 ENV PROFILENAME=pinewall_rpi
 ENV TARGETARCH=aarch64
