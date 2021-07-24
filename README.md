@@ -82,6 +82,7 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 
 `*` The `miniupnpd` 2.1 stable release shipped by Alpine 3.13 is not yet compatible with `nftables`, though upstream has been working on this support for a while and it seems to be planned for the 2.2 branch. I'll revisit this when Alpine start shipping `miniupnpd` 2.2+.
 
+
 ## Every package added on top of the Alpine "Standard" profile by Pinewall
 
 Below you can find a list of every package installed on top of the Alpine "Standard" profile. You can find these defined in this repository inside `mkimg.pinewall.sh` (which includes the packages in our custom Alpine image), and inside `genapkovl-pinewall.sh` which is an APK overlay which ensures that the packages are installed into RAM and available when the live system boots.
@@ -122,3 +123,40 @@ Below you can find a list of every package installed on top of the Alpine "Stand
   * Again, due to my upstream ISP being DOCSIS rather than VDSL/G.Fast, I have no means of testing a PPP link.
 * Log monitoring and alerting
   * I haven't really decided on my solution for this yet, but it'll probably end up being the Splunk Universal Forwarder feeding the logs from `/var/log` into a remote Splunk Enterprise instance.
+
+
+## How do I use this in production?
+Currently, I am using this in Alpine's RAM-based diskless mode. I generate an x86 based Alpine ISO with my custom packages by running `make x86` in the directory for this repo. This will produce an ISO image with all of the additional packages required to make Pinewall work, along with an APK overlay with the example configs inside it.
+
+I write this to one USB stick using a standard tool like `dd` or `GNOME Disks`, and boot it on an x86 system to be used as a firewall.
+
+At the same time, I also format a second USB stick with the following specs:
+* MBR Disk Layout
+* One Partition
+* EXT4 formatted
+
+If everything goes well, the system is booted with two USB sticks and no other storage. The primary stick will be the one with the Pinewall ISO written to it, and this will load the live system. The secondary stick is the one we just formatted as EXT4 and won't have anything on it yet, but should be found by the Alpine installer as `/dev/sdb1` and mounted read-only.
+
+When we make changes inside the live environment, we can save those changes to the secondary stick using:
+```
+sudo lbu_commit -dv
+```
+
+Until we write our changes to the disk using the above command, **they will not be preserved**. This is in-line with how a lot of networking equipment works because, this way, if you make a change that locks you out of the system, power-cycling the device should get you back to the state you were in before, as the change will not have been committed to disk.
+
+In our case, this command will commit changes to config files to the second USB, which then get loaded on subsequent boots as long as the second USB disk remains connected.
+
+This approach gives us a few benefits:
+* A power loss event has a very minimal chance of breaking anything. The disk is only even mounted read-only when we're running the `lbu_commit` command.
+* User-error when changing configs has a minimal chance of causing complete lockout. Power-cycling will load the last saved config from disk.
+* Running entirely from RAM reduces disk wear and can lower the chance of disk failure.
+* To conduct package upgrades or system upgrades, we're able to spin a whole new Pinewall ISO, write it to yet another USB disk and quickly swap it with the disk that has the booted Pinewall ISO on it.
+  * This is basically magic because if something breaks, we can just put the older stick back in and everything is back exactly how it was (and working!)
+  * And this is basically as close as we're going to get to the container-based microservice idea of machines as "cattle". We don't even update our host, we just spin a whole new base image and deploy that - preserving only our configs in the APKOVERLAY stored on our second USB stick.
+
+And some downsides:
+* Streaming data, like logs and bandwidth monitoring data also only gets preserved when you issue an `lbu_commit`, so in a power-loss event this might get lost as it might be a while since you last ran that command.
+* We can add new packages on-the-fly if we like - they'll be installed into RAM. **But we need to be careful!** If we want that package to be available again on next boot, we need to spin a new ISO which includes it, otherwise it won't work properly. It will exist in the `/etc/apk/world` file we committed with `lbu_commit`, but Alpine won't be able to actually load and install it during boot, so it might behave unpredictably.
+* Some of the above might be mitigated by using Alpine's [Local APK Cache](https://wiki.alpinelinux.org/wiki/Local_APK_cache) feature, but I'm avoiding this deliberately as it adds complexity, and I really like the image-based deployment pattern where I spin a whole new image and replace the stick physically for upgrades.
+
+All things considered I think, for a network appliance deployment, the benefits of running diskless and committing changes to disk only when needed far outweigh the drawbacks that come with needing to spin a new ISO periodically for any packageset changes.
