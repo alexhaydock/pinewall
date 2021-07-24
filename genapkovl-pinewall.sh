@@ -143,32 +143,34 @@ mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/motd "$tmp"/etc/motd
 
 # Write an inittab which is the same as the default but that doesn't
-# spawn as many TTYs by default
+# spawn as many TTYs by default and which listens for serial connections
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/inittab "$tmp"/etc/inittab
 
+# Add sysctls
 mkdir -p "$tmp"/etc/sysctl.d
 copyfile root:root 0644 /tmp/etc/sysctl.d/local.conf "$tmp"/etc/sysctl.d/local.conf
 
+# Add NTP config
 mkdir -p "$tmp"/etc/chrony
 copyfile root:root 0644 /tmp/etc/chrony/chrony.conf "$tmp"/etc/chrony/chrony.conf
 
+# Add DNS server config
 mkdir -p "$tmp"/etc/unbound
 copyfile root:root 0644 /tmp/etc/unbound/unbound.conf "$tmp"/etc/unbound/unbound.conf
+copyfile root:root 0644 /tmp/etc/unbound/unbound-localzone.conf "$tmp"/etc/unbound/unbound-localzone.conf
 
-mkdir -p "$tmp"/etc/unbound
-makefile root:root 0644 "$tmp"/etc/unbound/unbound-localzone.conf <<EOF
-# /etc/unbound/unbound-localzone.conf
+# Add nftables rules - note that these are 0754 unlike other files, as they
+# need to be executable!
+mkdir -p "$tmp"/etc/nftables.d
+copyfile root:root 0754 /tmp/etc/nftables.d/firewall.nft "$tmp"/etc/nftables.d/firewall.nft
+copyfile root:root 0754 /tmp/etc/nftables.d/nat.nft"$tmp"/etc/nftables.d/firewall.nft
+copyfile root:root 0754 /tmp/etc/nftables.d/vars.nft"$tmp"/etc/nftables.d/vars.nft
 
-# Define a transparent local zone for our LAN search domain
-local-zone: "localdomain." transparent
-
-# You can manually add DNS entries to your local zone here
-# I have included some examples below:
-#local-data-ptr: "10.10.10.10 nextcloud.localdomain"
-#local-data: "nextcloud.localdomain. A 10.10.10.10"
-EOF
-
+# Copy LBU config so that LBU in our running environment will backup
+# to the "usb" device by default, which it will mount to /media/usb
+mkdir -p "$tmp"/etc/lbu
+copyfile root:root 0644 /tmp/etc/lbu/lbu.conf "$tmp"/etc/lbu/lbu.conf
 
 # Except where commented, these runlevels come from the defaults that can
 # be found after a basic Alpine Standard install to HDD with the defaults.
@@ -189,6 +191,7 @@ rc_add acpid default
 rc_add chronyd default
 rc_add crond default
 rc_add iperf3 default
+rc_add nftables default
 rc_add sshd default
 rc_add unbound default
 
@@ -205,4 +208,5 @@ rc_add mdev sysinit
 # is needed for the live system
 rc_add modloop sysinit
 
+# Write out our generated APK overlay file
 tar -c -C "$tmp" etc | gzip -9n > $HOSTNAME.apkovl.tar.gz

@@ -13,7 +13,9 @@ profile_pinewall_x86() {
   # Don't forget to include $apks below to include the ones which we already read into this variable
   # from mkimg.base.sh (if we don't, we end up overwriting the variable)
   apks="$apks
+    alpine-base
     avahi
+    chrony
     conntrack-tools
     dbus
     dhcp-server-vanilla
@@ -26,6 +28,7 @@ profile_pinewall_x86() {
     nginx
     nload
     openssh
+    openssl
     sudo
     tcpdump
     tftp-hpa

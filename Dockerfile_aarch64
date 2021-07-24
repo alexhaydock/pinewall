@@ -45,7 +45,7 @@ RUN addgroup root abuild
 RUN mkdir /tmp/abuild
 WORKDIR /tmp/abuild
 
-RUN abuild-keygen -i -a
+RUN abuild-keygen -i -a -n
 
 RUN git clone https://gitlab.alpinelinux.org/alpine/aports.git
 
