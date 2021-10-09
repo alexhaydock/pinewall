@@ -21,6 +21,7 @@ profile_pinewall_rpi() {
     dns-root-hints
     ethtool
     htop
+    ifupdown-ng-ppp
     iperf3
     nano
     nftables
@@ -28,11 +29,11 @@ profile_pinewall_rpi() {
     nload
     openssh
     openssl
+    ppp-pppoe
     sudo
     tcpdump
     tftp-hpa
     unbound
-    vnstat
     wireguard-tools-wg
     "
 

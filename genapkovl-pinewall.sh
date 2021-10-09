@@ -69,6 +69,7 @@ dhcp-server-vanilla
 dns-root-hints
 ethtool
 htop
+ifupdown-ng-ppp
 iperf3
 nano
 nftables
@@ -76,11 +77,11 @@ nginx
 nload
 openssh
 openssl
+ppp-pppoe
 sudo
 tcpdump
 tftp-hpa
 unbound
-vnstat
 wireguard-tools-wg
 EOF
 

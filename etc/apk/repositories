@@ -10,6 +10,8 @@
 # to web-based repositories.
 #
 
-# Stable Repos
+# Main Stable Repo
 https://dl-cdn.alpinelinux.org/alpine/v3.14/main
-https://dl-cdn.alpinelinux.org/alpine/v3.14/community
+
+# Main Community Repo (Disabled)
+##https://dl-cdn.alpinelinux.org/alpine/v3.14/community
