@@ -1,14 +1,8 @@
 #!/bin/sh
 set -eu
 
-# Read in the variable that gets passed to the script.
-# We might as well, but we'll just set /etc/hostname to
-# 'pinewall' instead anyway further down in this script.
-HOSTNAME="$1"
-if [ -z "$HOSTNAME" ]; then
-  echo "usage: $0 hostname"
-  exit 1
-fi
+# Set hostname to "pinewall"
+HOSTNAME="pinewall"
 
 cleanup() {
   rm -rf "$tmp"
@@ -43,48 +37,19 @@ trap cleanup EXIT
 
 mkdir -p "$tmp"/etc
 makefile root:root 0644 "$tmp"/etc/hostname <<EOF
-pinewall
+$HOSTNAME
 EOF
 
+# Copy our interfaces file
 mkdir -p "$tmp"/etc/network
-makefile root:root 0644 "$tmp"/etc/network/interfaces <<EOF
-auto lo
-iface lo inet loopback
-
-auto eth0
-iface eth0 inet dhcp
-EOF
+copyfile root:root 0644 /tmp/etc/network/interfaces "$tmp"/etc/network/interfaces
 
 # By default, it seems like /etc/apk/world on a system without
 # an apkovl being loaded contains just the two entries for
-# "alpine-base" and for "openssl". I've replicated those here
-# to make sure we don't miss out on them.
+# "alpine-base" and for "openssl". I've replicated those in
+# the world file to make sure we don't miss out on them.
 mkdir -p "$tmp"/etc/apk
-makefile root:root 0644 "$tmp"/etc/apk/world <<EOF
-alpine-base
-avahi
-chrony
-conntrack-tools
-dbus
-dhcp-server-vanilla
-dns-root-hints
-ethtool
-htop
-ifupdown-ng-ppp
-iperf3
-nano
-nftables
-nginx
-nload
-openssh
-openssl
-ppp-pppoe
-sudo
-tcpdump
-tftp-hpa
-unbound
-wireguard-tools-wg
-EOF
+copyfile root:root 0644 /tmp/etc/apk/world "$tmp"/etc/apk/world
 
 # Copy the repos file to give us internet repo access
 mkdir -p "$tmp"/etc/apk
@@ -119,9 +84,14 @@ echo "pinewall:x:5000:5000:Pinewall MGMT user:/home/pinewall:/bin/ash" >> "$tmp"
 echo 'pinewall:$6$sFTyHCoLEjykVIXe$aDrddac7iQoqnedKMev5LuEf52/mQvTe5gOZkvERsgu36B7PM7HPj0udJFmSsLOAUac//OyOJpvjdEhEsEPxK.::0:::::' >> "$tmp"/etc/shadow
 
 # Create pinewall user's home directory
+# Add a basic file to this so it's not empty otherwise
+# the APK overlay doesn't seem to actually create it
+# in the loaded system.
 mkdir -p "$tmp"/home/pinewall
-chown 5000:5000 "$tmp"/home/pinewall
 chmod 0750 "$tmp"/home/pinewall
+echo "pinewall" "$tmp"/home/pinewall/.pinewall
+chmod 0640 "$tmp"/home/pinewall/.pinewall
+chown -R 5000:5000 "$tmp"/home/pinewall
 
 # Allow pinewall user sudo access
 mkdir -p "$tmp"/etc/sudoers.d
@@ -144,6 +114,11 @@ copyfile root:root 0755 /tmp/etc/init.d/iperf3 "$tmp"/etc/init.d/iperf3
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/motd "$tmp"/etc/motd
 
+# Copy our /etc/fstab which will mount disks labeled PINECONF
+# to /media/usb to allow us to use `lbu commit`.
+mkdir -p "$tmp"/etc
+copyfile root:root 0644 /tmp/etc/fstab "$tmp"/etc/fstab
+
 # Write an inittab which is the same as the default but that doesn't
 # spawn as many TTYs by default and which listens for serial connections
 mkdir -p "$tmp"/etc
@@ -164,15 +139,22 @@ copyfile root:root 0644 /tmp/etc/unbound/unbound-localzone.conf "$tmp"/etc/unbou
 
 # Add nftables rules - note that these are 0754 unlike other files, as they
 # need to be executable!
+copyfile root:root 0754 /tmp/etc/nftables.nft "$tmp"/etc/nftables.nft
 mkdir -p "$tmp"/etc/nftables.d
-copyfile root:root 0754 /tmp/etc/nftables.d/firewall.nft "$tmp"/etc/nftables.d/firewall.nft
-copyfile root:root 0754 /tmp/etc/nftables.d/nat.nft "$tmp"/etc/nftables.d/firewall.nft
-copyfile root:root 0754 /tmp/etc/nftables.d/vars.nft "$tmp"/etc/nftables.d/vars.nft
+copyfile root:root 0754 /tmp/etc/nftables.d/00-vars.nft "$tmp"/etc/nftables.d/00-vars.nft
+copyfile root:root 0754 /tmp/etc/nftables.d/10-firewall.nft "$tmp"/etc/nftables.d/10-firewall.nft
+copyfile root:root 0754 /tmp/etc/nftables.d/20-nat.nft "$tmp"/etc/nftables.d/20-nat.nft
+
+# Add DHCP config
+mkdir -p "$tmp"/etc/dhcp
+copyfile root:root 0754 /tmp/etc/dhcp/dhcpd.conf "$tmp"/etc/dhcp/dhcpd.conf
+copyfile root:root 0754 /tmp/etc/dhcp/dhcpd-ranges.conf "$tmp"/etc/dhcp/dhcpd-ranges.conf
+copyfile root:root 0754 /tmp/etc/dhcp/dhcpd-reservations.conf "$tmp"/etc/dhcp/dhcpd-reservations.conf
 
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
-mkdir -p "$tmp"/etc/lbu
-copyfile root:root 0644 /tmp/etc/lbu/lbu.conf "$tmp"/etc/lbu/lbu.conf
+#mkdir -p "$tmp"/etc/lbu
+#copyfile root:root 0644 /tmp/etc/lbu/lbu.conf "$tmp"/etc/lbu/lbu.conf
 
 # Except where commented, these runlevels come from the defaults that can
 # be found after a basic Alpine Standard install to HDD with the defaults.
@@ -192,6 +174,7 @@ rc_add urandom boot
 rc_add acpid default
 rc_add chronyd default
 rc_add crond default
+rc_add dhcpd default
 rc_add iperf3 default
 rc_add nftables default
 rc_add sshd default
@@ -211,4 +194,4 @@ rc_add mdev sysinit
 rc_add modloop sysinit
 
 # Write out our generated APK overlay file
-tar -c -C "$tmp" etc | gzip -9n > $HOSTNAME.apkovl.tar.gz
+tar -c -C "$tmp" etc | gzip -9n > /tmp/overlays/$HOSTNAME.apkovl.tar.gz
