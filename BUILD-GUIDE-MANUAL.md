@@ -55,7 +55,7 @@ These steps are to be performed over SSH. You could do these from the console te
   * Core functionality:
     * `sudo apk --no-cache add dhcp-server-vanilla nftables sudo unbound vlan`
   * Optional functionality:
-    * `sudo apk --no-cache add avahi conntrack-tools dbus ethtool htop iperf3 nano nload tcpdump vnstat wireguard-tools-wg`
+    * `sudo apk --no-cache add avahi conntrack-tools dbus ethtool htop iperf3 nano nload tcpdump wireguard-tools-wg`
 
 ### Configure and enable VMware Tools (optional)
 * If using VMware to host or test this router:

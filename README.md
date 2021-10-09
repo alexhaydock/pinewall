@@ -60,7 +60,6 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | Feature                           | Alpine Package      | Alpine Repo | Notes            |
 |-----------------------------------|---------------------|-------------|------------------|
 | 802.1Q VLANs                      | ifupdown-ng         | main        | Working          |
-| Bandwidth Monitoring              | vnstat              | community   | Working          |
 | Caching Proxy (for PXE clients)   | nginx               | main        | Working          |
 | DHCP Reservations                 | dhcp-server-vanilla | main        | Working          |
 | DHCP Server                       | dhcp-server-vanilla | main        | Working          |
@@ -105,7 +104,6 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | tcpdump             | main      | optional              |
 | tftp-hpa            | main      | optional              |
 | unbound             | main      | core                  |
-| vnstat              | community | optional              |
 | wireguard-tools-wg  | main      | optional              |
 
 

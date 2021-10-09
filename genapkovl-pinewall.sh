@@ -80,7 +80,6 @@ sudo
 tcpdump
 tftp-hpa
 unbound
-vnstat
 wireguard-tools-wg
 EOF
 

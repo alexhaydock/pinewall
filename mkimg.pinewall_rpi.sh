@@ -32,7 +32,6 @@ profile_pinewall_rpi() {
     tcpdump
     tftp-hpa
     unbound
-    vnstat
     wireguard-tools-wg
     "
 
