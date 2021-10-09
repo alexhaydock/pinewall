@@ -1,4 +1,4 @@
-.PHONY: trap init x86 x86-debug rpi rpi-debug clean
+.PHONY: trap init overlay x86 x86-debug rpi rpi-debug clean
 
 trap:
 	echo "Error! Please specify 'make init', 'make x86' or 'make rpi' directly."
@@ -8,12 +8,12 @@ init:
 
 overlay:
 	mkdir -p "$(shell pwd)/overlays"
-	podman build -f Dockerfile_x86 -t pinewall-x86 .
-	podman run --rm -it -v "$(shell pwd)/overlays:/tmp/overlays:Z" pinewall-x86 ./genapkovl-pinewall.sh
+	podman build -f Dockerfile_overlay -t pinewall-overlay .
+	podman run --rm -it -v "$(shell pwd)/overlays:/tmp/overlays:Z" pinewall-overlay ./genapkovl-pinewall.sh
 
 x86:
 	mkdir -p "$(shell pwd)/images"
-	podman build -f Dockerfile_x86 -t pinewall-x86 .
+	podman build -f Dockerfile_image_x86 -t pinewall-x86 .
 	podman run --rm -it -v "$(shell pwd)/images:/tmp/images:Z" --tmpfs "/tmp/cache" pinewall-x86 ./imagebuild.sh
 
 x86-debug:
@@ -21,7 +21,7 @@ x86-debug:
 
 rpi:
 	mkdir -p "$(shell pwd)/images"
-	podman build -f Dockerfile_aarch64 -t pinewall-rpi .
+	podman build -f Dockerfile_image_aarch64 -t pinewall-rpi .
 	podman run --rm -it -v "$(shell pwd)/images:/tmp/images:Z" --tmpfs "/tmp/cache" pinewall-rpi ./imagebuild.sh
 
 rpi-debug:
