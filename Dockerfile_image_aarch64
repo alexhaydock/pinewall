@@ -63,10 +63,6 @@ RUN chmod +x /tmp/abuild/aports/scripts/mkimg.$PROFILENAME.sh
 COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
 RUN chmod +x /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
 
-# Add our image building script to the container
-COPY imagebuild.sh /tmp/abuild/aports/scripts/imagebuild.sh
-RUN chmod +x /tmp/abuild/aports/scripts/imagebuild.sh
-
 # Add in all our configs
 COPY etc/ /tmp/etc/
 

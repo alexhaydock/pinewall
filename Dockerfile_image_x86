@@ -60,10 +60,6 @@ RUN mkdir /tmp/images
 COPY mkimg.$PROFILENAME.sh /tmp/abuild/aports/scripts/mkimg.$PROFILENAME.sh
 RUN chmod +x /tmp/abuild/aports/scripts/mkimg.$PROFILENAME.sh
 
-# Add our custom APK overlay
-COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
-RUN chmod +x /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
-
 # Add our image building script to the container
 COPY imagebuild.sh /tmp/abuild/aports/scripts/imagebuild.sh
 RUN chmod +x /tmp/abuild/aports/scripts/imagebuild.sh
