@@ -89,7 +89,7 @@ echo 'pinewall:$6$sFTyHCoLEjykVIXe$aDrddac7iQoqnedKMev5LuEf52/mQvTe5gOZkvERsgu36
 # in the loaded system.
 mkdir -p "$tmp"/home/pinewall
 chmod 0750 "$tmp"/home/pinewall
-echo "pinewall" "$tmp"/home/pinewall/.pinewall
+echo "pinewall" > "$tmp"/home/pinewall/.pinewall
 chmod 0640 "$tmp"/home/pinewall/.pinewall
 chown -R 5000:5000 "$tmp"/home/pinewall
 
