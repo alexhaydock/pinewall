@@ -1,4 +1,5 @@
-#!/bin/sh -e
+#!/bin/sh
+set -eu
 
 # Read in the variable that gets passed to the script.
 # We might as well, but we'll just set /etc/hostname to
@@ -165,8 +166,8 @@ copyfile root:root 0644 /tmp/etc/unbound/unbound-localzone.conf "$tmp"/etc/unbou
 # need to be executable!
 mkdir -p "$tmp"/etc/nftables.d
 copyfile root:root 0754 /tmp/etc/nftables.d/firewall.nft "$tmp"/etc/nftables.d/firewall.nft
-copyfile root:root 0754 /tmp/etc/nftables.d/nat.nft"$tmp"/etc/nftables.d/firewall.nft
-copyfile root:root 0754 /tmp/etc/nftables.d/vars.nft"$tmp"/etc/nftables.d/vars.nft
+copyfile root:root 0754 /tmp/etc/nftables.d/nat.nft "$tmp"/etc/nftables.d/firewall.nft
+copyfile root:root 0754 /tmp/etc/nftables.d/vars.nft "$tmp"/etc/nftables.d/vars.nft
 
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
