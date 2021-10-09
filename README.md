@@ -127,8 +127,26 @@ Below you can find a list of every package installed on top of the Alpine "Stand
   * I haven't really decided on my solution for this yet, but it'll probably end up being the Splunk Universal Forwarder feeding the logs from `/var/log` into a remote Splunk Enterprise instance.
 
 
+## How do I build this?
+
+To build the Alpine image, seeded with the latest packages:
+```
+make x86
+```
+
+You will find an ISO image that can be booted either from disc or USB in the `images/` directory.
+
+And to build the APK overlay based on `genapkovl-pinewall.sh`:
+```
+make overlay
+```
+
+You will then find the overlay, ready to copy to a USB stick in the `overlay/` directory.
+
+
 ## How do I use this in production?
-Currently, I am using this in Alpine's RAM-based diskless mode. I generate an x86 based Alpine ISO with my custom packages by running `make x86` in the directory for this repo. This will produce an ISO image with all of the additional packages required to make Pinewall work, along with an APK overlay with the example configs inside it.
+
+Currently, I am using this in Alpine's RAM-based diskless mode. I generate an x86 based Alpine ISO with my custom packages by running `make x86` in the directory for this repo. This will produce an ISO image with all of the additional packages required to make Pinewall work.
 
 I write this to one USB stick using a standard tool like `dd` or `GNOME Disks`, and boot it on an x86 system to be used as a firewall.
 
@@ -136,12 +154,15 @@ At the same time, I also format a second USB stick with the following specs:
 * MBR Disk Layout
 * One Partition
 * EXT4 formatted
+* Partition label is `PINECONF` (important! - we use this as a reference in /etc/fstab to allow `lbu commit` to work)
 
-If everything goes well, the system is booted with two USB sticks and no other storage. The primary stick will be the one with the Pinewall ISO written to it, and this will load the live system. The secondary stick is the one we just formatted as EXT4 and won't have anything on it yet, but should be found by the Alpine installer as `/dev/sdb1` and mounted read-only.
+I generate an APK overlay with `make overlay`, and then copy the generated overlay as a file to the `PINECONF` labeled USB stick.
+
+From there, I simply put both sticks into the system I want to use as the router, and I boot it up. The immutable boot environment loads from one stick, and the config loads from the other.
 
 When we make changes inside the live environment, we can save those changes to the secondary stick using:
 ```
-sudo lbu_commit -dv
+sudo lbu commit -dv
 ```
 
 Until we write our changes to the disk using the above command, **they will not be preserved**. This is in-line with how a lot of networking equipment works because, this way, if you make a change that locks you out of the system, power-cycling the device should get you back to the state you were in before, as the change will not have been committed to disk.

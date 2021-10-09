@@ -63,6 +63,10 @@ RUN chmod +x /tmp/abuild/aports/scripts/mkimg.$PROFILENAME.sh
 COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
 RUN chmod +x /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
 
+# Add our image building script to the container
+COPY imagebuild.sh /tmp/abuild/aports/scripts/imagebuild.sh
+RUN chmod +x /tmp/abuild/aports/scripts/imagebuild.sh
+
 # Add in all our configs
 COPY etc/ /tmp/etc/
 
@@ -70,6 +74,3 @@ COPY etc/ /tmp/etc/
 # (if we don't do this then the "apk fetch" stages of the build that fetch packages
 # like the Raspberry Pi bootloader will fail).
 RUN apk update
-
-# Run the build when we run the container
-CMD ["sh", "-c", "./mkimage.sh --tag v$ALPINEVER --outdir /tmp/images --workdir /tmp/cache --arch $TARGETARCH --repository $ALPINEREPO/v$ALPINEVER/main --repository $ALPINEREPO/v$ALPINEVER/community --profile $PROFILENAME"]

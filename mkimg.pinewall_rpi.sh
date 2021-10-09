@@ -50,5 +50,6 @@ profile_pinewall_rpi() {
   #
   #   https://raw.githubusercontent.com/alpinelinux/aports/master/scripts/genapkovl-dhcp.sh
   #
-  apkovl="genapkovl-pinewall.sh"
+  # NOTE: APK overlay is not currently being slipstreamed into ISO directly.
+  #apkovl="genapkovl-pinewall.sh"
 }
