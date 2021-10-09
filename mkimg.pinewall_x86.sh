@@ -22,6 +22,7 @@ profile_pinewall_x86() {
     dns-root-hints
     ethtool
     htop
+    ifupdown-ng-ppp
     iperf3
     nano
     nftables
@@ -29,6 +30,7 @@ profile_pinewall_x86() {
     nload
     openssh
     openssl
+    ppp-pppoe
     sudo
     tcpdump
     tftp-hpa

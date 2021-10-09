@@ -72,6 +72,8 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | NTP Server                        | chronyd             | main        | Working          |
 | Performance Testing               | iperf3              | main        | Working          |
 | Port Forwarding (Destination NAT) | nftables            | main        | Working          |
+| PPPoE Connectivity                | ppp-pppoe           | main        | Working          |
+| PPPoE Integration with ifupdown   | ifupdown-ng-ppp     | main        | Working          |
 | Remote Wireshark                  | tcpdump             | main        | Working          |
 | Static Port NAT for Games         | nftables            | main        | Working          |
 | TFTP Server (for PXE clients)     | tftp-hpa            | main        | Working          |
@@ -95,11 +97,13 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | dns-root-hints      | main      | core                  |
 | ethtool             | main      | optional              |
 | htop                | main      | optional              |
+| ifupdown-ng-ppp     | main      | core                  |
 | iperf3              | main      | optional              |
 | nano                | main      | optional              |
 | nftables            | main      | core                  |
 | nginx               | main      | optional              |
 | nload               | main      | optional              |
+| ppp-pppoe           | main      | core                  |
 | sudo                | main      | core                  |
 | tcpdump             | main      | optional              |
 | tftp-hpa            | main      | optional              |
@@ -118,7 +122,7 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 * IPv6
   * I can't really test this since my upstream ISP doesn't actually support it yet :(
 * PPPoE
-  * Again, due to my upstream ISP being DOCSIS rather than VDSL/G.Fast, I have no means of testing a PPP link.
+  * Currently in testing.
 * Log monitoring and alerting
   * I haven't really decided on my solution for this yet, but it'll probably end up being the Splunk Universal Forwarder feeding the logs from `/var/log` into a remote Splunk Enterprise instance.
 
