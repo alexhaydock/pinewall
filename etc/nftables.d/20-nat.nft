@@ -1,0 +1,20 @@
+table ip nat {
+
+    # NAT PREROUTING CHAIN
+    chain prerouting {
+        type nat hook prerouting priority filter; policy accept;
+
+        # rules go here #
+    }
+
+
+    # NAT POSTROUTING CHAIN
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+
+        ip saddr $rfc1918_cidr oifname $nic_wan counter masquerade random \
+        comment "Allow packets from private networks to be masqueraded to the WAN interface"
+
+        # more rules go here #
+    }
+}
