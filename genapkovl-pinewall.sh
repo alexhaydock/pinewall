@@ -145,6 +145,10 @@ copyfile root:root 0754 /tmp/etc/nftables.d/00-vars.nft "$tmp"/etc/nftables.d/00
 copyfile root:root 0754 /tmp/etc/nftables.d/10-firewall.nft "$tmp"/etc/nftables.d/10-firewall.nft
 copyfile root:root 0754 /tmp/etc/nftables.d/20-nat.nft "$tmp"/etc/nftables.d/20-nat.nft
 
+# Add Avahi config
+mkdir -p "$tmp"/etc/avahi
+copyfile root:root 0644 /tmp/etc/avahi/avahi-daemon.conf "$tmp"/etc/avahi/avahi-daemon.conf
+
 # Add DHCP config
 mkdir -p "$tmp"/etc/dhcp
 copyfile root:root 0644 /tmp/etc/dhcp/dhcpd.conf "$tmp"/etc/dhcp/dhcpd.conf
