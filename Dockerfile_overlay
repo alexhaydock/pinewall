@@ -11,3 +11,4 @@ RUN chmod +x /genapkovl-pinewall.sh
 
 # Add in all our configs
 COPY etc/ /tmp/etc/
+COPY var/ /tmp/var/

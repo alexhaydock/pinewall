@@ -147,9 +147,20 @@ copyfile root:root 0754 /tmp/etc/nftables.d/20-nat.nft "$tmp"/etc/nftables.d/20-
 
 # Add DHCP config
 mkdir -p "$tmp"/etc/dhcp
-copyfile root:root 0754 /tmp/etc/dhcp/dhcpd.conf "$tmp"/etc/dhcp/dhcpd.conf
-copyfile root:root 0754 /tmp/etc/dhcp/dhcpd-ranges.conf "$tmp"/etc/dhcp/dhcpd-ranges.conf
-copyfile root:root 0754 /tmp/etc/dhcp/dhcpd-reservations.conf "$tmp"/etc/dhcp/dhcpd-reservations.conf
+copyfile root:root 0644 /tmp/etc/dhcp/dhcpd.conf "$tmp"/etc/dhcp/dhcpd.conf
+copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-ranges.conf "$tmp"/etc/dhcp/dhcpd-ranges.conf
+copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-reservations.conf "$tmp"/etc/dhcp/dhcpd-reservations.conf
+
+# Add Fedora PXE config
+mkdir -p "$tmp"/var/tftpboot
+copyfile root:root 0644 /tmp/var/tftpboot/grubx64.efi "$tmp"/var/tftpboot/grubx64.efi
+copyfile root:root 0644 /tmp/var/tftpboot/netboot.xyz.kpxe "$tmp"/var/tftpboot/netboot.xyz.kpxe
+copyfile root:root 0644 /tmp/var/tftpboot/shimx64.efi "$tmp"/var/tftpboot/shimx64.efi
+mkdir -p "$tmp"/var/tftpboot/EFI/fedora
+copyfile root:root 0644 /tmp/var/tftpboot/EFI/fedora/grub.cfg "$tmp"/var/tftpboot/EFI/fedora/grub.cfg
+mkdir -p "$tmp"/var/tftpboot/f34
+copyfile root:root 0644 /tmp/var/tftpboot/f34/initrd.img "$tmp"/var/tftpboot/f34/initrd.img
+copyfile root:root 0644 /tmp/var/tftpboot/f34/vmlinuz "$tmp"/var/tftpboot/f34/vmlinuz
 
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
@@ -172,9 +183,11 @@ rc_add urandom boot
 
 # Most of our services want to go here in the default runlevel
 rc_add acpid default
+rc_add avahi-daemon default
 rc_add chronyd default
 rc_add crond default
 rc_add dhcpd default
+rc_add in.tftpd default
 rc_add iperf3 default
 rc_add nftables default
 rc_add sshd default
@@ -194,4 +207,4 @@ rc_add mdev sysinit
 rc_add modloop sysinit
 
 # Wrap up our custom /etc and /home into an APK overlay file
-tar -c -C "$tmp" etc home | gzip -9n > /tmp/overlays/$HOSTNAME.apkovl.tar.gz
+tar -c -C "$tmp" etc home var | gzip -9n > /tmp/overlays/$HOSTNAME.apkovl.tar.gz
