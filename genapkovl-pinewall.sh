@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -xeu
 
 # Set hostname to "pinewall"
 HOSTNAME="pinewall"
@@ -22,7 +22,7 @@ copyfile() {
   PERMS="$2"
   SOURCE="$3"
   DEST="$4"
-  cp -fv "$SOURCE" "$DEST"
+  cp -f "$SOURCE" "$DEST"
   chown "$OWNER" "$DEST"
   chmod "$PERMS" "$DEST"
 }
@@ -162,9 +162,16 @@ copyfile root:root 0644 /tmp/var/tftpboot/netboot.xyz.kpxe "$tmp"/var/tftpboot/n
 copyfile root:root 0644 /tmp/var/tftpboot/shimx64.efi "$tmp"/var/tftpboot/shimx64.efi
 mkdir -p "$tmp"/var/tftpboot/EFI/fedora
 copyfile root:root 0644 /tmp/var/tftpboot/EFI/fedora/grub.cfg "$tmp"/var/tftpboot/EFI/fedora/grub.cfg
+
+# Add Fedora 34 Kernel / Initramfs
 mkdir -p "$tmp"/var/tftpboot/f34
 copyfile root:root 0644 /tmp/var/tftpboot/f34/initrd.img "$tmp"/var/tftpboot/f34/initrd.img
 copyfile root:root 0644 /tmp/var/tftpboot/f34/vmlinuz "$tmp"/var/tftpboot/f34/vmlinuz
+
+# Add Fedora 35 Beta Kernel / Initramfs
+mkdir -p "$tmp"/var/tftpboot/f35b
+copyfile root:root 0644 /tmp/var/tftpboot/f35b/initrd.img "$tmp"/var/tftpboot/f35b/initrd.img
+copyfile root:root 0644 /tmp/var/tftpboot/f35b/vmlinuz "$tmp"/var/tftpboot/f35b/vmlinuz
 
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
