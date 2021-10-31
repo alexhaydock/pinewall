@@ -1,11 +1,12 @@
 stages:
+  - builder
   - build
   - release
 
 image-dep:
   # Use the official docker image.
   image: docker:latest
-  stage: build
+  stage: builder
   services:
     - docker:dind
   before_script:
@@ -13,12 +14,12 @@ image-dep:
   # Default branch leaves tag empty (= latest tag)
   # All other branches are tagged with the escaped branch name (commit ref slug)
   script:
-    - docker build --pull -f Dockerfile_image_x86 -t $CI_REGISTRY_IMAGE$:builder .
-    - docker push "$CI_REGISTRY_IMAGE$:builder"
+    - docker build --pull -f Dockerfile_image_x86 -t $CI_REGISTRY_IMAGE:builder .
+    - docker push "$CI_REGISTRY_IMAGE:builder"
 
 image-build:
   # Use the Pinewall builder image we just built in the image-dep stage above
-  image: $CI_REGISTRY_IMAGE$:builder
+  image: $CI_REGISTRY_IMAGE:builder
   stage: build
   dependencies: 
     - image-dep
