@@ -25,11 +25,11 @@ image-build:
     - |
       cd /tmp/abuild/aports/scripts
       ./imagebuild.sh
-      ls -lah /tmp/images
-      mv -fv /tmp/images/*.iso /tmp/images/pinewall.iso
+    - mv -fv /tmp/images/*.iso pinewall.iso
   artifacts:
     paths:
-      - /tmp/images/pinewall.iso
+      # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work
+      - pinewall.iso
     expire_in: 1 day
 
 image-push:
@@ -39,7 +39,7 @@ image-push:
   dependencies: 
     - image-build
   script:
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file /tmp/images/pinewall.iso "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/$(date "+%Y-%m-%d")/pinewall-x86_64-$(date "+%Y-%m-%d").iso"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file pinewall.iso "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/$(date "+%Y-%m-%d")/pinewall-x86_64-$(date "+%Y-%m-%d").iso"'
   # Only run the actual upload stage if we're running on the master branch
   only:
     refs:
