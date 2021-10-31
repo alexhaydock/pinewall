@@ -21,10 +21,14 @@ image-build:
   # Use the Pinewall builder image we just built in the image-dep stage above
   image: $CI_REGISTRY_IMAGE:builder
   stage: build
-  dependencies: 
-    - image-dep
   script:
+    # Sort script execution privileges
+    - chmod +x *.sh
+    # Run Pinewall ISO build script inside the builder container
     - ./imagebuild.sh
+    # Rename our ISO with the version-specific name to something more generic so we can
+    # reference it more easily in the CI release stage
+    - mv -fv /tmp/images/alpine-pinewall-*.iso /tmp/images/pinewall.iso
 
 image-push:
   image: curlimages/curl:latest
@@ -33,7 +37,7 @@ image-push:
   dependencies: 
     - image-build
   script:
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file /tmp/images/alpine-pinewall_x86-v3.14-x86_64.iso "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/$(date "+%Y-%m-%d")/pinewall-x86_64-$(date "+%Y-%m-%d").iso"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file /tmp/images/pinewall.iso "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/$(date "+%Y-%m-%d")/pinewall-x86_64-$(date "+%Y-%m-%d").iso"'
   # Only run the actual upload stage if we're running on the master branch
   only:
     refs:
