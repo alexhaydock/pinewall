@@ -25,7 +25,8 @@ image-build:
     - |
       cd /tmp/abuild/aports/scripts
       ./imagebuild.sh
-      mv -fv /tmp/images/alpine-pinewall-*.iso /tmp/images/pinewall.iso
+      ls -lah /tmp/images
+      mv -fv /tmp/images/*.iso /tmp/images/pinewall.iso
   artifacts:
     paths:
       - /tmp/images/pinewall.iso
