@@ -22,13 +22,14 @@ image-build:
   image: $CI_REGISTRY_IMAGE:builder
   stage: build
   script:
-    # Sort script execution privileges
-    - chmod +x *.sh
-    # Run Pinewall ISO build script inside the builder container
-    - ./imagebuild.sh
-    # Rename our ISO with the version-specific name to something more generic so we can
-    # reference it more easily in the CI release stage
-    - mv -fv /tmp/images/alpine-pinewall-*.iso /tmp/images/pinewall.iso
+    - |
+      cd /tmp/abuild/aports/scripts
+      ./imagebuild.sh
+      mv -fv /tmp/images/alpine-pinewall-*.iso /tmp/images/pinewall.iso
+  artifacts:
+    paths:
+      - /tmp/images/pinewall.iso
+    expire_in: 1 day
 
 image-push:
   image: curlimages/curl:latest
