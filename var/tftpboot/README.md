@@ -19,23 +19,28 @@ So on the TFTP server, we need to make sure our grub config is located at `/var/
 ### Secure Boot shim & GRUB binary
 Start Fedora container:
 ```
-podman run --rm -it -v "$(pwd)/var/tftpboot:/host:rw,Z" fedora:34
+podman run --rm -it -v "$(pwd)/:/host/:rw,Z" fedora:35
 ```
 
 Inside container:
 ```
 dnf install -y shim-x64 grub2-efi-x64
 
-cp -v /boot/efi/EFI/fedora/{shimx64.efi,grubx64.efi} /host
+cp -fv /boot/efi/EFI/fedora/{shimx64.efi,grubx64.efi} /host
 ```
 
 ### Kernel and initrd
 ```
-mkdir -p ./var/tftpboot/f34
+mkdir f35
 
-wget https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/images/pxeboot/initrd.img -O ./var/tftpboot/f34/initrd.img
+wget https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/35/Everything/x86_64/os/images/pxeboot/initrd.img -O f35/initrd.img
 
-wget https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/34/Everything/x86_64/os/images/pxeboot/vmlinuz -O ./var/tftpboot/f34/vmlinuz
+wget https://www.mirrorservice.org/sites/dl.fedoraproject.org/pub/fedora/linux/releases/35/Everything/x86_64/os/images/pxeboot/vmlinuz -O f35/vmlinuz
+```
+
+# Updating Netboot.xyz for non-UEFI systems
+```
+wget https://boot.netboot.xyz/ipxe/netboot.xyz.kpxe -O netboot.xyz.kpxe
 ```
 
 ### TODO
