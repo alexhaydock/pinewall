@@ -155,23 +155,21 @@ copyfile root:root 0644 /tmp/etc/dhcp/dhcpd.conf "$tmp"/etc/dhcp/dhcpd.conf
 copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-ranges.conf "$tmp"/etc/dhcp/dhcpd-ranges.conf
 copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-reservations.conf "$tmp"/etc/dhcp/dhcpd-reservations.conf
 
+# Add Netboot.xyz PXE config
+mkdir -p "$tmp"/var/tftpboot
+copyfile root:root 0644 /tmp/var/tftpboot/netboot.xyz.kpxe "$tmp"/var/tftpboot/netboot.xyz.kpxe
+
 # Add Fedora PXE config
 mkdir -p "$tmp"/var/tftpboot
 copyfile root:root 0644 /tmp/var/tftpboot/grubx64.efi "$tmp"/var/tftpboot/grubx64.efi
-copyfile root:root 0644 /tmp/var/tftpboot/netboot.xyz.kpxe "$tmp"/var/tftpboot/netboot.xyz.kpxe
 copyfile root:root 0644 /tmp/var/tftpboot/shimx64.efi "$tmp"/var/tftpboot/shimx64.efi
 mkdir -p "$tmp"/var/tftpboot/EFI/fedora
 copyfile root:root 0644 /tmp/var/tftpboot/EFI/fedora/grub.cfg "$tmp"/var/tftpboot/EFI/fedora/grub.cfg
 
-# Add Fedora 34 Kernel / Initramfs
-mkdir -p "$tmp"/var/tftpboot/f34
-copyfile root:root 0644 /tmp/var/tftpboot/f34/initrd.img "$tmp"/var/tftpboot/f34/initrd.img
-copyfile root:root 0644 /tmp/var/tftpboot/f34/vmlinuz "$tmp"/var/tftpboot/f34/vmlinuz
-
-# Add Fedora 35 Beta Kernel / Initramfs
-mkdir -p "$tmp"/var/tftpboot/f35b
-copyfile root:root 0644 /tmp/var/tftpboot/f35b/initrd.img "$tmp"/var/tftpboot/f35b/initrd.img
-copyfile root:root 0644 /tmp/var/tftpboot/f35b/vmlinuz "$tmp"/var/tftpboot/f35b/vmlinuz
+# Add Fedora 35 Kernel / Initramfs
+mkdir -p "$tmp"/var/tftpboot/f35
+copyfile root:root 0644 /tmp/var/tftpboot/f35/initrd.img "$tmp"/var/tftpboot/f35/initrd.img
+copyfile root:root 0644 /tmp/var/tftpboot/f35/vmlinuz "$tmp"/var/tftpboot/f35/vmlinuz
 
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
