@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3.14
+FROM docker.io/library/alpine:3.15
 
 # Bind mount a directory into /tmp/overlays when running this image to output a built overlay into it
 

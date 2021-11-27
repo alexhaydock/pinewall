@@ -12,7 +12,6 @@ ifupdown-ng-ppp
 iperf3
 nano
 nftables
-nginx
 nload
 openssh
 openssl
@@ -20,4 +19,3 @@ ppp-pppoe
 tcpdump
 tftp-hpa
 unbound
-wireguard-tools-wg
