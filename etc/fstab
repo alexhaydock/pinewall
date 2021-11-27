@@ -1,13 +1,3 @@
 # Mount disk with label PINECONF to /media/usb
 # Does not get mounted at boot (noauto) - lbu commit will do it automatically
 LABEL=PINECONF /media/usb ext4 noauto,defaults 0 0
-
-# Mount RHEL ISO for HTTP server to serve for PXE boot clients.
-#
-# This requires manual mounting with:
-#
-#   sudo mount /var/www/localhost/htdocs/tools/rhel-mounted
-#
-# It will not be auto-mounted on boot.
-#
-##/var/www/localhost/htdocs/tools/rhel-iso/rhel-8.4-x86_64-dvd.iso /var/www/localhost/htdocs/tools/rhel-mounted iso9660 noauto,ro 0 0

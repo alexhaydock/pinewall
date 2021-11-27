@@ -93,11 +93,9 @@ echo "pinewall" > "$tmp"/home/pinewall/.pinewall
 chmod 0640 "$tmp"/home/pinewall/.pinewall
 chown -R 5000:5000 "$tmp"/home/pinewall
 
-# Allow pinewall user sudo access
-mkdir -p "$tmp"/etc/sudoers.d
-makefile root:root 0440 "$tmp"/etc/sudoers.d/pinewall <<EOF
-pinewall ALL=(ALL) ALL
-EOF
+# Copy doas config to allow the pinewall user to escalate privilege
+mkdir -p "$tmp"/etc
+copyfile root:root 0400 /tmp/etc/doas.conf "$tmp"/etc/doas.conf
 
 # Add our file based on the iperf3 init.d default file
 # but which specifies to use the iperf user.

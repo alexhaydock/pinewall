@@ -4,7 +4,7 @@
 
 On firewall host:
 ```sh
-sudo chown -R mgmt:mgmt /home/mgmt/pcaps
+doas chown -R mgmt:mgmt /home/mgmt/pcaps
 ```
 
 On local box:
@@ -16,21 +16,21 @@ scp "mgmt@10.10.10.1:/home/mgmt/pcaps/*.pcap" "$HOME/pcaps/"
 ### Capture 4000 packets to/from a list of hosts on eth1
 
 ```sh
-sudo tcpdump host "1.1.1.2||1.0.0.2" -i eth1 -w ~/pcaps/cloudflare_dns_rsts.pcap -c 4000
+doas tcpdump host "1.1.1.2||1.0.0.2" -i eth1 -w ~/pcaps/cloudflare_dns_rsts.pcap -c 4000
 ```
 
 
 ### Another example that matches a whole CIDR range
 
 ```sh
-sudo tcpdump net "192.168.0.0/24" -i eth0 -w ~/pcaps/facebook_messenger_2.pcap -c 200
+doas tcpdump net "192.168.0.0/24" -i eth0 -w ~/pcaps/facebook_messenger_2.pcap -c 200
 ```
 
 
 ### A generic example that keeps running until we stop it
 
 ```sh
-sudo tcpdump host 10.2.0.108 -i eth0 -w ~/pcaps/facebook_messenger_3.pcap
+doas tcpdump host 10.2.0.108 -i eth0 -w ~/pcaps/facebook_messenger_3.pcap
 ```
 
 

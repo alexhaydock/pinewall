@@ -20,6 +20,7 @@ profile_pinewall_x86() {
     dbus
     dhcp-server-vanilla
     dns-root-hints
+    doas
     ethtool
     htop
     ifupdown-ng-ppp
@@ -31,7 +32,6 @@ profile_pinewall_x86() {
     openssh
     openssl
     ppp-pppoe
-    sudo
     tcpdump
     tftp-hpa
     unbound

@@ -27,12 +27,12 @@ RUN apk --no-cache add \
   apk-tools \
   build-base \
   busybox \
+  doas \
   dosfstools \
   fakeroot \
   grub-efi \
   mtools \
   squashfs-tools \
-  sudo \
   tzdata \
   xorriso
 

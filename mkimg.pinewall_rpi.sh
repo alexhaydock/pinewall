@@ -19,6 +19,7 @@ profile_pinewall_rpi() {
     dbus
     dhcp-server-vanilla
     dns-root-hints
+    doas
     ethtool
     htop
     ifupdown-ng-ppp
@@ -30,7 +31,6 @@ profile_pinewall_rpi() {
     openssh
     openssl
     ppp-pppoe
-    sudo
     tcpdump
     tftp-hpa
     unbound

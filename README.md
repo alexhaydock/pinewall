@@ -1,5 +1,3 @@
-> WARNING: The project in this repo is not yet considered "production-ready". Use at your own risk.
-
 ```
 
      /\ /\          ____  _                          _ _ 
@@ -74,6 +72,7 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | Port Forwarding (Destination NAT) | nftables            | main        | Working          |
 | PPPoE Connectivity                | ppp-pppoe           | main        | Working          |
 | PPPoE Integration with ifupdown   | ifupdown-ng-ppp     | main        | Working          |
+| Privilege Escalation              | doas                | main        | Working          |
 | Remote Wireshark                  | tcpdump             | main        | Working          |
 | Static Port NAT for Games         | nftables            | main        | Working          |
 | TFTP Server (for PXE clients)     | tftp-hpa            | main        | Working          |
@@ -95,6 +94,7 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | dbus                | main      | dependency (of avahi) |
 | dhcp-server-vanilla | main      | core                  |
 | dns-root-hints      | main      | core                  |
+| doas                | main      | core                  |
 | ethtool             | main      | optional              |
 | htop                | main      | optional              |
 | ifupdown-ng-ppp     | main      | core                  |
@@ -104,7 +104,6 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | nginx               | main      | optional              |
 | nload               | main      | optional              |
 | ppp-pppoe           | main      | core                  |
-| sudo                | main      | core                  |
 | tcpdump             | main      | optional              |
 | tftp-hpa            | main      | optional              |
 | unbound             | main      | core                  |
@@ -162,7 +161,7 @@ From there, I simply put both sticks into the system I want to use as the router
 
 When we make changes inside the live environment, we can save those changes to the secondary stick using:
 ```
-sudo lbu commit -dv
+doas lbu commit -dv
 ```
 
 Until we write our changes to the disk using the above command, **they will not be preserved**. This is in-line with how a lot of networking equipment works because, this way, if you make a change that locks you out of the system, power-cycling the device should get you back to the state you were in before, as the change will not have been committed to disk.
