@@ -76,9 +76,6 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | Static Port NAT for Games         | nftables            | main        | Working          |
 | TFTP Server (for PXE clients)     | tftp-hpa            | main        | Working          |
 | Log Shipping                      | Splunk UF           | not in repo | Not started      |
-| UPnP Daemon                       | miniupnpd           | community   | Rejected`*`      |
-
-`*` The `miniupnpd` 2.1 stable release shipped by Alpine 3.13 is not yet compatible with `nftables`, though upstream has been working on this support for a while and it seems to be planned for the 2.2 branch. I'll revisit this when Alpine start shipping `miniupnpd` 2.2+.
 
 
 ## Every package added on top of the Alpine "Standard" profile by Pinewall
@@ -113,11 +110,7 @@ Below you can find a list of every package installed on top of the Alpine "Stand
   * We can log much more robustly (including full packet contents) if we install and configure `ulogd2`.
   * See: https://blog.grimmo.it/2016/05/05/iptables-logging-using-nflog-and-ulogd2-on-debian-jessie/
 * UPnP
-  * The main package that seems to be used for this (and the same one pfSense uses), `miniupnpd`, doesn't have a stable release that supports `nftables` yet. 
-* IPv6
-  * I can't really test this since my upstream ISP doesn't actually support it yet :(
-* PPPoE
-  * Currently in testing.
+  * I thought about this but ended up making a conscious choice not to support it. STUN and other methods of NAT punching offer a much more reliable service for games etc. and a lot don't even bother with UPnP anymore. Plus it's a security risk.
 * Log monitoring and alerting
   * I haven't really decided on my solution for this yet, but it'll probably end up being the Splunk Universal Forwarder feeding the logs from `/var/log` into a remote Splunk Enterprise instance.
 

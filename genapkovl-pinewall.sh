@@ -133,7 +133,6 @@ copyfile root:root 0644 /tmp/etc/chrony/chrony.conf "$tmp"/etc/chrony/chrony.con
 # Add DNS server config
 mkdir -p "$tmp"/etc/unbound
 copyfile root:root 0644 /tmp/etc/unbound/unbound.conf "$tmp"/etc/unbound/unbound.conf
-copyfile root:root 0644 /tmp/etc/unbound/unbound-localzone.conf "$tmp"/etc/unbound/unbound-localzone.conf
 
 # Add nftables rules - note that these are 0754 unlike other files, as they
 # need to be executable!
