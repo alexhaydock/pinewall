@@ -58,7 +58,6 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | Feature                           | Alpine Package      | Alpine Repo | Notes            |
 |-----------------------------------|---------------------|-------------|------------------|
 | 802.1Q VLANs                      | ifupdown-ng         | main        | Working          |
-| Caching Proxy (for PXE clients)   | nginx               | main        | Working          |
 | DHCP Reservations                 | dhcp-server-vanilla | main        | Working          |
 | DHCP Server                       | dhcp-server-vanilla | main        | Working          |
 | DNS Cache                         | unbound             | main        | Working          |
@@ -76,7 +75,6 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | Remote Wireshark                  | tcpdump             | main        | Working          |
 | Static Port NAT for Games         | nftables            | main        | Working          |
 | TFTP Server (for PXE clients)     | tftp-hpa            | main        | Working          |
-| VPN (Client only, no routing)     | wireguard-tools-wg  | main        | Working          |
 | Log Shipping                      | Splunk UF           | not in repo | Not started      |
 | UPnP Daemon                       | miniupnpd           | community   | Rejected`*`      |
 
@@ -101,13 +99,11 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | iperf3              | main      | optional              |
 | nano                | main      | optional              |
 | nftables            | main      | core                  |
-| nginx               | main      | optional              |
 | nload               | main      | optional              |
 | ppp-pppoe           | main      | core                  |
 | tcpdump             | main      | optional              |
 | tftp-hpa            | main      | optional              |
 | unbound             | main      | core                  |
-| wireguard-tools-wg  | main      | optional              |
 
 
 ## What doesn't work?

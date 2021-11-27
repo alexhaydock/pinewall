@@ -53,21 +53,12 @@
   * `less /var/lib/dhcp/dhcpd.leases`
 
 
-## Notes on WireGuard
-
-* To massively decrease complexity, I have chosen here not to implement a complex WireGuard setup which uses NAT to force certain VLANs or packets through a tunnel.
-* What I recommend instead is to set up WireGuard with `AllowedIPs = 0.0.0.0/0` on a separate machine somewhere on the network, which is configured with the WireGuard upstream as the default route (and which has routing and NAT masquerading enabled).
-* Then, I would use the dhcpd per-host configuration options to hand out the IP of that WireGuard router as the gateway IP used for machines which should be proxied.
-  * `option routers 10.2.0.1;`
-* This decreases the complexity burden on our gateway massively and will provide a more robust setup overall.
-
-
 ## Upgrading Alpine
 
 * To upgrade the system:
   * `doas apk update && doas apk upgrade`
 * If we upgrade Alpine to a new point release, we should make sure to check the Release Notes for the specific release:
-  * https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.14.0
+  * https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.15.0
 * Commit notes for upgraded packages in `main` repo.
   * So there aren't super detailed release notes for each package release, but the packages move slowly enough that you can generally track everything in `main` by running a search on the Alpine `abuild` repo:
   * https://git.alpinelinux.org/aports/log/?qt=grep&q=main%2F
@@ -144,5 +135,5 @@ mount /dev/sdx1 /tmp/alpineusb
 
 Extract Pinewall onto the bootable partition you've created:
 ```sh
-doas tar -xvf alpine-pinewall_rpi-v3.14-aarch64.tar.gz --no-same-owner -C /tmp/alpineusb && sync
+doas tar -xvf alpine-pinewall_rpi-v3.15-aarch64.tar.gz --no-same-owner -C /tmp/alpineusb && sync
 ```

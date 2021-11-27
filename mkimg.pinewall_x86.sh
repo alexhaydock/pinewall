@@ -27,7 +27,6 @@ profile_pinewall_x86() {
     iperf3
     nano
     nftables
-    nginx
     nload
     openssh
     openssl
@@ -35,7 +34,6 @@ profile_pinewall_x86() {
     tcpdump
     tftp-hpa
     unbound
-    wireguard-tools-wg
     "
 
   local _k _a
