@@ -1,9 +1,9 @@
-.PHONY: trap init overlay x86 x86-debug rpi rpi-debug clean
+.PHONY: trap deps overlay x86 rpi
 
 trap:
-	echo "Error! Please specify 'make init', 'make x86' or 'make rpi' directly."
+	echo "Error! Please specify 'make deps', 'make overlay, 'make x86' or 'make rpi' directly."
 
-init:
+deps:
 	sudo dnf install podman qemu qemu-user-static
 
 overlay:
@@ -13,21 +13,10 @@ overlay:
 
 x86:
 	mkdir -p "$(shell pwd)/images"
-	podman build -f Dockerfile_image_x86 -t pinewall-x86 .
-	podman run --rm -it -v "$(shell pwd)/images:/tmp/images:Z" --tmpfs "/tmp/cache" pinewall-x86 ./imagebuild.sh
-
-x86-debug:
-	podman run --rm -it -v "$(shell pwd)/images:/tmp/images:Z" --tmpfs "/tmp/cache" --entrypoint /bin/ash pinewall-x86
+	podman build --arch=amd64 -f Dockerfile_image -t localhost/pinewall-x86 .
+	podman run --arch=amd64 --rm -it -v "$(shell pwd)/images:/tmp/images:Z" --tmpfs "/tmp/cache" --env PROFILENAME=pinewall_x86 --env TARGETARCH=x86_64 localhost/pinewall-x86 ./imagebuild.sh
 
 rpi:
 	mkdir -p "$(shell pwd)/images"
-	podman build -f Dockerfile_image_aarch64 -t pinewall-rpi .
-	podman run --rm -it -v "$(shell pwd)/images:/tmp/images:Z" --tmpfs "/tmp/cache" pinewall-rpi ./imagebuild.sh
-
-rpi-debug:
-	podman run --rm -it -v "$(shell pwd)/images:/tmp/images:Z" --tmpfs "/tmp/cache" --entrypoint /bin/ash pinewall-rpi
-
-clean:
-	sudo rm -rf ~/.config/containers ~/.local/share/containers /var/lib/containers
-	sudo podman system prune --all --volumes
-	podman system prune --all --volumes
+	podman build --arch=arm64 -f Dockerfile_image -t localhost/pinewall-rpi .
+	podman run --arch=arm64 --rm -it -v "$(shell pwd)/images:/tmp/images:Z" --tmpfs "/tmp/cache" --env PROFILENAME=pinewall_rpi --env TARGETARCH=aarch64 localhost/pinewall-rpi ./imagebuild.sh
