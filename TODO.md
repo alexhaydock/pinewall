@@ -10,5 +10,5 @@ I think, using these more complex methods, we can write out full actual packets 
 ## Quick Note on lbu
 
 ```sh
-sudo LBU_BACKUPDIR="/home/mgmt/backup" lbu commit -dv
+doas LBU_BACKUPDIR="/home/mgmt/backup" lbu commit -dv
 ```

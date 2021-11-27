@@ -17,26 +17,26 @@
 
 * You can use `conntrack` (provided by the `conntrack-tools` package) to investigate the connection-tracking layer in the Linux Kernel itself.
 * Some interesting `conntrack` commands:
-  * `sudo conntrack -C` -- Check number of conntrack entries.
-  * `sudo sysctl net.netfilter.nf_conntrack_max` -- Check the maximum number of conntrack entries.
-  * `sudo conntrack -E` -- Print a scrolling list of conntrack events as they happen.
-  * `sudo conntrack -L` -- List the current entries in the conntrack table.
+  * `doas conntrack -C` -- Check number of conntrack entries.
+  * `doas sysctl net.netfilter.nf_conntrack_max` -- Check the maximum number of conntrack entries.
+  * `doas conntrack -E` -- Print a scrolling list of conntrack events as they happen.
+  * `doas conntrack -L` -- List the current entries in the conntrack table.
 
 
 ## Notes on rule performance
 
 * With `nftables`, don't worry too much about having a super optimised ruleset. Everything is compiled down to netfilter bytecode when the ruleset is loaded.
 * You can see the raw bytecode at the top of the output of:
-  * `sudo nft --debug=netlink -a list ruleset | less`
+  * `doas nft --debug=netlink -a list ruleset | less`
 
 
 ## Using unbound-control
 
 * Analyse the state of the server in terms of cache hits and misses and total queries:
-  * `sudo unbound-control stats_noreset | grep "total.num"`
+  * `doas unbound-control stats_noreset | grep "total.num"`
   * We use `stats_noreset` above because otherwise the stats reset when we run the command.
 * We can list our "local zones" with the following:
-  * `sudo unbound-control list_local_zones`
+  * `doas unbound-control list_local_zones`
   * With that above, we should see our defined `transparent` local zone (`localhost.`), and also things like `onion.` and `invalid.` which should never be forwarded upstream.
 
 
@@ -44,7 +44,7 @@
 
 * NICs are usually capable of offloading various processing features direct to the hardware.
 * To get a view of how this is working on your system, try:
-  * `sudo ethtool -k eth1`
+  * `doas ethtool -k eth1`
 
 
 ## Investigating current DHCP leases
@@ -65,7 +65,7 @@
 ## Upgrading Alpine
 
 * To upgrade the system:
-  * `sudo apk update && sudo apk upgrade`
+  * `doas apk update && doas apk upgrade`
 * If we upgrade Alpine to a new point release, we should make sure to check the Release Notes for the specific release:
   * https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.14.0
 * Commit notes for upgraded packages in `main` repo.
@@ -99,7 +99,7 @@ lsblk
 
 Do most of the next steps as root:
 ```sh
-sudo -i
+doas -i
 ```
 
 Unmount anything on the disk
@@ -144,5 +144,5 @@ mount /dev/sdx1 /tmp/alpineusb
 
 Extract Pinewall onto the bootable partition you've created:
 ```sh
-sudo tar -xvf alpine-pinewall_rpi-v3.14-aarch64.tar.gz --no-same-owner -C /tmp/alpineusb && sync
+doas tar -xvf alpine-pinewall_rpi-v3.14-aarch64.tar.gz --no-same-owner -C /tmp/alpineusb && sync
 ```
