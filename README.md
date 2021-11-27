@@ -80,11 +80,12 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 
 ## Every package added on top of the Alpine "Standard" profile by Pinewall
 
-Below you can find a list of every package installed on top of the Alpine "Standard" profile. You can find these defined in this repository inside `mkimg.pinewall.sh` (which includes the packages in our custom Alpine image), and inside `genapkovl-pinewall.sh` which is an APK overlay which ensures that the packages are installed into RAM and available when the live system boots.
+Below you can find a list of every package installed on top of the Alpine "Standard" profile. You can find these defined the `apks` variable inside either `mkimg.pinewall_x86.sh`, or `mkimg.pinewall_rpi.sh`.
 
 | Package             | Repo      | Functionality         |
 |---------------------|-----------|-----------------------|
 | avahi               | main      | optional              |
+| chrony              | main      | optional              |
 | conntrack-tools     | main      | optional              |
 | dbus                | main      | dependency (of avahi) |
 | dhcp-server-vanilla | main      | core                  |
@@ -118,14 +119,19 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 ## How do I build this?
 
 To build the Alpine image, seeded with the latest packages:
-```
+```bash
 make x86
 ```
 
 You will find an ISO image that can be booted either from disc or USB in the `images/` directory.
 
-And to build the APK overlay based on `genapkovl-pinewall.sh`:
+To build the Raspberry Pi disk image **(work in progress!)**:
+```bash
+make rpi
 ```
+
+And to build the APK overlay based on `genapkovl-pinewall.sh`:
+```bash
 make overlay
 ```
 

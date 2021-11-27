@@ -1,6 +1,7 @@
 FROM docker.io/library/alpine:3.15
 
-# Bind mount a directory into /tmp/overlays when running this image to output a built overlay into it
+# Bind mount a directory into /tmp/overlays when running this image
+# to output a built overlay into it
 
 # Add some packages that we'll use as sources for overlay data
 RUN apk --no-cache add tzdata
