@@ -169,9 +169,8 @@ copyfile root:root 0644 /tmp/var/tftpboot/f35/vmlinuz "$tmp"/var/tftpboot/f35/vm
 
 # Add PPPoE settings
 mkdir -p "$tmp"/etc/ppp
-copyfile root:root 0644 /tmp/etc/ppp/chap-secrets "$tmp"/etc/ppp/chap-secrets
-mkdir -p "$tmp"/etc/ppp/ipv6-up.d
-copyfile root:root 0755 /tmp/etc/ppp/ipv6-up.d/0000-defaultroute "$tmp"/etc/ppp/ipv6-up.d/0000-defaultroute
+copyfile root:root 0600 /tmp/etc/ppp/chap-secrets "$tmp"/etc/ppp/chap-secrets
+copyfile root:root 0755 /tmp/etc/ppp/ip-up "$tmp"/etc/ppp/ip-up
 mkdir -p "$tmp"/etc/ppp/peers
 copyfile root:root 0644 /tmp/etc/ppp/peers/aaisp "$tmp"/etc/ppp/peers/aaisp
 

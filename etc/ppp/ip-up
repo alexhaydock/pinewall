@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# This script is run by pppd when there's a successful ppp connection.
+#
+/sbin/ip -6 route add default dev pppoe
