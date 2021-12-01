@@ -1,20 +1,10 @@
+# Adapted from: https://wiki.nftables.org/wiki-nftables/index.php/Simple_ruleset_for_a_home_router
+
 table ip nat {
-
-    # NAT PREROUTING CHAIN
-    chain prerouting {
-        type nat hook prerouting priority filter; policy accept;
-
-        # rules go here #
-    }
-
-
-    # NAT POSTROUTING CHAIN
     chain postrouting {
-        type nat hook postrouting priority srcnat; policy accept;
+        type nat hook postrouting priority 100; policy accept;
 
-        ip saddr $rfc1918_cidr oifname $nic_wan counter masquerade random \
-        comment "Allow packets from private networks to be masqueraded to the WAN interface"
-
-        # more rules go here #
+        # masquerade private IP addresses
+        ip saddr $NET_PRIVATE oifname $DEV_WORLD masquerade
     }
 }

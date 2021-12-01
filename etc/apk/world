@@ -16,6 +16,7 @@ nload
 openssh
 openssl
 ppp-pppoe
+radvd
 tcpdump
 tftp-hpa
 unbound

@@ -117,11 +117,6 @@ copyfile root:root 0644 /tmp/etc/motd "$tmp"/etc/motd
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/fstab "$tmp"/etc/fstab
 
-# Write an inittab which is the same as the default but that doesn't
-# spawn as many TTYs by default and which listens for serial connections
-mkdir -p "$tmp"/etc
-copyfile root:root 0644 /tmp/etc/inittab "$tmp"/etc/inittab
-
 # Add sysctls
 mkdir -p "$tmp"/etc/sysctl.d
 copyfile root:root 0644 /tmp/etc/sysctl.d/local.conf "$tmp"/etc/sysctl.d/local.conf
@@ -133,6 +128,10 @@ copyfile root:root 0644 /tmp/etc/chrony/chrony.conf "$tmp"/etc/chrony/chrony.con
 # Add DNS server config
 mkdir -p "$tmp"/etc/unbound
 copyfile root:root 0644 /tmp/etc/unbound/unbound.conf "$tmp"/etc/unbound/unbound.conf
+
+# Add IPv6 radvd config
+mkdir -p "$tmp"/etc
+copyfile root:root 0644 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
 
 # Add nftables rules - note that these are 0754 unlike other files, as they
 # need to be executable!
@@ -168,6 +167,18 @@ mkdir -p "$tmp"/var/tftpboot/f35
 copyfile root:root 0644 /tmp/var/tftpboot/f35/initrd.img "$tmp"/var/tftpboot/f35/initrd.img
 copyfile root:root 0644 /tmp/var/tftpboot/f35/vmlinuz "$tmp"/var/tftpboot/f35/vmlinuz
 
+# Add PPPoE settings
+mkdir -p "$tmp"/etc/ppp
+copyfile root:root 0644 /tmp/etc/ppp/chap-secrets "$tmp"/etc/ppp/chap-secrets
+mkdir -p "$tmp"/etc/ppp/ipv6-up.d
+copyfile root:root 0755 /tmp/etc/ppp/ipv6-up.d/0000-defaultroute "$tmp"/etc/ppp/ipv6-up.d/0000-defaultroute
+mkdir -p "$tmp"/etc/ppp/peers
+copyfile root:root 0644 /tmp/etc/ppp/peers/aaisp "$tmp"/etc/ppp/peers/aaisp
+
+# Add modules file
+mkdir -p "$tmp"/etc
+copyfile root:root 0644 /tmp/etc/modules "$tmp"/etc/modules
+
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
 #mkdir -p "$tmp"/etc/lbu
@@ -196,6 +207,7 @@ rc_add dhcpd default
 rc_add in.tftpd default
 rc_add iperf3 default
 rc_add nftables default
+rc_add radvd default
 rc_add sshd default
 rc_add unbound default
 

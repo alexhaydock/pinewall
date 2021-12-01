@@ -1,11 +1,16 @@
-# Loopback interface
+# Loopback
 auto lo
 iface lo inet loopback
 
-# Upstream WAN interface
+# WAN
 auto eth1
-iface eth1 inet dhcp
-        hostname gateway
+iface eth1 inet manual
+
+# PPPoE
+auto pppoe
+iface pppoe inet ppp
+   provider aaisp
+   pre-up /sbin/ip link set eth1 up
 
 # Default untagged LAN interface
 auto eth0
@@ -13,7 +18,7 @@ iface eth0 inet static
         address 10.10.10.1
         netmask 255.255.255.0
 
-# VLAN interface
+# Example VLAN interface
 auto vlan301
 iface vlan301 inet static
 	address 10.2.0.1

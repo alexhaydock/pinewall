@@ -1,16 +1,5 @@
-# /etc/nftables.d/vars.nft
+# Adapted from: https://wiki.nftables.org/wiki-nftables/index.php/Simple_ruleset_for_a_home_router
 
-# Define variables in this file.
-
-# WAN INTERFACES
-define nic_wan = eth1
-
-# DEFAULT UNTAGGED LAN INTERFACE
-define default_untagged_lan = eth0
-
-# RFC 1918 NETWORKS
-define rfc1918_cidr = { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 }
-
-# MARTIAN PACKET RANGES
-# https://en.wikipedia.org/wiki/Martian_packet
-define martians = { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16 }
+define DEV_PRIVATE = eth1
+define DEV_WORLD = ppp0
+define NET_PRIVATE = 192.168.0.0/16
