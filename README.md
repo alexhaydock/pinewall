@@ -36,10 +36,12 @@ In brief, I want this project to:
 
 * Replace pfSense in my home setup
 * Be based on Linux rather than FreeBSD
+* [Track a stable upstream release of the Linux kernel](https://security.googleblog.com/2021/08/linux-kernel-security-done-right.html)
 * Be free of unnecessary complexity and attack surface (GUIs etc)
 * Be minimal and simple to manage
 * Be easy to back up and migrate config
-* Be crash safe and resiliant to power loss (we will need to run mainly from RAM)
+* Be crash safe and resiliant to power loss (needs to run from RAM)
+* Have full IPv6 support
 
 
 ## Who is this for?
@@ -65,6 +67,7 @@ I'm also very willing to help out generally where I can if people get stuck (fee
 | DNS Server (Upstream via DoT)     | unbound             | main        | Working          |
 | DNSSEC                            | unbound             | main        | Working          |
 | Firewall                          | nftables            | main        | Working          |
+| IPv6 Router Advertisements        | radvd               | main        | Working          |
 | mDNS Proxy                        | avahi, dbus         | main        | Working          |
 | NTP Server                        | chronyd             | main        | Working          |
 | Performance Testing               | iperf3              | main        | Working          |
@@ -99,6 +102,7 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | nftables            | main      | core                  |
 | nload               | main      | optional              |
 | ppp-pppoe           | main      | core                  |
+| radvd               | main      | core                  |
 | tcpdump             | main      | optional              |
 | tftp-hpa            | main      | optional              |
 | unbound             | main      | core                  |
@@ -106,10 +110,6 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 
 ## What doesn't work?
 
-* `nftables` logging to disk
-  * Currently the `log` option works in nftables rules, but the logs just end up in the kernel ring buffer (can be read with `dmesg` though).
-  * We can log much more robustly (including full packet contents) if we install and configure `ulogd2`.
-  * See: https://blog.grimmo.it/2016/05/05/iptables-logging-using-nflog-and-ulogd2-on-debian-jessie/
 * UPnP
   * I thought about this but ended up making a conscious choice not to support it. STUN and other methods of NAT punching offer a much more reliable service for games etc. and a lot don't even bother with UPnP anymore. Plus it's a security risk.
 * Log monitoring and alerting
@@ -118,7 +118,7 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 
 ## How do I build this?
 
-To build the Alpine image, seeded with the latest packages:
+To build the Alpine image, seeded with the latest packages (you will need `podman` installed):
 ```bash
 make x86
 ```

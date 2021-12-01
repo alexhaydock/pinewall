@@ -1,0 +1,2 @@
+#!/bin/bash
+/sbin/ip -6 route add default dev pppoe
