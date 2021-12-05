@@ -55,6 +55,13 @@ That said, I've tried my best to document everything as thoroughly as possible a
 I'm also very willing to help out generally where I can if people get stuck (feel free to open issues) or want to try and implement something new on top of this. The best way to learn is through experimenting and trying to solve problems. I'm also open to sensible suggestions via PR that make the project a bit more adaptable to the needs of others (but without compromising the goals of simplicity and minimalism!).
 
 
+## Is this a custom distro / is this a fork of Alpine?
+
+Not really.
+
+This is more of a set of scripts and configs that allows you to compose a custom Alpine Linux image that contains all the additional packages needed to run a Linux-based home router. This is paired with a second set of scripts and configs that allow us to build a filesystem overlay that our custom ISO will load into RAM while booting. Most of this is built around the native functionality provided by Alpine's [local backup utility](https://wiki.alpinelinux.org/wiki/Alpine_local_backup) - I've just tailored it specifically towards being a home router.
+
+
 ## Feature matrix
 
 | Feature                           | Alpine Package      | Alpine Repo | Notes            |
@@ -110,6 +117,12 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 
 ## What doesn't work?
 
+* IPv6 ruleset for nftables
+  * This definitely needs some work. I have a separate private repo that has my current live config in it and I have the rules working there, but the ones in this repo definitely need updating with the things I've learned about making IPv6 work well in a home network.
+  * One resource I'd recommend for now which shows off a good IPv6 nftables ruleset would be [this post on the Alpine wiki](https://wiki.alpinelinux.org/wiki/Linux_Router_with_VPN_on_a_Raspberry_Pi_(IPv6)#nftables).
+* DHCPv6
+  * Currently I'm using SLAAC for IPv6 address configuration on my VLANs and not DHCPv6 or DHCPv6-PD. I statically assign `/64` prefixes for each of my VLANs in my ISP's control panel and manually add these to the `radvd.conf` file to be advertised on those interfaces via Router Advertisements.
+  * I don't really have a need for DHCPv6 with this setup, but if I find a need in the future I will find a way to fit it into the current design.
 * UPnP
   * I thought about this but ended up making a conscious choice not to support it. STUN and other methods of NAT punching offer a much more reliable service for games etc. and a lot don't even bother with UPnP anymore. Plus it's a security risk.
 * Log monitoring and alerting
