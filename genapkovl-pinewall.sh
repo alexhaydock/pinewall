@@ -130,8 +130,9 @@ mkdir -p "$tmp"/etc/unbound
 copyfile root:root 0644 /tmp/etc/unbound/unbound.conf "$tmp"/etc/unbound/unbound.conf
 
 # Add IPv6 radvd config
+# It seems like radvd is quite particular about making sure its config is not world writable
 mkdir -p "$tmp"/etc
-copyfile root:root 0644 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
+copyfile root:root 0400 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
 
 # Add nftables rules - note that these are 0754 unlike other files, as they
 # need to be executable!
@@ -206,7 +207,7 @@ rc_add dhcpd default
 rc_add in.tftpd default
 rc_add iperf3 default
 rc_add nftables default
-rc_add radvd default
+#rc_add radvd default  # We let ppp start this instead inside /etc/ppp/if-up
 rc_add sshd default
 rc_add unbound default
 

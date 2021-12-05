@@ -2,4 +2,11 @@
 #
 # This script is run by pppd when there's a successful ppp connection.
 #
-/sbin/ip -6 route add default dev pppoe
+
+# Restart radvd as it usually quits when the ppp link disappears and doesn't
+# restart itself.
+#
+# I've removed radvd from the default runlevel meaning PPP is the one to
+# start radvd when the system comes up, and will also restart it when the
+# link comes up/down.
+/sbin/rc-service radvd restart
