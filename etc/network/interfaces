@@ -24,3 +24,10 @@ iface vlan301 inet static
 	address 10.2.0.1
 	netmask 255.255.255.0
 	vlan-raw-device eth0
+
+# Example VPN interface
+auto wg0
+iface wg0 inet static
+       requires eth0
+       use wireguard
+       address 192.168.42.1
