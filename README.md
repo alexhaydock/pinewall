@@ -64,28 +64,30 @@ This is more of a set of scripts and configs that allows you to compose a custom
 
 ## Feature matrix
 
-| Feature                           | Alpine Package      | Alpine Repo | Notes            |
-|-----------------------------------|---------------------|-------------|------------------|
-| 802.1Q VLANs                      | ifupdown-ng         | main        | Working          |
-| DHCP Reservations                 | dhcp-server-vanilla | main        | Working          |
-| DHCP Server                       | dhcp-server-vanilla | main        | Working          |
-| DNS Cache                         | unbound             | main        | Working          |
-| DNS Root Hints (for Unbound)      | dns-root-hints      | main        | Working          |
-| DNS Server (Upstream via DoT)     | unbound             | main        | Working          |
-| DNSSEC                            | unbound             | main        | Working          |
-| Firewall                          | nftables            | main        | Working          |
-| IPv6 Router Advertisements        | radvd               | main        | Working          |
-| mDNS Proxy                        | avahi, dbus         | main        | Working          |
-| NTP Server                        | chronyd             | main        | Working          |
-| Performance Testing               | iperf3              | main        | Working          |
-| Port Forwarding (Destination NAT) | nftables            | main        | Working          |
-| PPPoE Connectivity                | ppp-pppoe           | main        | Working          |
-| PPPoE Integration with ifupdown   | ifupdown-ng-ppp     | main        | Working          |
-| Privilege Escalation              | doas                | main        | Working          |
-| Remote Wireshark                  | tcpdump             | main        | Working          |
-| Static Port NAT for Games         | nftables            | main        | Working          |
-| TFTP Server (for PXE clients)     | tftp-hpa            | main        | Working          |
-| Log Shipping                      | Splunk UF           | not in repo | Not started      |
+| Feature                             | Alpine Package        | Alpine Repo | Notes            |
+|-------------------------------------|---------------------  |-------------|------------------|
+| 802.1Q VLANs                        | ifupdown-ng           | main        | Working          |
+| DHCP Reservations                   | dhcp-server-vanilla   | main        | Working          |
+| DHCP Server                         | dhcp-server-vanilla   | main        | Working          |
+| DNS Cache                           | unbound               | main        | Working          |
+| DNS Root Hints (for Unbound)        | dns-root-hints        | main        | Working          |
+| DNS Server (Upstream via DoT)       | unbound               | main        | Working          |
+| DNSSEC                              | unbound               | main        | Working          |
+| Firewall                            | nftables              | main        | Working          |
+| IPv6 Router Advertisements          | radvd                 | main        | Working          |
+| mDNS Proxy                          | avahi, dbus           | main        | Working          |
+| NTP Server                          | chronyd               | main        | Working          |
+| Performance Testing                 | iperf3                | main        | Working          |
+| Port Forwarding (Destination NAT)   | nftables              | main        | Working          |
+| PPPoE Connectivity                  | ppp-pppoe             | main        | Working          |
+| PPPoE integration with ifupdown     | ifupdown-ng-ppp       | main        | Working          |
+| Privilege Escalation                | doas                  | main        | Working          |
+| Remote Wireshark                    | tcpdump               | main        | Working          |
+| Static Port NAT for Games           | nftables              | main        | Working          |
+| TFTP Server (for PXE clients)       | tftp-hpa              | main        | Working          |
+| WireGuard integration with ifupdown | ifupdown-ng-wireguard | main        | Working          |
+| WireGuard VPN Server                | wireguard-tools-wg    | main        | Working          |
+| Log Shipping                        | Splunk UF             | not in repo | Not started      |
 
 
 ## Every package added on top of the Alpine "Standard" profile by Pinewall
@@ -94,25 +96,27 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 
 | Package             | Repo      | Functionality         |
 |---------------------|-----------|-----------------------|
-| avahi               | main      | optional              |
-| chrony              | main      | optional              |
-| conntrack-tools     | main      | optional              |
-| dbus                | main      | dependency (of avahi) |
-| dhcp-server-vanilla | main      | core                  |
-| dns-root-hints      | main      | core                  |
-| doas                | main      | core                  |
-| ethtool             | main      | optional              |
-| htop                | main      | optional              |
-| ifupdown-ng-ppp     | main      | core                  |
-| iperf3              | main      | optional              |
-| nano                | main      | optional              |
-| nftables            | main      | core                  |
-| nload               | main      | optional              |
-| ppp-pppoe           | main      | core                  |
-| radvd               | main      | core                  |
-| tcpdump             | main      | optional              |
-| tftp-hpa            | main      | optional              |
-| unbound             | main      | core                  |
+| avahi                 | main      | optional              |
+| chrony                | main      | optional              |
+| conntrack-tools       | main      | optional              |
+| dbus                  | main      | dependency (of avahi) |
+| dhcp-server-vanilla   | main      | core                  |
+| dns-root-hints        | main      | core                  |
+| doas                  | main      | core                  |
+| ethtool               | main      | optional              |
+| htop                  | main      | optional              |
+| ifupdown-ng-ppp       | main      | core                  |
+| ifupdown-ng-wireguard | main      | optional              |
+| iperf3                | main      | optional              |
+| nano                  | main      | optional              |
+| nftables              | main      | core                  |
+| nload                 | main      | optional              |
+| ppp-pppoe             | main      | core                  |
+| radvd                 | main      | core                  |
+| tcpdump               | main      | optional              |
+| tftp-hpa              | main      | optional              |
+| unbound               | main      | core                  |
+| wireguard-tools-wg    | main      | optional              |
 
 
 ## What doesn't work?

@@ -19,6 +19,7 @@ profile_pinewall_rpi() {
     ethtool
     htop
     ifupdown-ng-ppp
+    ifupdown-ng-wireguard
     iperf3
     nano
     nftables
@@ -30,5 +31,6 @@ profile_pinewall_rpi() {
     tcpdump
     tftp-hpa
     unbound
+    wireguard-tools-wg
     "
 }
