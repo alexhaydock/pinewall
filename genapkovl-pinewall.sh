@@ -125,6 +125,10 @@ copyfile root:root 0644 /tmp/etc/sysctl.d/local.conf "$tmp"/etc/sysctl.d/local.c
 mkdir -p "$tmp"/etc/chrony
 copyfile root:root 0644 /tmp/etc/chrony/chrony.conf "$tmp"/etc/chrony/chrony.conf
 
+# Add DNS client config
+mkdir -p "$tmp"/etc
+copyfile root:root 0644 /tmp/etc/resolv.conf "$tmp"/etc/resolv.conf
+
 # Add DNS server config
 mkdir -p "$tmp"/etc/unbound
 copyfile root:root 0644 /tmp/etc/unbound/unbound.conf "$tmp"/etc/unbound/unbound.conf
