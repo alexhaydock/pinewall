@@ -90,7 +90,7 @@ lsblk
 
 Do most of the next steps as root:
 ```sh
-doas -i
+sudo -i
 ```
 
 Unmount anything on the disk
@@ -135,5 +135,5 @@ mount /dev/sdx1 /tmp/alpineusb
 
 Extract Pinewall onto the bootable partition you've created:
 ```sh
-doas tar -xvf alpine-pinewall_rpi-v3.15-aarch64.tar.gz --no-same-owner -C /tmp/alpineusb && sync
+sudo tar -xvf alpine-pinewall_rpi-v3.15-aarch64.tar.gz --no-same-owner -C /tmp/alpineusb && sync
 ```
