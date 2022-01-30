@@ -33,6 +33,7 @@ profile_pinewall_x86() {
     ppp-pppoe
     radvd
     raspberrypi
+    rng-tools
     tcpdump
     tftp-hpa
     unbound
