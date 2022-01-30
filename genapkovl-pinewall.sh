@@ -179,6 +179,10 @@ copyfile root:root 0644 /tmp/etc/ppp/peers/aaisp "$tmp"/etc/ppp/peers/aaisp
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/modules "$tmp"/etc/modules
 
+# Add rngd config
+mkdir -p "$tmp"/etc/conf.d
+copyfile root:root 0644 /tmp/etc/conf.d/rngd "$tmp"/etc/conf.d/rngd
+
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
 #mkdir -p "$tmp"/etc/lbu
@@ -194,6 +198,7 @@ rc_add hwclock boot
 rc_add modules boot
 rc_add networking boot
 rc_add swap boot  # Won't work unless we have swap which we won't if we're running live
+rc_add rngd boot          # Add rng service for Pi type devices without much entropy available
 rc_add sysctl boot
 rc_add syslog boot
 rc_add urandom boot

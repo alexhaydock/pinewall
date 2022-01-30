@@ -18,6 +18,7 @@ openssh
 openssl
 ppp-pppoe
 radvd
+rng-tools
 tcpdump
 tftp-hpa
 unbound
