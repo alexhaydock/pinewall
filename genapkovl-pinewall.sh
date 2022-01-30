@@ -201,12 +201,14 @@ copyfile root:root 0644 /tmp/etc/inittab "$tmp"/etc/inittab
 
 rc_add bootmisc boot
 rc_add hostname boot
-rc_add hwclock boot
-#rc_add loadkmap boot  # Might not be needed unless we specify a keymap
+#rc_add hwclock boot      # Pi does not have a hardware clock
+rc_add swclock boot       # Need to enable software clock for the Pi instead
+#rc_add loadkmap boot     # Might not be needed unless we specify a keymap
 rc_add modules boot
 rc_add networking boot
-rc_add swap boot  # Won't work unless we have swap which we won't if we're running live
+rc_add nftables boot      # Moved into boot runlevel so that the firewall comes up ASAP
 rc_add rngd boot          # Add rng service for Pi type devices without much entropy available
+#rc_add swap boot         # Won't work unless we have swap which we won't if we're running live
 rc_add sysctl boot
 rc_add syslog boot
 rc_add urandom boot
@@ -219,8 +221,7 @@ rc_add crond default
 rc_add dhcpd default
 rc_add in.tftpd default
 rc_add iperf3 default
-rc_add nftables default
-#rc_add radvd default  # We let ppp start this instead inside /etc/ppp/if-up
+rc_add radvd default
 rc_add sshd default
 rc_add unbound default
 
