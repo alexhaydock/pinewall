@@ -32,6 +32,7 @@ profile_pinewall_x86() {
     openssl
     ppp-pppoe
     radvd
+    raspberrypi
     tcpdump
     tftp-hpa
     unbound
