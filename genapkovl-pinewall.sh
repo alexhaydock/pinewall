@@ -177,7 +177,7 @@ mkdir -p "$tmp"/etc/ppp
 copyfile root:root 0600 /tmp/etc/ppp/chap-secrets "$tmp"/etc/ppp/chap-secrets
 copyfile root:root 0755 /tmp/etc/ppp/ip-up "$tmp"/etc/ppp/ip-up
 mkdir -p "$tmp"/etc/ppp/peers
-copyfile root:root 0644 /tmp/etc/ppp/peers/aaisp "$tmp"/etc/ppp/peers/aaisp
+copyfile root:root 0644 /tmp/etc/ppp/peers/provider "$tmp"/etc/ppp/peers/provider
 
 # Add modules file
 mkdir -p "$tmp"/etc
