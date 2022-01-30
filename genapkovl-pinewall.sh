@@ -187,6 +187,10 @@ copyfile root:root 0644 /tmp/etc/modules "$tmp"/etc/modules
 mkdir -p "$tmp"/etc/conf.d
 copyfile root:root 0644 /tmp/etc/conf.d/rngd "$tmp"/etc/conf.d/rngd
 
+# Add inittab config
+mkdir -p "$tmp"/etc
+copyfile root:root 0644 /tmp/etc/inittab "$tmp"/etc/inittab
+
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
 #mkdir -p "$tmp"/etc/lbu
