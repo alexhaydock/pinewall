@@ -3,10 +3,10 @@
 # This script is run by pppd when there's a successful ppp connection.
 #
 
-# Restart radvd as it usually quits when the ppp link disappears and doesn't
-# restart itself.
-#
-# I've removed radvd from the default runlevel meaning PPP is the one to
-# start radvd when the system comes up, and will also restart it when the
-# link comes up/down.
+# Restart chronyd on successful ppp connection, to force an NTP sync
+# this is important if we're on a Pi without an RTC.
+/sbin/rc-service chronyd restart
+
+# Restart radvd on successful ppp connection, since it has a habit
+# of quitting when anything is wrong at all.
 /sbin/rc-service radvd restart

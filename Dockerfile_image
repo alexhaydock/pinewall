@@ -47,7 +47,8 @@ WORKDIR /tmp/abuild
 # instead of doas, as abuild-keygen expects it to be there
 RUN abuild-keygen -i -a -n
 
-RUN git clone https://gitlab.alpinelinux.org/alpine/aports.git
+# Clone the aports repo for our specific branch
+RUN git clone --branch "$ALPINEVER-stable" https://gitlab.alpinelinux.org/alpine/aports.git
 
 RUN chmod +x /tmp/abuild/aports/scripts/mkimage.sh
 

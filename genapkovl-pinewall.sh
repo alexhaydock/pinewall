@@ -125,6 +125,10 @@ copyfile root:root 0644 /tmp/etc/sysctl.d/local.conf "$tmp"/etc/sysctl.d/local.c
 mkdir -p "$tmp"/etc/chrony
 copyfile root:root 0644 /tmp/etc/chrony/chrony.conf "$tmp"/etc/chrony/chrony.conf
 
+# Add DNS client config
+mkdir -p "$tmp"/etc
+copyfile root:root 0644 /tmp/etc/resolv.conf "$tmp"/etc/resolv.conf
+
 # Add DNS server config
 mkdir -p "$tmp"/etc/unbound
 copyfile root:root 0644 /tmp/etc/unbound/unbound.conf "$tmp"/etc/unbound/unbound.conf
@@ -173,11 +177,19 @@ mkdir -p "$tmp"/etc/ppp
 copyfile root:root 0600 /tmp/etc/ppp/chap-secrets "$tmp"/etc/ppp/chap-secrets
 copyfile root:root 0755 /tmp/etc/ppp/ip-up "$tmp"/etc/ppp/ip-up
 mkdir -p "$tmp"/etc/ppp/peers
-copyfile root:root 0644 /tmp/etc/ppp/peers/aaisp "$tmp"/etc/ppp/peers/aaisp
+copyfile root:root 0644 /tmp/etc/ppp/peers/provider "$tmp"/etc/ppp/peers/provider
 
 # Add modules file
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/modules "$tmp"/etc/modules
+
+# Add rngd config
+mkdir -p "$tmp"/etc/conf.d
+copyfile root:root 0644 /tmp/etc/conf.d/rngd "$tmp"/etc/conf.d/rngd
+
+# Add inittab config
+mkdir -p "$tmp"/etc
+copyfile root:root 0644 /tmp/etc/inittab "$tmp"/etc/inittab
 
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
@@ -189,11 +201,14 @@ copyfile root:root 0644 /tmp/etc/modules "$tmp"/etc/modules
 
 rc_add bootmisc boot
 rc_add hostname boot
-rc_add hwclock boot
-#rc_add loadkmap boot  # Might not be needed unless we specify a keymap
+#rc_add hwclock boot      # Pi does not have a hardware clock
+rc_add swclock boot       # Need to enable software clock for the Pi instead
+#rc_add loadkmap boot     # Might not be needed unless we specify a keymap
 rc_add modules boot
 rc_add networking boot
-rc_add swap boot  # Won't work unless we have swap which we won't if we're running live
+rc_add nftables boot      # Moved into boot runlevel so that the firewall comes up ASAP
+rc_add rngd boot          # Add rng service for Pi type devices without much entropy available
+#rc_add swap boot         # Won't work unless we have swap which we won't if we're running live
 rc_add sysctl boot
 rc_add syslog boot
 rc_add urandom boot
@@ -206,8 +221,7 @@ rc_add crond default
 rc_add dhcpd default
 rc_add in.tftpd default
 rc_add iperf3 default
-rc_add nftables default
-#rc_add radvd default  # We let ppp start this instead inside /etc/ppp/if-up
+rc_add radvd default
 rc_add sshd default
 rc_add unbound default
 
