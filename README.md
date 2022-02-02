@@ -142,7 +142,7 @@ make x86
 
 You will find an ISO image that can be booted either from disc or USB in the `images/` directory.
 
-To build the Raspberry Pi disk image **(work in progress!)**:
+To build the Raspberry Pi filesystem content (`.tar.gz`) as well as ready-to-use disk image (`.img.gz`):
 ```bash
 make rpi
 ```

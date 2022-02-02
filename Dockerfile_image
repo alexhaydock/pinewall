@@ -1,23 +1,10 @@
-FROM docker.io/library/alpine:3.15
+FROM docker.io/library/alpine:3.15 as builder
 
-# Bind mount a directory into /tmp/images when running this image
+# Bind mount a directory into /tmp/output when running this image
 # to output a built image into it
 
-####################################
-#  _____ _   ___     __ __     ___    ____  ____  
-# | ____| \ | \ \   / / \ \   / / \  |  _ \/ ___| 
-# |  _| |  \| |\ \ / /   \ \ / / _ \ | |_) \___ \ 
-# | |___| |\  | \ V /     \ V / ___ \|  _ < ___) |
-# |_____|_| \_|  \_/       \_/_/   \_\_| \_\____/ 
-#                                                 
-####################################
-
-# Do not include a trailing slash in repo URL
-# Note that not all mirrors mirror all architectures
-ENV ALPINEREPO=https://dl-cdn.alpinelinux.org/alpine
-ENV ALPINEVER=3.15
-
-####################################
+# Copy our env vars into the container
+COPY settings.sh /settings.sh
 
 RUN apk --no-cache add \
   alpine-conf \
@@ -48,7 +35,7 @@ WORKDIR /tmp/abuild
 RUN abuild-keygen -i -a -n
 
 # Clone the aports repo for our specific branch
-RUN git clone --branch "$ALPINEVER-stable" https://gitlab.alpinelinux.org/alpine/aports.git
+RUN source /settings.sh && git clone --branch "$ALPINEVER-stable" https://gitlab.alpinelinux.org/alpine/aports.git
 
 RUN chmod +x /tmp/abuild/aports/scripts/mkimage.sh
 
@@ -67,8 +54,36 @@ RUN chmod +x /tmp/abuild/aports/scripts/imagebuild.sh
 
 # Add in all our configs
 COPY etc/ /tmp/etc/
+COPY var /tmp/var
 
 # Run an APK update so we have a recent cache ready in the Docker image
 # (if we don't do this then the "apk fetch" stages of the build that fetch
 # packages like the Raspberry Pi bootloader will fail).
 RUN apk update
+
+# Build our image
+RUN source /settings.sh && ./imagebuild.sh
+
+# Copy our built image into a new container
+FROM docker.io/library/ubuntu:20.04
+
+# Install dosfstools so we can make VFAT filesystems
+RUN apt-get update && apt-get install -y dosfstools
+
+# Copy our built images and settings from the build container
+COPY --from=builder /tmp/images /tmp/images
+COPY --from=builder /settings.sh /settings.sh
+
+COPY imagepack.sh /opt/imagepack.sh
+
+WORKDIR /opt
+
+# Just in case we run this in CI instead of bind-mounting
+# the /tmp/output directory inside, we'll try and create
+# this directory
+RUN mkdir -p /tmp/output
+
+# When we run the container, copy what we've built into the output directory
+# We don't enclose this in [""] because if we leave it like this then it gets
+# run in the context of a shell and we can use the wildcard
+ENTRYPOINT cp -Rfv /tmp/images/* /tmp/output/
