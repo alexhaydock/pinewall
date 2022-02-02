@@ -1,0 +1,22 @@
+FROM docker.io/library/ubuntu:20.04 as builder
+
+# Bind mount a directory into /tmp/images when running this image
+# to output a built image into it
+
+# Copy our env vars into the container
+COPY settings.sh /settings.sh
+
+RUN sed -i 's,http://archive.ubuntu.com/,http://mirrorservice.org/sites/archive.ubuntu.com/,g' /etc/apt/sources.list && \
+    sed -i 's,http://security.ubuntu.com/,http://mirrorservice.org/sites/archive.ubuntu.com/,g' /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y dosfstools
+
+COPY imagepack.sh /opt/imagepack.sh
+
+WORKDIR /opt
+
+# We can't run the imagepack.sh script as part of the container
+# build process like we do with the imagebuild.sh one in the
+# Alpine container. This is because we can't use the --privileged
+# flag when running a `podman build` process, and we need it
+# to mount loop devices.
