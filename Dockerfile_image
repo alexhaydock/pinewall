@@ -71,4 +71,4 @@ COPY --from=builder /tmp/images /tmp/images
 # When we run the container, copy what we've built into the output directory
 # We don't enclose this in [""] because if we leave it like this then it gets
 # run in the context of a shell and we can use the wildcard
-CMD cp -Rfv /tmp/images/*.tar.gz /tmp/output/
+CMD cp -Rfv /tmp/images/* /tmp/output/
