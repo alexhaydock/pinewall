@@ -35,7 +35,7 @@ image-build-x86:
     name: $CI_REGISTRY_IMAGE:imagebuild
     entrypoint: [""]  # Override ENTRYPOINT so we just run the script below
   stage: build
-  script: mv -fv /tmp/output/*.iso $CI_PROJECT_DIR/pinewall.iso
+  script: mv -fv /tmp/images/*.iso $CI_PROJECT_DIR/pinewall.iso  # This is a replacement for our ENTRYPOINT that's tailored to running in our CI environment
   artifacts:
     paths:
       # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work
