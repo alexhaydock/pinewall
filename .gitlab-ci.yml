@@ -31,9 +31,10 @@ overlay-dep:
 
 image-build-x86:
   # Use the Pinewall builder image we just built in the image-dep stage above
-  image: $CI_REGISTRY_IMAGE:imagebuild
+  image:
+    name: $CI_REGISTRY_IMAGE:imagebuild
+    entrypoint: [""]  # Override ENTRYPOINT so we just run the script below
   stage: build
-  entrypoint: [""]  # Override ENTRYPOINT so we just run the script below
   script: mv -fv /tmp/output/*.iso $CI_PROJECT_DIR/pinewall.iso
   artifacts:
     paths:
