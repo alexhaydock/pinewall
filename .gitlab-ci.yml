@@ -33,14 +33,7 @@ image-build-x86:
   # Use the Pinewall builder image we just built in the image-dep stage above
   image: $CI_REGISTRY_IMAGE:imagebuild
   stage: build
-  variables:
-    PROFILENAME: "pinewall_x86"
-    TARGETARCH: "x86_64"
-  script:
-    - |
-      cd /tmp/abuild/aports/scripts
-      ./imagebuild.sh
-    - mv -fv /tmp/images/*.iso $CI_PROJECT_DIR/pinewall.iso
+  script: mv -fv /tmp/output/*.iso $CI_PROJECT_DIR/pinewall.iso
   artifacts:
     paths:
       # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work

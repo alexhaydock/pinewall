@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 set -eu
 
 # The variables used here are defined in the ENV vars of
@@ -7,6 +7,6 @@ set -eu
   --tag v$ALPINEVER \
   --outdir /tmp/images \
   --workdir /tmp/cache \
-  --arch $TARGETARCH \
+  --arch $ARCH \
   --repository $ALPINEREPO/v$ALPINEVER/main \
   --profile $PROFILENAME
