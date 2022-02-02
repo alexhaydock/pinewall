@@ -20,6 +20,7 @@ profile_pinewall_x86() {
     dhcp-server-vanilla
     dns-root-hints
     doas
+    dropbear
     ethtool
     htop
     ifupdown-ng-ppp
@@ -28,7 +29,6 @@ profile_pinewall_x86() {
     nano
     nftables
     nload
-    openssh
     openssl
     ppp-pppoe
     radvd

@@ -219,10 +219,10 @@ rc_add avahi-daemon default
 rc_add chronyd default
 rc_add crond default
 rc_add dhcpd default
+rc_add dropbear default
 rc_add in.tftpd default
 rc_add iperf3 default
 rc_add radvd default
-rc_add sshd default
 rc_add unbound default
 
 rc_add mount-ro shutdown

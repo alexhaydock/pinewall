@@ -6,6 +6,7 @@ dbus
 dhcp-server-vanilla
 dns-root-hints
 doas
+dropbear
 ethtool
 htop
 ifupdown-ng-ppp
@@ -14,7 +15,6 @@ iperf3
 nano
 nftables
 nload
-openssh
 openssl
 ppp-pppoe
 radvd
