@@ -5,15 +5,17 @@ set -xe
 # with variables configured in a script at /settings.sh
 source /settings.sh
 
-# Autodiscover the image name
-IMGNAME="/tmp/output/alpine-$PROFILENAME-v$ALPINEVER-$(uname -m)"
+# Autodiscover the image name that we built in the builder
+# step and copied into the container that will run this script
+IMGNAME="alpine-$PROFILENAME-v$ALPINEVER-$(uname -m)"
+IMGPATH="/tmp/images/$IMGNAME"
 
 # Create 1G image
-rm -v "$IMGNAME.img" || true
-truncate -s 1G "$IMGNAME.img"
+rm -v "$IMGPATH.img" || true
+truncate -s 1G "$IMGPATH.img"
 
 # Create a partition on the image we just created
-fdisk -H 255 -S 63 "$IMGNAME.img" <<-EOF
+fdisk -H 255 -S 63 "$IMGPATH.img" <<-EOF
 o
 n
 p
@@ -31,7 +33,7 @@ losetup -d $(ls -1 /dev/loop?) || true
 # the losetup binary is provided by Busybox and doesn't support the
 # --partscan flag, and for whatever reason the one that ships with
 # Fedora gives us this issue: https://github.com/RPi-Distro/pi-gen/issues/257
-LOOP_DEV="$(losetup --partscan --show --find ${IMGNAME}.img)"
+LOOP_DEV="$(losetup --partscan --show --find ${IMGPATH}.img)"
 PART_DEV="$LOOP_DEV"p1
 
 # Wait a bit before trying to format it
@@ -49,7 +51,7 @@ mkdir -p /tmp/pinewall
 mount --make-private "$PART_DEV" /tmp/pinewall
 
 # Extract our generated filesystem content into the mounted filesystem
-tar -xvf "$IMGNAME.tar.gz" --no-same-owner -C /tmp/pinewall
+tar -xvf "$IMGPATH.tar.gz" --no-same-owner -C /tmp/pinewall
 
 # Sync disks twice, just to make sure
 sync
@@ -61,6 +63,5 @@ umount -lf /tmp/pinewall
 # Detach the loop device (very important otherwise it'll stick around including on the host)
 losetup -d "$LOOP_DEV"
 
-# Compress our final image
-gzip -c "$IMGNAME.img" > "$IMGNAME.img.gz"
-rm -fv "$IMGNAME.img"
+# Compress our final image into our output directory
+gzip -c "$IMGPATH.img" > "/tmp/output/$IMGNAME.img.gz"

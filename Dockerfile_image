@@ -65,10 +65,20 @@ RUN apk update
 RUN source /settings.sh && ./imagebuild.sh
 
 # Copy our built image into a new container
-FROM docker.io/library/alpine:3.15
+FROM docker.io/library/ubuntu:20.04
+
+# Install dosfstools so we can make VFAT filesystems
+RUN apt-get update && apt-get install -y dosfstools
+
+# Copy our built images and settings from the build container
 COPY --from=builder /tmp/images /tmp/images
+COPY --from=builder /settings.sh /settings.sh
+
+COPY imagepack.sh /opt/imagepack.sh
+
+WORKDIR /opt
 
 # When we run the container, copy what we've built into the output directory
 # We don't enclose this in [""] because if we leave it like this then it gets
 # run in the context of a shell and we can use the wildcard
-CMD cp -Rfv /tmp/images/* /tmp/output/
+ENTRYPOINT cp -Rfv /tmp/images/* /tmp/output/
