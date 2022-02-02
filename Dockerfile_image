@@ -78,6 +78,11 @@ COPY imagepack.sh /opt/imagepack.sh
 
 WORKDIR /opt
 
+# Just in case we run this in CI instead of bind-mounting
+# the /tmp/output directory inside, we'll try and create
+# this directory
+RUN mkdir -p /tmp/output
+
 # When we run the container, copy what we've built into the output directory
 # We don't enclose this in [""] because if we leave it like this then it gets
 # run in the context of a shell and we can use the wildcard
