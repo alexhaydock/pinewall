@@ -2,8 +2,8 @@ profile_pinewall_x86() {
   # Source the env vars from the "standard" profile below (see mkimg.base.sh)
   profile_standard
 
-  # Force amd64
-  arch="amd64"
+  # Force x86_64
+  arch="x86_64"
 
   # We don't want the kernel addons from the Standard profile, which includes
   # xtables-addons. We don't want any *tables stuff since we're fully nftables.
