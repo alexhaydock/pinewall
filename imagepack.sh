@@ -12,17 +12,11 @@ IMGPATH="/tmp/images/$IMGNAME"
 
 # Create 1G image
 rm -v "$IMGPATH.img" || true
-truncate -s 1G "$IMGPATH.img"
+truncate -s 256M "$IMGPATH.img"
 
-# Create a partition on the image we just created
-fdisk -H 255 -S 63 "$IMGPATH.img" <<-EOF
-o
-n
-p
-1
-
-
-w
+# Create a 255MB partition on the image we just created
+sfdisk "$IMGPATH.img" << EOF
+,$((2048*255)),c
 EOF
 
 # Detach all loop devices (WARNING! - also affects the host!)
@@ -40,13 +34,10 @@ PART_DEV="$LOOP_DEV"p1
 sleep 2
 
 # Make a VFAT filesystem on the image
-# We run this in an Ubuntu container since the version of dosfstools
-# that ships with Fedora gives us an issue about CP850 to UTF-8
-# translation for the FAT volume name that I can only find on this
-# Russian forum without a real solution attached: https://www.linux.org.ru/forum/linux-install/16201697
-mkfs.vfat -F32 -n PINEWALL "$PART_DEV"
+mkfs.vfat -F32 "$PART_DEV"
+fatlabel "$PART_DEV" PINEWALL
 
-# Make a directory and mount our VFAT partition into it
+# Make a directory and mount our FAT partition into it
 mkdir -p /tmp/pinewall
 mount --make-private "$PART_DEV" /tmp/pinewall
 
@@ -65,3 +56,10 @@ losetup -d "$LOOP_DEV"
 
 # Compress our final image into our output directory
 gzip -c "$IMGPATH.img" > "/tmp/output/$IMGNAME.img.gz"
+
+# Move the uncompressed image over too, so we can keep it
+mv -fv "$IMGPATH.img" "/tmp/output/$IMGNAME.img"
+
+# Checksum the 3 files we now have in the output dir (we assume the *.tar.gz file is still here from our previous run)
+cd /tmp/output
+sha256sum "$IMGNAME.img" "$IMGNAME.img.gz" "$IMGNAME.tar.gz" > CHECKSUMS.sha256
