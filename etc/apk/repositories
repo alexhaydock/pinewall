@@ -11,7 +11,7 @@
 #
 
 # Main Stable Repo
-https://dl-cdn.alpinelinux.org/alpine/v3.15/main
+https://dl-cdn.alpinelinux.org/alpine/edge/main
 
 # Main Community Repo (Disabled)
-##https://dl-cdn.alpinelinux.org/alpine/v3.15/community
+##https://dl-cdn.alpinelinux.org/alpine/edge/community

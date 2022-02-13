@@ -4,9 +4,9 @@ set -eu
 # The variables used here are defined in the ENV vars of
 # the respective Dockerfile being used to run this script:
 ./mkimage.sh \
-  --tag v$ALPINEVER \
+  --tag $ALPINETAG \
   --outdir /tmp/images \
   --workdir /tmp/cache \
   --arch $ARCH \
-  --repository $ALPINEREPO/v$ALPINEVER/main \
+  --repository $ALPINEREPO/$ALPINETAG/main \
   --profile $PROFILENAME
