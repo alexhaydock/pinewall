@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.15 as builder
+FROM docker.io/library/alpine:edge as builder
 
 # Bind mount a directory into /tmp/output when running this image
 # to output a built image into it
@@ -35,7 +35,7 @@ WORKDIR /tmp/abuild
 RUN abuild-keygen -i -a -n
 
 # Clone the aports repo for our specific branch
-RUN source /settings.sh && git clone --branch "$ALPINEVER-stable" https://gitlab.alpinelinux.org/alpine/aports.git
+RUN source /settings.sh && git clone --branch "$ALPINEGIT" https://gitlab.alpinelinux.org/alpine/aports.git
 
 RUN chmod +x /tmp/abuild/aports/scripts/mkimage.sh
 

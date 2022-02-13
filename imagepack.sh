@@ -7,8 +7,19 @@ source /settings.sh
 
 # Autodiscover the image name that we built in the builder
 # step and copied into the container that will run this script
-IMGNAME="alpine-$PROFILENAME-v$ALPINEVER-$(uname -m)"
-IMGPATH="/tmp/images/$IMGNAME"
+# (We don't control this name)
+IMGNAME="alpine-$PROFILENAME-$ALPINETAG-$(uname -m)"
+
+# Set our destination image name to something better
+# (Include the date we built the image)
+IMGDEST="alpine-$PROFILENAME-$ALPINETAG-$(date -I)-$(uname -m)"
+
+# Rename the image
+mv -fv "/tmp/images/$IMGNAME.tar.gz" "/tmp/images/$IMGDEST.tar.gz" 
+
+# Discover our new image path
+IMGNAME="$IMGDEST"
+IMGPATH="/tmp/images/$IMGDEST"
 
 # Create 1G image
 rm -v "$IMGPATH.img" || true
@@ -62,4 +73,4 @@ mv -fv "$IMGPATH.img" "/tmp/output/$IMGNAME.img"
 
 # Checksum the 3 files we now have in the output dir (we assume the *.tar.gz file is still here from our previous run)
 cd /tmp/output
-sha256sum "$IMGNAME.img" "$IMGNAME.img.gz" "$IMGNAME.tar.gz" > CHECKSUMS.sha256
+sha256sum "$IMGNAME.img" "$IMGNAME.img.gz" > CHECKSUMS.sha256
