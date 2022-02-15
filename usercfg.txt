@@ -1,0 +1,6 @@
+# Pinewall usercfg.txt
+# https://gitlab.com/pinewall/pinewall/-/blob/master/userconfig.txt
+
+# Disable Wi-Fi and Bluetooth to save power
+dtoverlay=disable-wifi
+dtoverlay=disable-bt
