@@ -55,6 +55,9 @@ mount --make-private "$PART_DEV" /tmp/pinewall
 # Extract our generated filesystem content into the mounted filesystem
 tar -xvf "$IMGPATH.tar.gz" --no-same-owner -C /tmp/pinewall
 
+# Copy in our Pi firmware tweaks before creating the final image
+cp -fv /opt/usercfg.txt /tmp/pinewall/usercfg.txt
+
 # Sync disks twice, just to make sure
 sync
 sync

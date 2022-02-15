@@ -90,6 +90,15 @@ This is more of a set of scripts and configs that allows you to compose a custom
 | Log Shipping                        | Splunk UF             | not in repo | Not started      |
 
 
+## Supported Deployments
+
+* Raspberry Pi 4 / Compute Module 4
+  * This is the main target platform, as it's what I actively deploy. This is where you can expect development, support, and prompt fixes for issues.
+  * I will likely try and support new Pi revisions as they release, but nothing before the Pi 4 will be supported as previous revsions do not use a proper ethernet controller and are not capable of routing at gigabit speeds.
+* Generic x86_64 PC
+  * Supported only on a best-effort basis.
+
+
 ## Every package added on top of the Alpine "Standard" profile by Pinewall
 
 Below you can find a list of every package installed on top of the Alpine "Standard" profile. You can find these defined the `apks` variable inside either `mkimg.pinewall_x86.sh`, or `mkimg.pinewall_rpi.sh`.
@@ -135,17 +144,17 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 
 ## How do I build this?
 
+To build the Raspberry Pi filesystem content (`.tar.gz`) as well as ready-to-use disk image (`.img.gz`):
+```bash
+make rpi
+```
+
 To build the Alpine image, seeded with the latest packages (you will need `podman` installed):
 ```bash
 make x86
 ```
 
-You will find an ISO image that can be booted either from disc or USB in the `images/` directory.
-
-To build the Raspberry Pi filesystem content (`.tar.gz`) as well as ready-to-use disk image (`.img.gz`):
-```bash
-make rpi
-```
+You will then find an ISO image that can be booted either from disc or USB in the `output/` directory.
 
 And to build the APK overlay based on `genapkovl-pinewall.sh`:
 ```bash

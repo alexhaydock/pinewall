@@ -76,6 +76,9 @@ COPY --from=builder /settings.sh /settings.sh
 
 COPY imagepack.sh /opt/imagepack.sh
 
+# Add in our Pi firmware tweaks
+COPY usercfg.txt /opt/usercfg.txt
+
 WORKDIR /opt
 
 # Just in case we run this in CI instead of bind-mounting
