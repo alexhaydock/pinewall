@@ -64,6 +64,13 @@ RUN apk update
 # Build our image
 RUN source /settings.sh && ./imagebuild.sh
 
+# Move our image to a better-named location
+RUN source /settings.sh && mv -fv "/tmp/images/alpine-$PROFILENAME-$ALPINETAG-$(uname -m).iso" /tmp/images/pinewall.iso || true
+RUN source /settings.sh && mv -fv "/tmp/images/alpine-$PROFILENAME-$ALPINETAG-$(uname -m).tar.gz" /tmp/images/pinewall.tar.gz || true
+
+# List our image directory
+RUN ls -lah /tmp/images
+
 # Copy our built image into a new container
 FROM docker.io/library/ubuntu:20.04
 
@@ -86,7 +93,9 @@ WORKDIR /opt
 # this directory
 RUN mkdir -p /tmp/output
 
-# When we run the container, copy what we've built into the output directory
+# When we run the container, copy what we've built into the directory we will
+# mount at runtime as /tmp/output
+#
 # We don't enclose this in [""] because if we leave it like this then it gets
 # run in the context of a shell and we can use the wildcard
 ENTRYPOINT cp -Rfv /tmp/images/* /tmp/output/

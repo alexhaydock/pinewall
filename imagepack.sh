@@ -5,20 +5,14 @@ set -xe
 # with variables configured in a script at /settings.sh
 source /settings.sh
 
-# Autodiscover the image name that we built in the builder
-# step and copied into the container that will run this script
-# (We don't control this name)
-IMGNAME="alpine-$PROFILENAME-$ALPINETAG-$(uname -m)"
-
-# Set our destination image name to something better
+# Configure our destination image name
 # (Include the date we built the image)
-IMGDEST="alpine-$PROFILENAME-$ALPINETAG-$(date -I)-$(uname -m)"
+IMGNAME="alpine-$PROFILENAME-$ALPINETAG-$(date -I)-$(uname -m)"
 
-# Rename the image
-mv -fv "/tmp/images/$IMGNAME.tar.gz" "/tmp/images/$IMGDEST.tar.gz" 
+# Rename the image we built in the build step
+mv -fv "/tmp/images/pinewall.tar.gz" "/tmp/images/$IMGNAME.tar.gz"
 
 # Discover our new image path
-IMGNAME="$IMGDEST"
 IMGPATH="/tmp/images/$IMGDEST"
 
 # Create 1G image

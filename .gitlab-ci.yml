@@ -36,7 +36,7 @@ image-build-x86:
     name: $CI_REGISTRY_IMAGE:imagebuild
     entrypoint: [""]  # Override ENTRYPOINT so we just run the script below
   stage: build
-  script: mv -fv /tmp/images/*.iso $CI_PROJECT_DIR/pinewall.iso  # This is a replacement for our ENTRYPOINT that's tailored to running in our CI environment
+  script: mv -fv /tmp/images/pinewall.iso $CI_PROJECT_DIR/pinewall.iso  # This is a replacement for our ENTRYPOINT that's tailored to running in our CI environment
   artifacts:
     paths:
       # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work
@@ -77,8 +77,15 @@ image-build-rpi:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     # Build arm64 image
-    - docker buildx build --platform linux/arm64/v8 -f Dockerfile_image --push -t $CI_REGISTRY_IMAGE:rpibuild .
-    #- docker run --rm -it --privileged -v "$(shell pwd)/output:/tmp/output:Z" --entrypoint ./imagepack.sh $CI_REGISTRY_IMAGE:rpibuild
+    - mkdir -p output
+    - docker buildx build --platform linux/arm64/v8 -v "$(pwd)/output:/tmp/output" -f Dockerfile_image --push -t $CI_REGISTRY_IMAGE:rpibuild .
+    - ls -lah output
+    - mv -fv /tmp/images/pinewall.tar.gz $CI_PROJECT_DIR/pinewall.tar.gz  # This is a replacement for our ENTRYPOINT that's tailored to running in our CI environment
+  artifacts:
+    paths:
+      # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work
+      - pinewall.tar.gz
+    expire_in: 1 day
 
 overlay-build:
   # Use the Pinewall builder image we just built in the image-dep stage above
@@ -105,6 +112,7 @@ publish-artifacts:
     - |
       DATECODE=$(date "+%Y%m%d-%H%M")
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.iso "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-x86_64-${DATECODE}.iso"
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-rpi4-${DATECODE}.tar.gz"
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.apkovl.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall.apkovl.tar.gz"
   only:
     refs:
