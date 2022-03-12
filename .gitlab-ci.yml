@@ -37,9 +37,11 @@ image-build-rpi:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     # Build arm64 image
+    - docker buildx build --platform linux/arm64/v8 -f Dockerfile_image --push -t $CI_REGISTRY_IMAGE:rpibuild .
+    # Create output directory and then run the container we built, which will output our built Pinewall image into the output dir
     - mkdir -p output
-    - docker buildx build --platform linux/arm64/v8 -f Dockerfile_image -t $CI_REGISTRY_IMAGE:rpibuild .
     - docker run --platform linux/arm64/v8 --rm -v "$(pwd)/output:/tmp/output" $CI_REGISTRY_IMAGE:rpibuild
+    # Show the contents of our output directory, and then move the image so we can make it available as an artefact with GitLab CI
     - ls -lah output
     - mv -fv output/pinewall.tar.gz $CI_PROJECT_DIR/pinewall.tar.gz  # This is a replacement for our ENTRYPOINT that's tailored to running in our CI environment
   artifacts:
