@@ -1,11 +1,12 @@
 stages:
-  - builders
+  - prebuild
   - build
+  - pack
   - release
 
 image-dep:
-  image: docker:latest  # Use the official docker image
-  stage: builders
+  image: docker.io/library/docker:latest  # Use the official docker image
+  stage: prebuild
   services:
     - docker:dind
   before_script:
@@ -17,8 +18,8 @@ image-dep:
     - docker push "$CI_REGISTRY_IMAGE:imagebuild"
 
 overlay-dep:
-  image: docker:latest  # Use the official docker image
-  stage: builders
+  image: docker.io/library/docker:latest  # Use the official docker image
+  stage: prebuild
   services:
     - docker:dind
   before_script:
@@ -41,6 +42,43 @@ image-build-x86:
       # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work
       - pinewall.iso
     expire_in: 1 day
+
+image-build-rpi:
+  # Use the official docker image.
+  image: docker.io/library/docker:latest
+  stage: build
+  timeout: 3h  # Extend timeout as we're building for non-native architectures
+  services:
+    # Do not attempt to prepend this with 'docker.io/library/' as I think it's
+    # an internal identifier and not a container URL, so stuff breaks if we do.
+    - name: docker:dind
+      command: ["--experimental"]
+  before_script:
+    # Set up environment for multiarch builds
+
+    # Install buildx from docker/buildx-bin container so that it's available to DinD
+    # See: https://docs.docker.com/buildx/working-with-buildx/#install
+    - mkdir -p ~/.docker/cli-plugins
+    - docker run --name buildx docker.io/docker/buildx-bin /buildx --help  # This is just to create the container
+    - docker cp buildx:/buildx ~/.docker/cli-plugins/docker-buildx
+
+    # Register buildx qemu-user-static handlers
+    # See: https://github.com/multiarch/qemu-user-static
+    - docker run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes
+
+    # Create buildx builder
+    - docker buildx create --use
+
+    # Debug stuff
+    - docker version
+    - docker buildx version
+
+    # Login to the GitLab Registry
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    # Build arm64 image
+    - docker buildx build --platform linux/arm64/v8 -f Dockerfile_image --push -t $CI_REGISTRY_IMAGE:rpibuild .
+    #- docker run --rm -it --privileged -v "$(shell pwd)/output:/tmp/output:Z" --entrypoint ./imagepack.sh $CI_REGISTRY_IMAGE:rpibuild
 
 overlay-build:
   # Use the Pinewall builder image we just built in the image-dep stage above
