@@ -26,4 +26,4 @@ rpi:
 	# Copy Pi .tar.gz to output/ directory (can skip this step if we only want the packed .img and .img.gz files)
 	#sudo podman run --arch=arm64 --rm -it -v "$(shell pwd)/output:/tmp/output:Z" localhost/pinewall
 	# Build Pi actual image (.img) and copy to output/ directory
-	sudo podman run --arch=arm64 --rm -it --privileged -v "$(shell pwd)/output:/tmp/output:Z" --entrypoint ./imagepack.sh localhost/pinewall
+	#sudo podman run --arch=arm64 --rm -it --privileged -v "$(shell pwd)/output:/tmp/output:Z" --entrypoint ./imagepack.sh localhost/pinewall
