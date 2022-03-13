@@ -5,21 +5,15 @@ set -xe
 # with variables configured in a script at /settings.sh
 source /settings.sh
 
-# Autodiscover the image name that we built in the builder
-# step and copied into the container that will run this script
-# (We don't control this name)
-IMGNAME="alpine-$PROFILENAME-$ALPINETAG-$(uname -m)"
-
-# Set our destination image name to something better
+# Configure our destination image name
 # (Include the date we built the image)
-IMGDEST="alpine-$PROFILENAME-$ALPINETAG-$(date -I)-$(uname -m)"
+IMGNAME="alpine-$PROFILENAME-$ALPINETAG-$(date -I)-$(uname -m)"
 
-# Rename the image
-mv -fv "/tmp/images/$IMGNAME.tar.gz" "/tmp/images/$IMGDEST.tar.gz" 
+# Rename the image we built in the build step
+mv -fv "/tmp/images/pinewall.tar.gz" "/tmp/images/$IMGNAME.tar.gz"
 
 # Discover our new image path
-IMGNAME="$IMGDEST"
-IMGPATH="/tmp/images/$IMGDEST"
+IMGPATH="/tmp/images/$IMGNAME"
 
 # Create 1G image
 rm -v "$IMGPATH.img" || true
@@ -30,21 +24,25 @@ sfdisk "$IMGPATH.img" << EOF
 ,$((2048*255)),c
 EOF
 
-# Detach all loop devices (WARNING! - also affects the host!)
-losetup -d $(ls -1 /dev/loop?) || true
+# Decide on our loop device location
+PART_DEV="/tmp/dev/loop0"
 
-# Mount our loop device and then discover our loop device specifics
-# We run this in an Ubuntu container because in an Alpine container
-# the losetup binary is provided by Busybox and doesn't support the
-# --partscan flag, and for whatever reason the one that ships with
-# Fedora gives us this issue: https://github.com/RPi-Distro/pi-gen/issues/257
-LOOP_DEV="$(losetup --partscan --show --find ${IMGPATH}.img)"
-PART_DEV="$LOOP_DEV"p1
+# Detach loop device if we've already got one mounted from a previous run
+losetup -d $(ls -1 $PART_DEV) || true
 
-# Wait a bit before trying to format it
-sleep 2
+# Make a place for us to mount this inside /tmp/dev
+mkdir -p /tmp/dev
+
+# Mount the loop device to our new location with losetup
+mknod -m 0660 "$PART_DEV" b 7 0
+losetup --partscan "$PART_DEV" ${IMGPATH}.img
+
+# Print our loop devices for debug purposes
+ls -lah /tmp/dev
+losetup -a
 
 # Make a VFAT filesystem on the image
+# (try the mkfs command 3 times in case it doesn't work the first time)
 mkfs.vfat -F32 "$PART_DEV"
 fatlabel "$PART_DEV" PINEWALL
 
@@ -71,9 +69,13 @@ losetup -d "$LOOP_DEV"
 # Compress our final image into our output directory
 gzip -c "$IMGPATH.img" > "/tmp/output/$IMGNAME.img.gz"
 
+# Make a copy of the image with a basic name so we can use it in our CI run
+# TODO: Make this approach better
+cp -fv "/tmp/output/$IMGNAME.img.gz" "/tmp/output/pinewall.img.gz"
+
 # Move the uncompressed image over too, so we can keep it
 mv -fv "$IMGPATH.img" "/tmp/output/$IMGNAME.img"
 
-# Checksum the 3 files we now have in the output dir (we assume the *.tar.gz file is still here from our previous run)
+# Checksum our images
 cd /tmp/output
 sha256sum "$IMGNAME.img" "$IMGNAME.img.gz" > CHECKSUMS.sha256
