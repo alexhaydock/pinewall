@@ -24,19 +24,22 @@ sfdisk "$IMGPATH.img" << EOF
 ,$((2048*255)),c
 EOF
 
+# Decide on our loop device location
+PART_DEV="/tmp/dev/loop0"
+
 # Detach loop device if we've already got one mounted from a previous run
-losetup -d $(ls -1 /dev/loop0) || true
+losetup -d $(ls -1 $PART_DEV) || true
 
 # Make a place for us to mount this inside /tmp/dev
 mkdir -p /tmp/dev
 
 # Mount the loop device to our new location with losetup
-PART_DEV="/tmp/dev/loop0"
 mknod -m 0660 "$PART_DEV" b 7 0
-losetup -P "$PART_DEV" ${IMGPATH}.img
+losetup --partscan "$PART_DEV" ${IMGPATH}.img
 
 # Print our loop devices for debug purposes
 ls -lah /tmp/dev
+losetup -a
 
 # Make a VFAT filesystem on the image
 # (try the mkfs command 3 times in case it doesn't work the first time)

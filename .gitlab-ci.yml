@@ -21,12 +21,12 @@ image-build-rpi4:
     - podman run --arch=arm64 --rm --privileged -v "$(pwd)/output:/tmp/output" --entrypoint ./imagepack.sh $CI_REGISTRY_IMAGE:rpibuild
     # Show the contents of our output directory, and then move the image so we can make it available as an artefact with GitLab CI
     - ls -lah output
-    - mv -fv output/pinewall.img.gz $CI_PROJECT_DIR/pinewall.img.gz
+    #- mv -fv output/pinewall.img.gz $CI_PROJECT_DIR/pinewall.img.gz  # TODO
     - mv -fv output/pinewall.tar.gz $CI_PROJECT_DIR/pinewall.tar.gz
   artifacts:
     paths:
       # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command at the end of the script above for this to work
-      - pinewall.img.gz
+      #- pinewall.img.gz  # TODO
       - pinewall.tar.gz
     expire_in: 1 day
 
@@ -91,7 +91,7 @@ publish-artifacts:
     - |
       DATECODE=$(date "+%Y%m%d-%H%M")
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.iso "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-x86_64-${DATECODE}.iso"
-      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.img.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-rpi4-${DATECODE}.img.gz"
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-rpi4-${DATECODE}.tar.gz"
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.apkovl.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall.apkovl.tar.gz"
   only:
     refs:
