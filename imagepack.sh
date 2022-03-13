@@ -24,26 +24,23 @@ sfdisk "$IMGPATH.img" << EOF
 ,$((2048*255)),c
 EOF
 
-# Detach all loop devices (WARNING! - also affects the host!)
-losetup -d $(ls -1 /dev/loop?) || true
+# Detach loop device if we've already got one mounted from a previous run
+losetup -d $(ls -1 /dev/loop0) || true
 
-# Mount our loop device and then discover our loop device specifics
-# We run this in an Ubuntu container because in an Alpine container
-# the losetup binary is provided by Busybox and doesn't support the
-# --partscan flag, and for whatever reason the one that ships with
-# Fedora gives us this issue: https://github.com/RPi-Distro/pi-gen/issues/257
-LOOP_DEV="$(losetup --partscan --show --find ${IMGPATH}.img)"
-PART_DEV="$LOOP_DEV"p1
+# Make a place for us to mount this inside /tmp/dev
+mkdir -p /tmp/dev
 
-# Wait a bit before trying to format it
-sleep 2
+# Mount the loop device to our new location with losetup
+PART_DEV="/tmp/dev/loop0"
+mknod -m 0660 "$PART_DEV" b 7 0
+losetup -P "$PART_DEV" ${IMGPATH}.img
 
 # Print our loop devices for debug purposes
-ls -lah /dev/loop*
+ls -lah /tmp/dev
 
 # Make a VFAT filesystem on the image
 # (try the mkfs command 3 times in case it doesn't work the first time)
-mkfs.vfat -F32 "$PART_DEV" || mkfs.vfat -F32 "$PART_DEV"  || mkfs.vfat -F32 "$PART_DEV" 
+mkfs.vfat -F32 "$PART_DEV"
 fatlabel "$PART_DEV" PINEWALL
 
 # Make a directory and mount our FAT partition into it
