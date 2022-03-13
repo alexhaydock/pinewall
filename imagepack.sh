@@ -65,9 +65,13 @@ losetup -d "$LOOP_DEV"
 # Compress our final image into our output directory
 gzip -c "$IMGPATH.img" > "/tmp/output/$IMGNAME.img.gz"
 
+# Make a copy of the image with a basic name so we can use it in our CI run
+# TODO: Make this approach better
+cp -fv "/tmp/output/$IMGNAME.img.gz" "/tmp/output/pinewall.img.gz"
+
 # Move the uncompressed image over too, so we can keep it
 mv -fv "$IMGPATH.img" "/tmp/output/$IMGNAME.img"
 
-# Checksum the 3 files we now have in the output dir (we assume the *.tar.gz file is still here from our previous run)
+# Checksum our images
 cd /tmp/output
 sha256sum "$IMGNAME.img" "$IMGNAME.img.gz" > CHECKSUMS.sha256

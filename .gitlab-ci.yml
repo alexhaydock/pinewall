@@ -16,15 +16,19 @@ image-build-rpi-podman:
     # Build arm64 image
     - podman build --arch=arm64 -f Dockerfile_image -t $CI_REGISTRY_IMAGE:rpibuild .
     - podman push $CI_REGISTRY_IMAGE:rpibuild
-    # Create output directory and then run the container we built, which will output our built Pinewall image into the output dir
+    # Create output directory and then run the container we built, which will output our built Pinewall .tar.gz into the output dir
     - mkdir -p output
     - podman run --arch=arm64 --rm -v "$(pwd)/output:/tmp/output" $CI_REGISTRY_IMAGE:rpibuild
+    # Build the .tar.gz into an .img.gz (requires privileges to mount loop devices)
+    - podman run --arch=arm64 --rm --privileged -v "$(pwd)/output:/tmp/output" --entrypoint ./imagepack.sh $CI_REGISTRY_IMAGE:rpibuild
     # Show the contents of our output directory, and then move the image so we can make it available as an artefact with GitLab CI
     - ls -lah output
-    - mv -fv output/pinewall.tar.gz $CI_PROJECT_DIR/pinewall.tar.gz  # This is a replacement for our ENTRYPOINT that's tailored to running in our CI environment
+    - mv -fv output/pinewall.img.gz $CI_PROJECT_DIR/pinewall.img.gz
+    - mv -fv output/pinewall.tar.gz $CI_PROJECT_DIR/pinewall.tar.gz
   artifacts:
     paths:
-      # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work
+      # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command at the end of the script above for this to work
+      - pinewall.img.gz
       - pinewall.tar.gz
     expire_in: 1 day
 
