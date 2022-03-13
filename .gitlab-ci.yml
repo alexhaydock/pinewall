@@ -18,7 +18,7 @@ image-build-rpi4:
     - mkdir -p output
     - podman run --arch=arm64 --rm -v "$(pwd)/output:/tmp/output" $CI_REGISTRY_IMAGE:rpibuild
     # Build the .tar.gz into an .img.gz (requires privileges to mount loop devices)
-    - podman run --arch=arm64 --rm --privileged -v "$(pwd)/output:/tmp/output" --entrypoint ./imagepack.sh $CI_REGISTRY_IMAGE:rpibuild
+    #- podman run --arch=arm64 --rm --privileged -v "$(pwd)/output:/tmp/output" --entrypoint ./imagepack.sh $CI_REGISTRY_IMAGE:rpibuild  # TODO
     # Show the contents of our output directory, and then move the image so we can make it available as an artefact with GitLab CI
     - ls -lah output
     #- mv -fv output/pinewall.img.gz $CI_PROJECT_DIR/pinewall.img.gz  # TODO
