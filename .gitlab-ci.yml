@@ -43,7 +43,7 @@ image-build-x86:
     - podman push "$CI_REGISTRY_IMAGE:imagebuild"
     # Create output directory and then run the container we built, which will output our built Pinewall .iso into the output dir
     - mkdir -p output
-    - podman run --rm -v "$(pwd)/output:/tmp/output" $CI_REGISTRY_IMAGE:rpibuild
+    - podman run --rm -v "$(pwd)/output:/tmp/output" $CI_REGISTRY_IMAGE:imagebuild
     # Show the contents of our output directory, and then move the image so we can make it available as an artefact with GitLab CI
     - ls -lah output
     - mv -fv output/pinewall.iso $CI_PROJECT_DIR/pinewall.iso

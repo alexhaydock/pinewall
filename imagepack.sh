@@ -38,8 +38,12 @@ PART_DEV="$LOOP_DEV"p1
 # Wait a bit before trying to format it
 sleep 2
 
+# Print our loop devices for debug purposes
+ls -lah /dev/loop*
+
 # Make a VFAT filesystem on the image
-mkfs.vfat -F32 "$PART_DEV"
+# (try the mkfs command 3 times in case it doesn't work the first time)
+mkfs.vfat -F32 "$PART_DEV" || mkfs.vfat -F32 "$PART_DEV"  || mkfs.vfat -F32 "$PART_DEV" 
 fatlabel "$PART_DEV" PINEWALL
 
 # Make a directory and mount our FAT partition into it
