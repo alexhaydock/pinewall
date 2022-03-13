@@ -13,7 +13,7 @@ IMGNAME="alpine-$PROFILENAME-$ALPINETAG-$(date -I)-$(uname -m)"
 mv -fv "/tmp/images/pinewall.tar.gz" "/tmp/images/$IMGNAME.tar.gz"
 
 # Discover our new image path
-IMGPATH="/tmp/images/$IMGDEST"
+IMGPATH="/tmp/images/$IMGNAME"
 
 # Create 1G image
 rm -v "$IMGPATH.img" || true

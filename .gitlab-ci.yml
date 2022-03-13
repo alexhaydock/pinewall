@@ -3,12 +3,10 @@ stages:
   - prep
   - release
 
-image-build-rpi-podman:
-  # Use the official Podman image.
+image-build-rpi4:
   image: quay.io/podman/stable:latest
   stage: build
   timeout: 3h  # Extend timeout as we're building for non-native architectures
-  services:
   before_script:
     # Login to the GitLab Registry
     - podman login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -32,91 +30,40 @@ image-build-rpi-podman:
       - pinewall.tar.gz
     expire_in: 1 day
 
-# image-build-rpi-docker:
-#   # Use the official docker image.
-#   image: docker.io/library/docker:latest
-#   stage: build
-#   timeout: 3h  # Extend timeout as we're building for non-native architectures
-#   services:
-#     # Do not attempt to prepend this with 'docker.io/library/' as I think it's
-#     # an internal identifier and not a container URL, so stuff breaks if we do.
-#     - name: docker:dind
-#       command: ["--experimental"]
-#   before_script:
-#     # Set up environment for multiarch builds
-# 
-#     # Install buildx from docker/buildx-bin container so that it's available to DinD
-#     # See: https://docs.docker.com/buildx/working-with-buildx/#install
-#     - mkdir -p ~/.docker/cli-plugins
-#     - docker run --name buildx docker.io/docker/buildx-bin /buildx --help  # This is just to create the container
-#     - docker cp buildx:/buildx ~/.docker/cli-plugins/docker-buildx
-# 
-#     # Register buildx qemu-user-static handlers
-#     # See: https://github.com/multiarch/qemu-user-static
-#     - docker run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes
-# 
-#     # Create buildx builder
-#     - docker buildx create --use
-# 
-#     # Debug stuff
-#     - docker version
-#     - docker buildx version
-# 
-#     # Login to the GitLab Registry
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#   script:
-#     # Build arm64 image
-#     - docker buildx build --platform linux/arm64/v8 -f Dockerfile_image --push -t $CI_REGISTRY_IMAGE:rpibuild .
-#     # Create output directory and then run the container we built, which will output our built Pinewall image into the output dir
-#     - mkdir -p output
-#     - docker run --platform linux/arm64/v8 --rm -v "$(pwd)/output:/tmp/output" $CI_REGISTRY_IMAGE:rpibuild
-#     # Show the contents of our output directory, and then move the image so we can make it available as an artefact with GitLab CI
-#     - ls -lah output
-#     - mv -fv output/pinewall.tar.gz $CI_PROJECT_DIR/pinewall.tar.gz  # This is a replacement for our ENTRYPOINT that's tailored to running in our CI environment
-#   artifacts:
-#     paths:
-#       # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work
-#       - pinewall.tar.gz
-#     expire_in: 1 day
-
 image-build-x86:
-  image: docker.io/library/docker:latest  # Use the official docker image
+  image: quay.io/podman/stable:latest
   stage: build
-  services:
-    - docker:dind
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - podman login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   # Default branch leaves tag empty (= latest tag)
   # All other branches are tagged with the escaped branch name (commit ref slug)
   script:
-    - docker build --pull -f Dockerfile_image -t $CI_REGISTRY_IMAGE:imagebuild .
-    - docker push "$CI_REGISTRY_IMAGE:imagebuild"
-
-overlay-build-noarch:
-  image: docker.io/library/docker:latest  # Use the official docker image
-  stage: build
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-  # Default branch leaves tag empty (= latest tag)
-  # All other branches are tagged with the escaped branch name (commit ref slug)
-  script:
-    - docker build --pull -f Dockerfile_overlay -t $CI_REGISTRY_IMAGE:overlaybuild .
-    - docker push "$CI_REGISTRY_IMAGE:overlaybuild"
-
-image-prep-x86:
-  # Use the Pinewall builder image we just built in the image-dep stage above
-  image:
-    name: $CI_REGISTRY_IMAGE:imagebuild
-    entrypoint: [""]  # Override ENTRYPOINT so we just run the script below
-  stage: prep
-  script: mv -fv /tmp/images/pinewall.iso $CI_PROJECT_DIR/pinewall.iso  # This is a replacement for our ENTRYPOINT that's tailored to running in our CI environment
+    # Build x86_64 image
+    - podman build --pull -f Dockerfile_image -t $CI_REGISTRY_IMAGE:imagebuild .
+    - podman push "$CI_REGISTRY_IMAGE:imagebuild"
+    # Create output directory and then run the container we built, which will output our built Pinewall .iso into the output dir
+    - mkdir -p output
+    - podman run --rm -v "$(pwd)/output:/tmp/output" $CI_REGISTRY_IMAGE:rpibuild
+    # Show the contents of our output directory, and then move the image so we can make it available as an artefact with GitLab CI
+    - ls -lah output
+    - mv -fv output/pinewall.iso $CI_PROJECT_DIR/pinewall.iso
   artifacts:
     paths:
       # Relative to the project directory ($CI_PROJECT_DIR) so we need the mv command in the script above for this to work
       - pinewall.iso
     expire_in: 1 day
+
+overlay-build-noarch:
+  image: quay.io/podman/stable:latest
+  stage: build
+  before_script:
+    - podman login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  # Default branch leaves tag empty (= latest tag)
+  # All other branches are tagged with the escaped branch name (commit ref slug)
+  script:
+    # Build image on default arch (it doesn't matter here)
+    - podman build --pull -f Dockerfile_overlay -t $CI_REGISTRY_IMAGE:overlaybuild .
+    - podman push "$CI_REGISTRY_IMAGE:overlaybuild"
 
 overlay-prep-noarch:
   # Use the Pinewall builder image we just built in the image-dep stage above
@@ -133,18 +80,18 @@ overlay-prep-noarch:
     expire_in: 1 day
 
 publish-artifacts:
-  image: curlimages/curl:latest
+  image: docker.io/curlimages/curl:latest
   stage: release
   # Keep all the untracked files generated by the build stages since this is where our actual ISO and apkoverlay files ended up
   dependencies: 
-    - image-build-rpi-podman
-    - image-prep-x86
+    - image-build-rpi4
+    - image-build-x86
     - overlay-prep-noarch
   script:
     - |
       DATECODE=$(date "+%Y%m%d-%H%M")
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.iso "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-x86_64-${DATECODE}.iso"
-      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-rpi4-${DATECODE}.tar.gz"
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.img.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-rpi4-${DATECODE}.img.gz"
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.apkovl.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall.apkovl.tar.gz"
   only:
     refs:
