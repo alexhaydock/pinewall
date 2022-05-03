@@ -9,7 +9,7 @@ deps:
 overlay:
 	mkdir -p "$(shell pwd)/overlays"
 	podman build -f Dockerfile_overlay -t pinewall-overlay .
-	podman run --rm -it -v "$(shell pwd)/overlays:/tmp/output:Z" pinewall-overlay ./genapkovl-pinewall.sh
+	podman run --rm -it -v "$(shell pwd)/overlays:/tmp/overlays:Z" pinewall-overlay ./genapkovl-pinewall.sh
 
 x86:
 	mkdir -p "$(shell pwd)/output"
