@@ -52,6 +52,7 @@ profile_pinewall_rpi() {
     ppp-pppoe
     radvd
     rng-tools
+    squid
     tcpdump
     tftp-hpa
     unbound

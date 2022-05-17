@@ -67,6 +67,7 @@ This is more of a set of scripts and configs that allows you to compose a custom
 | Feature                             | Alpine Package        | Alpine Repo | Notes            |
 |-------------------------------------|---------------------  |-------------|------------------|
 | 802.1Q VLANs                        | ifupdown-ng           | main        | Working          |
+| Caching Proxy                       | squid                 | main        | Working          |
 | DHCP Reservations                   | dhcp-server-vanilla   | main        | Working          |
 | DHCP Server                         | dhcp-server-vanilla   | main        | Working          |
 | DNS Cache                           | unbound               | main        | Working          |
