@@ -156,22 +156,6 @@ copyfile root:root 0644 /tmp/etc/dhcp/dhcpd.conf "$tmp"/etc/dhcp/dhcpd.conf
 copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-ranges.conf "$tmp"/etc/dhcp/dhcpd-ranges.conf
 copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-reservations.conf "$tmp"/etc/dhcp/dhcpd-reservations.conf
 
-# Add Netboot.xyz PXE config
-mkdir -p "$tmp"/var/tftpboot
-copyfile root:root 0644 /tmp/var/tftpboot/netboot.xyz.kpxe "$tmp"/var/tftpboot/netboot.xyz.kpxe
-
-# Add Fedora PXE config
-mkdir -p "$tmp"/var/tftpboot
-copyfile root:root 0644 /tmp/var/tftpboot/grubx64.efi "$tmp"/var/tftpboot/grubx64.efi
-copyfile root:root 0644 /tmp/var/tftpboot/shimx64.efi "$tmp"/var/tftpboot/shimx64.efi
-mkdir -p "$tmp"/var/tftpboot/EFI/fedora
-copyfile root:root 0644 /tmp/var/tftpboot/EFI/fedora/grub.cfg "$tmp"/var/tftpboot/EFI/fedora/grub.cfg
-
-# Add Fedora 35 Kernel / Initramfs
-mkdir -p "$tmp"/var/tftpboot/f35
-copyfile root:root 0644 /tmp/var/tftpboot/f35/initrd.img "$tmp"/var/tftpboot/f35/initrd.img
-copyfile root:root 0644 /tmp/var/tftpboot/f35/vmlinuz "$tmp"/var/tftpboot/f35/vmlinuz
-
 # Add PPPoE settings
 mkdir -p "$tmp"/etc/ppp
 copyfile root:root 0600 /tmp/etc/ppp/chap-secrets "$tmp"/etc/ppp/chap-secrets
@@ -220,10 +204,8 @@ rc_add chronyd default
 rc_add crond default  # Previously disabled but I've re-enabled it since logrotate requires it
 rc_add dhcpd default
 rc_add dropbear default
-rc_add in.tftpd default
 rc_add iperf3 default
 rc_add radvd default
-rc_add squid default
 rc_add unbound default
 
 rc_add mount-ro shutdown

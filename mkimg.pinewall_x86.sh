@@ -36,9 +36,7 @@ profile_pinewall_x86() {
     ppp-pppoe
     radvd
     rng-tools
-    squid
     tcpdump
-    tftp-hpa
     unbound
     wireguard-tools-wg
     "

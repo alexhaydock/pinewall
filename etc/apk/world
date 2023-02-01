@@ -20,8 +20,6 @@ ppp-pppoe
 radvd
 raspberrypi
 rng-tools
-squid
 tcpdump
-tftp-hpa
 unbound
 wireguard-tools-wg

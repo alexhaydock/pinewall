@@ -67,9 +67,8 @@ This is more of a set of scripts and configs that allows you to compose a custom
 | Feature                             | Alpine Package        | Alpine Repo | Notes            |
 |-------------------------------------|---------------------  |-------------|------------------|
 | 802.1Q VLANs                        | ifupdown-ng           | main        | Working          |
-| Caching Proxy                       | squid                 | main        | Working          |
-| DHCP Reservations                   | dhcp-server-vanilla   | main        | Working          |
-| DHCP Server                         | dhcp-server-vanilla   | main        | Working          |
+| DHCPv4 Reservations                 | dhcp-server-vanilla   | main        | Working          |
+| DHCPv4 Server                       | dhcp-server-vanilla   | main        | Working          |
 | DNS Cache                           | unbound               | main        | Working          |
 | DNS Root Hints (for Unbound)        | dns-root-hints        | main        | Working          |
 | DNS Server (Upstream via DoT)       | unbound               | main        | Working          |
@@ -84,8 +83,6 @@ This is more of a set of scripts and configs that allows you to compose a custom
 | PPPoE integration with ifupdown     | ifupdown-ng-ppp       | main        | Working          |
 | Privilege Escalation                | doas                  | main        | Working          |
 | Remote Wireshark                    | tcpdump               | main        | Working          |
-| Static Port NAT for Games           | nftables              | main        | Working          |
-| TFTP Server (for PXE clients)       | tftp-hpa              | main        | Working          |
 | WireGuard integration with ifupdown | ifupdown-ng-wireguard | main        | Working          |
 | WireGuard VPN Server                | wireguard-tools-wg    | main        | Working          |
 | Log Shipping                        | Splunk UF             | not in repo | Not started      |
@@ -97,7 +94,7 @@ This is more of a set of scripts and configs that allows you to compose a custom
   * This is the main target platform, as it's what I actively deploy. This is where you can expect development, support, and prompt fixes for issues.
   * I will likely try and support new Pi revisions as they release, but nothing before the Pi 4 will be supported as previous revsions do not use a proper ethernet controller and are not capable of routing at gigabit speeds.
 * Generic x86_64 PC
-  * Supported only on a best-effort basis.
+  * Supported only on a best-effort basis and no longer automatically built by the GitLab CI processes.
 
 
 ## Every package added on top of the Alpine "Standard" profile by Pinewall
@@ -124,7 +121,6 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 | ppp-pppoe             | main      | core                  |
 | radvd                 | main      | core                  |
 | tcpdump               | main      | optional              |
-| tftp-hpa              | main      | optional              |
 | unbound               | main      | core                  |
 | wireguard-tools-wg    | main      | optional              |
 
