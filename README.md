@@ -141,62 +141,12 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 
 ## How do I build this?
 
-To build the Raspberry Pi filesystem content (`.tar.gz`) as well as ready-to-use disk image (`.img.gz`):
+To build the Raspberry Pi image (`pinewall.img`) run:
 ```bash
-make rpi
+make image
 ```
-
-To build the Alpine image, seeded with the latest packages (you will need `podman` installed):
-```bash
-make x86
-```
-
-You will then find an ISO image that can be booted either from disc or USB in the `output/` directory.
-
-And to build the APK overlay based on `genapkovl-pinewall.sh`:
-```bash
-make overlay
-```
-
-You will then find the overlay, ready to copy to a USB stick in the `overlay/` directory.
 
 
 ## How do I use this in production?
 
-Currently, I am using this in Alpine's RAM-based diskless mode. I generate an x86 based Alpine ISO with my custom packages by running `make x86` in the directory for this repo. This will produce an ISO image with all of the additional packages required to make Pinewall work.
-
-I write this to one USB stick using a standard tool like `dd` or `GNOME Disks`, and boot it on an x86 system to be used as a firewall.
-
-At the same time, I also format a second USB stick with the following specs:
-* MBR Disk Layout
-* One Partition
-* EXT4 formatted
-* Partition label is `PINECONF` (important! - we use this as a reference in /etc/fstab to allow `lbu commit` to work)
-
-I generate an APK overlay with `make overlay`, and then copy the generated overlay as a file to the `PINECONF` labeled USB stick.
-
-From there, I simply put both sticks into the system I want to use as the router, and I boot it up. The immutable boot environment loads from one stick, and the config loads from the other.
-
-When we make changes inside the live environment, we can save those changes to the secondary stick using:
-```
-doas lbu commit -dv
-```
-
-Until we write our changes to the disk using the above command, **they will not be preserved**. This is in-line with how a lot of networking equipment works because, this way, if you make a change that locks you out of the system, power-cycling the device should get you back to the state you were in before, as the change will not have been committed to disk.
-
-In our case, this command will commit changes to config files to the second USB, which then get loaded on subsequent boots as long as the second USB disk remains connected.
-
-This approach gives us a few benefits:
-* A power loss event has a very minimal chance of breaking anything. The disk is only even mounted read-only when we're running the `lbu_commit` command.
-* User-error when changing configs has a minimal chance of causing complete lockout. Power-cycling will load the last saved config from disk.
-* Running entirely from RAM reduces disk wear and can lower the chance of disk failure.
-* To conduct package upgrades or system upgrades, we're able to spin a whole new Pinewall ISO, write it to yet another USB disk and quickly swap it with the disk that has the booted Pinewall ISO on it.
-  * This is basically magic because if something breaks, we can just put the older stick back in and everything is back exactly how it was (and working!)
-  * And this is basically as close as we're going to get to the container-based microservice idea of machines as "cattle". We don't even update our host, we just spin a whole new base image and deploy that - preserving only our configs in the APKOVERLAY stored on our second USB stick.
-
-And some downsides:
-* Streaming data, like logs and bandwidth monitoring data also only gets preserved when you issue an `lbu_commit`, so in a power-loss event this might get lost as it might be a while since you last ran that command.
-* We can add new packages on-the-fly if we like - they'll be installed into RAM. **But we need to be careful!** If we want that package to be available again on next boot, we need to spin a new ISO which includes it, otherwise it won't work properly. It will exist in the `/etc/apk/world` file we committed with `lbu_commit`, but Alpine won't be able to actually load and install it during boot, so it might behave unpredictably.
-* Some of the above might be mitigated by using Alpine's [Local APK Cache](https://wiki.alpinelinux.org/wiki/Local_APK_cache) feature, but I'm avoiding this deliberately as it adds complexity, and I really like the image-based deployment pattern where I spin a whole new image and replace the stick physically for upgrades.
-
-All things considered I think, for a network appliance deployment, the benefits of running diskless and committing changes to disk only when needed far outweigh the drawbacks that come with needing to spin a new ISO periodically for any packageset changes.
+_Update to this section coming soon._
