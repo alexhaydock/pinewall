@@ -1,3 +1,4 @@
+---
 stages:
   - build
   - release
@@ -10,7 +11,7 @@ build:
     - podman login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - podman build --arch=arm64 -t $CI_REGISTRY_IMAGE:rpibuild .
-    -	podman create --name pinewall $CI_REGISTRY_IMAGE:rpibuild
+    - podman create --name pinewall $CI_REGISTRY_IMAGE:rpibuild
     - podman cp pinewall:/opt/pinewall.img pinewall.img
   artifacts:
     paths:
@@ -20,7 +21,7 @@ build:
 release:
   image: docker.io/curlimages/curl:latest
   stage: release
-  dependencies: 
+  dependencies:
     - build
   script:
     - |
