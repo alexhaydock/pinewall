@@ -105,13 +105,25 @@ COPY usercfg.txt /opt/pinewall/usercfg.txt
 
 # Build a FAT32 image with our overlay and the contents of our archive
 RUN dd if=/dev/zero of=/opt/pinewall.img bs=1M count=128
+
+# Create FAT32 filesystem on our image
 RUN mformat -i /opt/pinewall.img ::
+
+# Copy our image contents to the the image
 RUN mcopy -si /opt/pinewall.img /opt/pinewall/* ::
+
+# Set disk image label for PINEWALL
+RUN mlabel -i ./pinewall.img ::PINEWALL
+
+# Print the directory listing for the image we've built
 RUN mdir -i /opt/pinewall.img ::
+
+# Compress our image since otherwise a lot of it is just unallocated blocks
+RUN gzip -9 /opt/pinewall.img
 
 # --------------------------------------------- #
 
 # We don't set an entrypoint in this container as our preferred method for
 # retrieving the built image from it is to use `podman create` to create an
-# instance of the container, and then `podman cp` to copy /tmp/pinewall.img
+# instance of the container, and then `podman cp` to copy /tmp/pinewall.img.gz
 # to the host machine.

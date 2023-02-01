@@ -13,10 +13,10 @@ overlay:
 
 image:
     # Remove existing image in local dir
-	rm pinewall.img || true
+	rm pinewall.img.gz || true
 	# Build Pi image
 	podman build --arch=arm64 -t localhost/pinewall .
 	# Copy image to host machine
 	podman rm pinewall || true
 	podman create --name pinewall localhost/pinewall
-	podman cp pinewall:/opt/pinewall.img pinewall.img
+	podman cp pinewall:/opt/pinewall.img.gz pinewall.img.gz

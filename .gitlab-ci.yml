@@ -12,10 +12,10 @@ build:
   script:
     - podman build --arch=arm64 -t $CI_REGISTRY_IMAGE:rpibuild .
     - podman create --name pinewall $CI_REGISTRY_IMAGE:rpibuild
-    - podman cp pinewall:/opt/pinewall.img pinewall.img
+    - podman cp pinewall:/opt/pinewall.img.gz pinewall.img.gz
   artifacts:
     paths:
-      - pinewall.img
+      - pinewall.img.gz
     expire_in: 1 day
 
 release:
@@ -26,7 +26,7 @@ release:
   script:
     - |
       DATECODE=$(date "+%Y%m%d-%H%M")
-      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.img "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-rpi4-${DATECODE}.img"
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.img.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Pinewall/${DATECODE}/pinewall-rpi4-${DATECODE}.img.gz"
   only:
     refs:
       - master  # Only run the actual release stage if we're running on the master branch (stops us accidentally releasing other branches)

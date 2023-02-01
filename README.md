@@ -140,11 +140,23 @@ Below you can find a list of every package installed on top of the Alpine "Stand
 
 
 ## How do I build this?
+Install Podman and the `qemu-user-static` to allow for cross-compilation (assuming you're not already running an `aarch64` system):
+```sh
+sudo apt install podman qemu-user-static
+```
 
-To build the Raspberry Pi image (`pinewall.img`) run:
+To build the Raspberry Pi image (`pinewall.img.gz`) run:
 ```bash
 make image
 ```
+
+This will output the built `pinewall.img.gz` into the current directory.
+
+
+## How can I update this for my own uses?
+
+_Update to this section coming soon._
+
 
 
 ## How do I use this in production?
