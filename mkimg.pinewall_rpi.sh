@@ -45,6 +45,7 @@ profile_pinewall_rpi() {
     ifupdown-ng-ppp
     ifupdown-ng-wireguard
     iperf3
+    logrotate
     nano
     nftables
     nload

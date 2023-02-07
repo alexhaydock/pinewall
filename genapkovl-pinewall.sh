@@ -129,9 +129,14 @@ copyfile root:root 0644 /tmp/etc/chrony/chrony.conf "$tmp"/etc/chrony/chrony.con
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/resolv.conf "$tmp"/etc/resolv.conf
 
-# Add DNS server config
+# Add Unbound DNS server config
 mkdir -p "$tmp"/etc/unbound
 copyfile root:root 0644 /tmp/etc/unbound/unbound.conf "$tmp"/etc/unbound/unbound.conf
+copyfile root:root 0644 /tmp/etc/unbound/adblock.list "$tmp"/etc/unbound/adblock.list
+
+# Add Pinehole adblock list downloader for Unbound
+mkdir -p "$tmp"/etc/periodic/daily
+copyfile root:root 0744 /tmp/etc/periodic/daily/pinehole.sh "$tmp"/etc/periodic/daily/pinehole.sh
 
 # Add IPv6 radvd config
 # It seems like radvd is quite particular about making sure its config is not world writable

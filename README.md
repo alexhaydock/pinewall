@@ -73,9 +73,11 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | ifupdown-ng-ppp       | main | PPP connection integration with /etc/network/interfaces                                |
 | ifupdown-ng-wireguard | main | WireGuard connection integration with /etc/network/interfaces                          |
 | iperf3                | main | Network performance testing                                                            |
+| logrotate             | main | Allows for automatic rotation of system logs                                           |
 | nano                  | main | Text editor                                                                            |
 | nftables              | main | Firewall                                                                               |
 | nload                 | main | Network throughput viewer                                                              |
+| pinehole.sh           | N/A  | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
 | ppp-pppoe             | main | The main PPP daemon for dialing PPPoE connections                                      |
 | radvd                 | main | IPv6 Router Advertisement daemon                                                       |
 | raspberrypi           | main | Raspberry Pi support tools and scripts                                                 |

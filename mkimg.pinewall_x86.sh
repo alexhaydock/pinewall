@@ -29,6 +29,7 @@ profile_pinewall_x86() {
     ifupdown-ng-ppp
     ifupdown-ng-wireguard
     iperf3
+    logrotate
     nano
     nftables
     nload
