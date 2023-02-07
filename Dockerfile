@@ -6,8 +6,6 @@ FROM docker.io/library/alpine:edge as builder
 RUN apk update
 
 # Install build deps
-# We still need to layer the sudo package into this builder image
-# instead of doas, as abuild-keygen expects it to be there
 RUN apk add \
   alpine-conf \
   alpine-sdk \
@@ -19,20 +17,12 @@ RUN apk add \
   grub-efi \
   mtools \
   squashfs-tools \
-  sudo \
   tzdata \
   xorriso
 
-# We can't use the build/builder user that most examples use because
-# then it can't access the pseudo device that xorriso creates during
-# the ISO build process:
-#     https://stackoverflow.com/a/58297342
-RUN addgroup root abuild
-
+# Create build directory
 RUN mkdir /tmp/abuild
 WORKDIR /tmp/abuild
-
-RUN abuild-keygen -i -a -n
 
 # Clone the aports repo for our specific branch
 # If building from Alpine Edge, we need to use the master branch
@@ -45,6 +35,21 @@ COPY mkimg.pinewall_rpi.sh /tmp/abuild/aports/scripts/mkimg.pinewall_rpi.sh
 RUN chmod +x /tmp/abuild/aports/scripts/mkimage.sh
 RUN chmod +x /tmp/abuild/aports/scripts/mkimg.pinewall_rpi.sh
 
+# Add unprivileged builder user and change ownership of build directory
+# so we can launch the mkimage process unprivileged
+RUN adduser builder --disabled-password
+RUN addgroup builder abuild
+RUN chown -R builder:abuild /tmp/abuild
+
+# Become builder user and generate our build key
+# Most examples pass the -i flag to abuild-keygen, but that just installs
+# our generated keys into /etc/apk/keys. We don't need to do that since we're
+# not actually going to be installing any packages we've built inside this container
+# (or even building any packages in the first place really, I think this is just a pre-req
+# to running abuild-based processes).
+USER builder
+RUN abuild-keygen -a -n
+
 # Enter the script directory
 WORKDIR /tmp/abuild/aports/scripts
 
@@ -55,6 +60,7 @@ RUN mkdir /tmp/images
 RUN ./mkimage.sh --tag edge --outdir /tmp/images --workdir /tmp/cache --arch aarch64 --repository https://dl-cdn.alpinelinux.org/alpine/edge/main --profile pinewall_rpi
 
 # List the contents of our image directory
+# (should show our built image if everything worked)
 RUN ls -lah /tmp/images
 
 # --------------------------------------------- #

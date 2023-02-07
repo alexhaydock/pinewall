@@ -12,22 +12,17 @@
 ```
 
 ## Introduction
-
 There's some controversy right now (March 2021) around Netgate and pfSense and I have been looking to explore alternatives for a while. I could jump ship to OPNSense, but it's based on FreeBSD just like pfSense and [FreeBSD's code quality is being called into question too](https://arstechnica.com/gadgets/2021/03/buffer-overruns-license-violations-and-bad-code-freebsd-13s-close-call/) at the moment.
 
 Linux also seems to have the better networking stack these days (which Netgate seem to be well aware of as they base [their extremely high performance TNSR router](https://www.tnsr.com/) platform on Linux rather than BSD). You also get to [play with eBPF and XDP Hardware Offload](https://blog.cloudflare.com/how-to-drop-10-million-packets/) if you're lucky enough to have compatible gear.
 
-If I had to pick a proper vendor-supported Linux-based routing platform to use, I would pick [VyOS](https://vyos.io/), the still-developed OSS fork of Brocade's Vyatta. But hey -- a home or SoHO firewall/gateway device is actually pretty a pretty simple set of features -- why not just build one from scratch? That idea became this project.
-
+If I had to pick a proper vendor-supported Linux-based routing platform to use, I would probably pick [VyOS](https://vyos.io/), the still-developed OSS fork of Brocade's Vyatta. But hey -- a home or SoHO firewall/gateway device is actually pretty a pretty simple set of features -- why not just build one from scratch? That idea became this project.
 
 ## Official Repository Links
-
 * https://gitlab.com/pinewall/pinewall
 * https://github.com/alexhaydock/pinewall
 
-
 ## What's the goal?
-
 The core goals of this project are simplicity and minimalism. I want it to be my home router/gateway and nothing more.
 
 At its core, a home router/firewall/gateway doesn't really do much. It routes, it NATs, and it does DHCP. That's about it. There are some other neat features you can add, and I have a feature matrix further down in this README, but those are the key features, and when your project has so few "moving parts", it makes sense to start from a very minimal state -- and that's where Alpine Linux comes in.
@@ -41,105 +36,79 @@ In brief, I want this project to:
 * Be minimal and simple to manage
 * Be easy to back up and migrate config
 * Be crash safe and resiliant to power loss (needs to run from RAM)
-* Have full IPv6 support
-
+* Have first-class IPv6 support
 
 ## Who is this for?
-
 Me.
 
 This project is designed to be minimal and simple. The downside of this is that it may be slightly rigid in terms of conforming to my needs. If I don't need something, I didn't include it.
+
+Pinewall is also quite opinionated. It is designed from the ground-up to treat IPv6 as the primary target version of IP, with IPv4 support being provided on a best-effort basis. For this reason, many technologies associated with IPv4 are mostly ignored here (Inbound NAT Port Forwarding, Static Port Outbound NAT, UPnP). Pinewall is fully geared-up to support IPv6-only and IPv6-mostly networks, as this is how I deploy it in production.
 
 That said, I've tried my best to document everything as thoroughly as possible and I'm using this public repo as my actual development workspace for the live version of Pinewall that I'm running in production at home. The hope there is that the code and processes in use here may benefit others who wish to opt for a similar setup.
 
 I'm also very willing to help out generally where I can if people get stuck (feel free to open issues) or want to try and implement something new on top of this. The best way to learn is through experimenting and trying to solve problems. I'm also open to sensible suggestions via PR that make the project a bit more adaptable to the needs of others (but without compromising the goals of simplicity and minimalism!).
 
-
 ## Is this a custom distro / is this a fork of Alpine?
-
 Not really.
 
-This is more of a set of scripts and configs that allows you to compose a custom Alpine Linux image that contains all the additional packages needed to run a Linux-based home router. This is paired with a second set of scripts and configs that allow us to build a filesystem overlay that our custom ISO will load into RAM while booting. Most of this is built around the native functionality provided by Alpine's [local backup utility](https://wiki.alpinelinux.org/wiki/Alpine_local_backup) - I've just tailored it specifically towards being a home router.
+This is more of a set of scripts and configs that allows you to compose a custom Alpine Linux image that contains all the additional packages needed to run a Linux-based home router on a Raspberry Pi. Most of this is built around the native 'overlay' functionality provided by Alpine's [local backup utility](https://wiki.alpinelinux.org/wiki/Alpine_local_backup) - I've just tailored it specifically towards being a home router.
 
-
-## Feature matrix
-
-| Feature                             | Alpine Package        | Alpine Repo | Notes            |
-|-------------------------------------|---------------------  |-------------|------------------|
-| 802.1Q VLANs                        | ifupdown-ng           | main        | Working          |
-| DHCPv4 Reservations                 | dhcp-server-vanilla   | main        | Working          |
-| DHCPv4 Server                       | dhcp-server-vanilla   | main        | Working          |
-| DNS Cache                           | unbound               | main        | Working          |
-| DNS Root Hints (for Unbound)        | dns-root-hints        | main        | Working          |
-| DNS Server (Upstream via DoT)       | unbound               | main        | Working          |
-| DNSSEC                              | unbound               | main        | Working          |
-| Firewall                            | nftables              | main        | Working          |
-| IPv6 Router Advertisements          | radvd                 | main        | Working          |
-| mDNS Proxy                          | avahi, dbus           | main        | Working          |
-| NTP Server                          | chronyd               | main        | Working          |
-| Performance Testing                 | iperf3                | main        | Working          |
-| Port Forwarding (Destination NAT)   | nftables              | main        | Working          |
-| PPPoE Connectivity                  | ppp-pppoe             | main        | Working          |
-| PPPoE integration with ifupdown     | ifupdown-ng-ppp       | main        | Working          |
-| Privilege Escalation                | doas                  | main        | Working          |
-| Remote Wireshark                    | tcpdump               | main        | Working          |
-| WireGuard integration with ifupdown | ifupdown-ng-wireguard | main        | Working          |
-| WireGuard VPN Server                | wireguard-tools-wg    | main        | Working          |
-| Log Shipping                        | Splunk UF             | not in repo | Not started      |
-
-
-## Supported Deployments
-
+## What hardware does Pinewall support?
 * Raspberry Pi 4 / Compute Module 4
   * This is the main target platform, as it's what I actively deploy. This is where you can expect development, support, and prompt fixes for issues.
   * I will likely try and support new Pi revisions as they release, but nothing before the Pi 4 will be supported as previous revsions do not use a proper ethernet controller and are not capable of routing at gigabit speeds.
 * Generic x86_64 PC
   * Supported only on a best-effort basis and no longer automatically built by the GitLab CI processes.
 
+## What packages does Pinewall add on top of a standard Alpine Linux base?
+Here you can find a list of every package that Pinewall installs on top of the Alpine "Standard" profile, along with the justifcation for each package's presence.
 
-## Every package added on top of the Alpine "Standard" profile by Pinewall
+You can find these packages defined in the `apks` variable inside either `mkimg.pinewall_x86.sh`, or `mkimg.pinewall_rpi.sh`.
 
-Below you can find a list of every package installed on top of the Alpine "Standard" profile. You can find these defined the `apks` variable inside either `mkimg.pinewall_x86.sh`, or `mkimg.pinewall_rpi.sh`.
+| Package               | Repo | Functionality                                                                          |
+|-----------------------|------|----------------------------------------------------------------------------------------|
+| avahi                 | main | Multicast DNS proxy for relaying mDNS trafic across VLANS                              |
+| chrony                | main | NTP Client & Server                                                                    |
+| conntrack-tools       | main | Allows introspecting the kernel's conntrack table(s)                                   |
+| dbus                  | main | Dependency (of avahi)                                                                  |
+| dhcp-server-vanilla   | main | ISC DCHPv4 Server                                                                      |
+| dns-root-hints        | main | Provides DNSSEC root keys for Unbound                                                  |
+| doas                  | main | Privilege escalation, similar to sudo                                                  |
+| dropbear              | main | Minimal SSH server, similar to OpenSSH                                                 |
+| ethtool               | main | Allows inspecting/configuring physical network interfaces                              |
+| htop                  | main | System performance viewer                                                              |
+| ifupdown-ng-ppp       | main | PPP connection integration with /etc/network/interfaces                                |
+| ifupdown-ng-wireguard | main | WireGuard connection integration with /etc/network/interfaces                          |
+| iperf3                | main | Network performance testing                                                            |
+| nano                  | main | Text editor                                                                            |
+| nftables              | main | Firewall                                                                               |
+| nload                 | main | Network throughput viewer                                                              |
+| ppp-pppoe             | main | The main PPP daemon for dialing PPPoE connections                                      |
+| radvd                 | main | IPv6 Router Advertisement daemon                                                       |
+| raspberrypi           | main | Raspberry Pi support tools and scripts                                                 |
+| rng-tools             | main | Random number generator daemon, especially useful for Raspberry Pi systems             |
+| tcpdump               | main | Packet capturing                                                                       |
+| unbound               | main | Recursive DNS resolver (with caching and filtering)                                    |
+| wireguard-tools-wg    | main | Just enough WireGuard to set up WireGuard connections without also pulling in iptables |
 
-| Package             | Repo      | Functionality         |
-|---------------------|-----------|-----------------------|
-| avahi                 | main      | optional              |
-| chrony                | main      | optional              |
-| conntrack-tools       | main      | optional              |
-| dbus                  | main      | dependency (of avahi) |
-| dhcp-server-vanilla   | main      | core                  |
-| dns-root-hints        | main      | core                  |
-| doas                  | main      | core                  |
-| ethtool               | main      | optional              |
-| htop                  | main      | optional              |
-| ifupdown-ng-ppp       | main      | core                  |
-| ifupdown-ng-wireguard | main      | optional              |
-| iperf3                | main      | optional              |
-| nano                  | main      | optional              |
-| nftables              | main      | core                  |
-| nload                 | main      | optional              |
-| ppp-pppoe             | main      | core                  |
-| radvd                 | main      | core                  |
-| tcpdump               | main      | optional              |
-| unbound               | main      | core                  |
-| wireguard-tools-wg    | main      | optional              |
-
-
-## What doesn't work?
-
+## What doesn't work yet?
 * IPv6 ruleset for nftables
-  * This definitely needs some work. I have a separate private repo that has my current live config in it and I have the rules working there, but the ones in this repo definitely need updating with the things I've learned about making IPv6 work well in a home network.
-  * One resource I'd recommend for now which shows off a good IPv6 nftables ruleset would be [this post on the Alpine wiki](https://wiki.alpinelinux.org/wiki/Linux_Router_with_VPN_on_a_Raspberry_Pi_(IPv6)#nftables).
+  * My production config for this is very functional, but I'm fully aware that the one in this repository needs a lot of work to be functional and useful. For obvious reasons, the configs in this repo are just examples rather than the full configs I run in production complete with my entire firewall layout and PPPoE passwords and such. Regrettably, this means they get a lot less attention than the ones I've actually got running in production.
+  * For the time being, I'd recommend for now which shows off a good IPv6 nftables ruleset would be [this post on the Alpine wiki](https://wiki.alpinelinux.org/wiki/Linux_Router_with_VPN_on_a_Raspberry_Pi_(IPv6)#nftables).
 * DHCPv6
-  * Currently I'm using SLAAC for IPv6 address configuration on my VLANs and not DHCPv6 or DHCPv6-PD. I statically assign `/64` prefixes for each of my VLANs in my ISP's control panel and manually add these to the `radvd.conf` file to be advertised on those interfaces via Router Advertisements.
-  * I don't really have a need for DHCPv6 with this setup, but if I find a need in the future I will find a way to fit it into the current design.
-* UPnP
-  * I thought about this but ended up making a conscious choice not to support it. STUN and other methods of NAT punching offer a much more reliable service for games etc. and a lot don't even bother with UPnP anymore. Plus it's a security risk.
+  * Pinewall does not currently support DHCPv6 as either a server or a client.
+  * I'm fortunate enough to have a very forward-thinking ISP (shout-out to [AAISP](https://www.aa.net.uk/) in the UK) who routes a static IPv6 `/48` to me. I just pick static `/64` ranges from this allocation and assign them to my VLANs, rather than needing to deal with prefix delegation from upstream. For this reason, I haven't bothered including it in Pinewall.
 * Log monitoring and alerting
-  * I haven't really decided on my solution for this yet, but it'll probably end up being the Splunk Universal Forwarder feeding the logs from `/var/log` into a remote Splunk Enterprise instance.
+  * I haven't really decided on my solution for this yet, but I'll probably end up using rsyslog with some janky output formatting to feed directly to a Splunk HTTP Event Collector (HEC) endpoint.
 
+## Why Alpine Edge rather than the latest stable release?
+This is mostly down to the fact that the Linux kernel package for Raspberry Pi seems to update more rapidly [TODO]
 
-## How do I build this?
+## How can I download this?
+You can download built Raspberry Pi 4 images from the Pinewall GitLab Package Registry [here](https://gitlab.com/pinewall/pinewall/-/packages), where they are built weekly on Saturdays by a scheduled CI/CD run.
+
+## How can I build this locally instead?
 Install Podman and the `qemu-user-static` to allow for cross-compilation (assuming you're not already running an `aarch64` system):
 ```sh
 sudo apt install podman qemu-user-static
@@ -152,13 +121,12 @@ make image
 
 This will output the built `pinewall.img.gz` into the current directory.
 
-
-## How can I update this for my own uses?
-
+## How can I use this in production?
 _Update to this section coming soon._
 
+Well the way _I_ run this [TODO]
 
-
-## How do I use this in production?
-
+## How can I add my own configs to this?
 _Update to this section coming soon._
+
+Fork it [TODO]
