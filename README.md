@@ -103,7 +103,7 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
   * I haven't really decided on my solution for this yet, but I'll probably end up using rsyslog with some janky output formatting to feed directly to a Splunk HTTP Event Collector (HEC) endpoint.
 
 ## Why Alpine Edge rather than the latest stable release?
-This is mostly down to the fact that the Linux kernel package for Raspberry Pi seems to update more rapidly [TODO]
+This is mostly down to the fact that the Linux kernel package for Raspberry Pi seems to update more rapidly than in the stable branch, though I cant say that this is entirely consistent. But I've had no problems so far running with Edge so I've decided to stick with that approach.
 
 ## How can I download this?
 You can download built Raspberry Pi 4 images from the Pinewall GitLab Package Registry [here](https://gitlab.com/pinewall/pinewall/-/packages), where they are built weekly on Saturdays by a scheduled CI/CD run.
@@ -122,11 +122,15 @@ make image
 This will output the built `pinewall.img.gz` into the current directory.
 
 ## How can I use this in production?
-_Update to this section coming soon._
+Well the way _I_ run this in production is to use the exact images that the GitLab CI process builds and pushes to the Package Registry. I use Raspberry Pi Imager to write the `pinewall.img.gz` file directly to a microSD card.
 
-Well the way _I_ run this [TODO]
+I then have a second repo which contains a fork of the contents of the `config/` directory found in this repo, where I can add things that I can't publish to this repo, like my WireGuard host keys and config, and my PPP dialing passwords. That repo uses GitLab CI to build an APKOVERLAY file (using a similar `genapkovl-pinewall.sh` script to the one in this repo). I simply drop the built APKOVERLAY onto the microSD card I just flashed the fresh Pinewall image to and put it in my Raspberry Pi.
+
+I keep a rotation of 2 microSD cards going for this, meaning that I never make changes to the current running deployment. Changes are always written to a new microSD card, and then I swap in the new card, taking the old card out. This means that if a new Pinewall image (or a new config change I've made in the overlay) causes a problem, I always have a way to roll back to the known-working config simply by putting in the older microSD card.
+
+Similarly, I make an effort to make all configs as generic as possible so that they're not specific to the Pi's hardware (so no using IPv6 EUI-64 addresses that depend on the hardware MAC address, or other such things). This means that if my router/gateway fails, I can simply put the microSD card into a different Raspberry Pi 4 and boot it up and _boom_ - enterprise(-ish) redundancy at a fraction of th cost.
+
+This is about as close as I can get to atomic container-style updates, and treating machines as cattle rather than pets, with a home-grown firewall/gateway solution.
 
 ## How can I add my own configs to this?
-_Update to this section coming soon._
-
-Fork it [TODO]
+The easiest method will just be to fork it here on GitLab and start changing things in the `config/` directory as you please. As a bonus, if you fork it here you'll get the benfits of the automatic CI/CD processes building images for you - even if you're using a free GitLab.com account. Try it out!
