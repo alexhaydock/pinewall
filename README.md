@@ -1,15 +1,7 @@
-```
+![Pinewall Logo](logo.png)
 
-     /\ /\          ____  _                          _ _ 
-    // \  \        |  _ \(_)_ __   _____      ____ _| | |
-   //   \  \       | |_) | | '_ \ / _ \ \ /\ / / _' | | |
-  ///    \  \      |  __/| | | | |  __/\ V  V / (_| | | |
-  //      \  \     |_|   |_|_| |_|\___| \_/\_/ \__'_|_|_|
-           \
-  
-       A minimal Alpine Linux home Firewall / Router.
-
-```
+# Pinewall
+A minimal Alpine Linux home firewall / router.
 
 ## Introduction
 There's some controversy right now (March 2021) around Netgate and pfSense and I have been looking to explore alternatives for a while. I could jump ship to OPNSense, but it's based on FreeBSD just like pfSense and [FreeBSD's code quality is being called into question too](https://arstechnica.com/gadgets/2021/03/buffer-overruns-license-violations-and-bad-code-freebsd-13s-close-call/) at the moment.
@@ -126,11 +118,11 @@ Well the way _I_ run this in production is to use the exact images that the GitL
 
 I then have a second repo which contains a fork of the contents of the `config/` directory found in this repo, where I can add things that I can't publish to this repo, like my WireGuard host keys and config, and my PPP dialing passwords. That repo uses GitLab CI to build an APKOVERLAY file (using a similar `genapkovl-pinewall.sh` script to the one in this repo). I simply drop the built APKOVERLAY onto the microSD card I just flashed the fresh Pinewall image to and put it in my Raspberry Pi.
 
-I keep a rotation of 2 microSD cards going for this, meaning that I never make changes to the current running deployment. Changes are always written to a new microSD card, and then I swap in the new card, taking the old card out. This means that if a new Pinewall image (or a new config change I've made in the overlay) causes a problem, I always have a way to roll back to the known-working config simply by putting in the older microSD card.
+I keep a rotation of 2 microSD cards going for this, meaning that I never make changes to the current running deployment. Changes are always written to a new microSD card, and then I swap in the new card, taking the old card out. This means that if a new Pinewall image (or a new config change I've made in the overlay) causes a problem, I always have a way to roll back to the known-working config simply by putting in the previous microSD card.
 
 Similarly, I make an effort to make all configs as generic as possible so that they're not specific to the Pi's hardware (so no using IPv6 EUI-64 addresses that depend on the hardware MAC address, or other such things). This means that if my router/gateway fails, I can simply put the microSD card into a different Raspberry Pi 4 and boot it up and _boom_ - enterprise(-ish) redundancy at a fraction of th cost.
 
-This is about as close as I can get to atomic container-style updates, and treating machines as cattle rather than pets, with a home-grown firewall/gateway solution.
+This is about as close as I can get to atomic container-style update (and the sysadmin's dream of treating all hosts as cattle rather than pets) with a home-grown firewall/gateway solution.
 
 ## How can I add my own configs to this?
 The easiest method will just be to fork it here on GitLab and start changing things in the `config/` directory as you please. As a bonus, if you fork it here you'll get the benfits of the automatic CI/CD processes building images for you - even if you're using a free GitLab.com account. Try it out!
