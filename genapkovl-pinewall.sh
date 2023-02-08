@@ -143,6 +143,10 @@ copyfile root:root 0744 /tmp/etc/periodic/daily/pinehole.sh "$tmp"/etc/periodic/
 mkdir -p "$tmp"/etc
 copyfile root:root 0400 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
 
+# Add corerad config
+mkdir -p "$tmp"/etc/corerad
+copyfile root:root 0644 /tmp/etc/corerad/corerad.toml "$tmp"/etc/corerad/corerad.toml
+
 # Add nftables rules - note that these are 0754 unlike other files, as they
 # need to be executable!
 copyfile root:root 0754 /tmp/etc/nftables.nft "$tmp"/etc/nftables.nft
@@ -206,12 +210,14 @@ rc_add urandom boot
 rc_add acpid default
 rc_add avahi-daemon default
 rc_add chronyd default
+rc_add corerad default  # Testing deprecation of radvd in favour of corerad
 rc_add crond default  # Previously disabled but I've re-enabled it since logrotate requires it
 rc_add dhcpd default
 rc_add dropbear default
 rc_add iperf3 default
-rc_add radvd default
+#rc_add radvd default  # Testing deprecation of radvd in favour of corerad
 rc_add unbound default
+
 
 rc_add mount-ro shutdown
 rc_add killprocs shutdown

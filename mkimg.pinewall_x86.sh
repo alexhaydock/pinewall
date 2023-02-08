@@ -19,6 +19,7 @@ profile_pinewall_x86() {
     avahi
     chrony
     conntrack-tools
+    corerad
     dbus
     dhcp-server-vanilla
     dns-root-hints

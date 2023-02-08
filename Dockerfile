@@ -57,7 +57,8 @@ WORKDIR /tmp/abuild/aports/scripts
 RUN mkdir /tmp/images
 
 # Build our image
-RUN ./mkimage.sh --tag edge --outdir /tmp/images --workdir /tmp/cache --arch aarch64 --repository https://dl-cdn.alpinelinux.org/alpine/edge/main --profile pinewall_rpi
+# TODO: Disable the testing repo when corerad moves out of it
+RUN ./mkimage.sh --tag edge --outdir /tmp/images --workdir /tmp/cache --arch aarch64 --repository https://dl-cdn.alpinelinux.org/alpine/edge/main --repository https://dl-cdn.alpinelinux.org/alpine/edge/testing --profile pinewall_rpi
 
 # List the contents of our image directory
 # (should show our built image if everything worked)

@@ -35,6 +35,7 @@ profile_pinewall_rpi() {
     avahi
     chrony
     conntrack-tools
+    corerad
     dbus
     dhcp-server-vanilla
     dns-root-hints
