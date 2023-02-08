@@ -145,7 +145,7 @@ copyfile root:root 0400 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
 
 # Add corerad config
 mkdir -p "$tmp"/etc/corerad
-copyfile root:root 0644 /tmp/etc/corerad/corerad.toml "$tmp"/etc/corerad/corerad.toml
+copyfile root:root 0644 /tmp/etc/corerad/config.toml "$tmp"/etc/corerad/config.toml
 
 # Add nftables rules - note that these are 0754 unlike other files, as they
 # need to be executable!

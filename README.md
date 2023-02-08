@@ -58,38 +58,38 @@ Here you can find a list of every package that Pinewall installs on top of the A
 
 You can find these packages defined in the `apks` variable inside either `mkimg.pinewall_x86.sh`, or `mkimg.pinewall_rpi.sh`.
 
-| Package               | Repo | Functionality                                                                          |
-|-----------------------|------|----------------------------------------------------------------------------------------|
-| avahi                 | main | Multicast DNS proxy for relaying mDNS trafic across VLANS                              |
-| chrony                | main | NTP Client & Server                                                                    |
-| conntrack-tools       | main | Allows introspecting the kernel's conntrack table(s)                                   |
-| dbus                  | main | Dependency (of avahi)                                                                  |
-| dhcp-server-vanilla   | main | ISC DCHPv4 Server                                                                      |
-| dns-root-hints        | main | Provides DNSSEC root keys for Unbound                                                  |
-| doas                  | main | Privilege escalation, similar to sudo                                                  |
-| dropbear              | main | Minimal SSH server, similar to OpenSSH                                                 |
-| ethtool               | main | Allows inspecting/configuring physical network interfaces                              |
-| htop                  | main | System performance viewer                                                              |
-| ifupdown-ng-ppp       | main | PPP connection integration with /etc/network/interfaces                                |
-| ifupdown-ng-wireguard | main | WireGuard connection integration with /etc/network/interfaces                          |
-| iperf3                | main | Network performance testing                                                            |
-| logrotate             | main | Allows for automatic rotation of system logs                                           |
-| nano                  | main | Text editor                                                                            |
-| nftables              | main | Firewall                                                                               |
-| nload                 | main | Network throughput viewer                                                              |
-| pinehole.sh           | N/A  | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
-| ppp-pppoe             | main | The main PPP daemon for dialing PPPoE connections                                      |
-| radvd                 | main | IPv6 Router Advertisement daemon                                                       |
-| raspberrypi           | main | Raspberry Pi support tools and scripts                                                 |
-| rng-tools             | main | Random number generator daemon, especially useful for Raspberry Pi systems             |
-| tcpdump               | main | Packet capturing                                                                       |
-| unbound               | main | Recursive DNS resolver (with caching and filtering)                                    |
-| wireguard-tools-wg    | main | Just enough WireGuard to set up WireGuard connections without also pulling in iptables |
+| Package               | Repo    | Functionality                                                                          |
+|-----------------------|---------|----------------------------------------------------------------------------------------|
+| avahi                 | main    | Multicast DNS proxy for relaying mDNS trafic across VLANS                              |
+| chrony                | main    | NTP Client & Server                                                                    |
+| conntrack-tools       | main    | Allows introspecting the kernel's conntrack table(s)                                   |
+| corerad               | testing | IPv6 Router Advertisement daemon                                                       |
+| dbus                  | main    | Dependency (of avahi)                                                                  |
+| dhcp-server-vanilla   | main    | ISC DCHPv4 Server                                                                      |
+| dns-root-hints        | main    | Provides DNSSEC root keys for Unbound                                                  |
+| doas                  | main    | Privilege escalation, similar to sudo                                                  |
+| dropbear              | main    | Minimal SSH server, similar to OpenSSH                                                 |
+| ethtool               | main    | Allows inspecting/configuring physical network interfaces                              |
+| htop                  | main    | System performance viewer                                                              |
+| ifupdown-ng-ppp       | main    | PPP connection integration with /etc/network/interfaces                                |
+| ifupdown-ng-wireguard | main    | WireGuard connection integration with /etc/network/interfaces                          |
+| iperf3                | main    | Network performance testing                                                            |
+| logrotate             | main    | Allows for automatic rotation of system logs                                           |
+| nano                  | main    | Text editor                                                                            |
+| nftables              | main    | Firewall                                                                               |
+| nload                 | main    | Network throughput viewer                                                              |
+| pinehole.sh           | N/A     | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
+| ppp-pppoe             | main    | The main PPP daemon for dialing PPPoE connections                                      |
+| raspberrypi           | main    | Raspberry Pi support tools and scripts                                                 |
+| rng-tools             | main    | Random number generator daemon, especially useful for Raspberry Pi systems             |
+| tcpdump               | main    | Packet capturing                                                                       |
+| unbound               | main    | Recursive DNS resolver (with caching and filtering)                                    |
+| wireguard-tools-wg    | main    | Just enough WireGuard to set up WireGuard connections without also pulling in iptables |
 
 ## What doesn't work yet?
 * IPv6 ruleset for nftables
   * My production config for this is very functional, but I'm fully aware that the one in this repository needs a lot of work to be functional and useful. For obvious reasons, the configs in this repo are just examples rather than the full configs I run in production complete with my entire firewall layout and PPPoE passwords and such. Regrettably, this means they get a lot less attention than the ones I've actually got running in production.
-  * For the time being, I'd recommend for now which shows off a good IPv6 nftables ruleset would be [this post on the Alpine wiki](https://wiki.alpinelinux.org/wiki/Linux_Router_with_VPN_on_a_Raspberry_Pi_(IPv6)#nftables).
+  * For the time being, I'd recommend [this post on the Alpine wiki](https://wiki.alpinelinux.org/wiki/Linux_Router_with_VPN_on_a_Raspberry_Pi_(IPv6)#nftables) which shows off a good IPv6 nftables ruleset.
 * DHCPv6
   * Pinewall does not currently support DHCPv6 as either a server or a client.
   * I'm fortunate enough to have a very forward-thinking ISP (shout-out to [AAISP](https://www.aa.net.uk/) in the UK) who routes a static IPv6 `/48` to me. I just pick static `/64` ranges from this allocation and assign them to my VLANs, rather than needing to deal with prefix delegation from upstream. For this reason, I haven't bothered including it in Pinewall.
@@ -122,7 +122,7 @@ I then have a second repo which contains a fork of the contents of the `config/`
 
 I keep a rotation of 2 microSD cards going for this, meaning that I never make changes to the current running deployment. Changes are always written to a new microSD card, and then I swap in the new card, taking the old card out. This means that if a new Pinewall image (or a new config change I've made in the overlay) causes a problem, I always have a way to roll back to the known-working config simply by putting in the previous microSD card.
 
-Similarly, I make an effort to make all configs as generic as possible so that they're not specific to the Pi's hardware (so no using IPv6 EUI-64 addresses that depend on the hardware MAC address, or other such things). This means that if my router/gateway fails, I can simply put the microSD card into a different Raspberry Pi 4 and boot it up and _boom_ - enterprise(-ish) redundancy at a fraction of th cost.
+Similarly, I make an effort to make all configs as generic as possible so that they're not specific to the Pi's hardware (so no using IPv6 EUI-64 addresses that depend on the hardware MAC address, or other such things). This means that if my router/gateway fails, I can simply put the microSD card into a different Raspberry Pi 4 and boot it up and _boom_ - enterprise(-ish) redundancy at a fraction of the cost.
 
 This is about as close as I can get to atomic container-style update (and the sysadmin's dream of treating all hosts as cattle rather than pets) with a home-grown firewall/gateway solution.
 
