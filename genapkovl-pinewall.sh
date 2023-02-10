@@ -71,7 +71,12 @@ copyfile root:root 0644 /etc/shadow "$tmp"/etc/shadow
 
 # Lock the root account
 # We're doing this by setting the /sbin/nologin shell
-sed -i 's,^root.*,root:x:0:0:root:/root:/sbin/nologin,g' "$tmp"/etc/passwd
+#
+## DISABLED! - So it turns out that busybox crond launches all cron jobs in the shell of the
+##             user they belong to - I think. Which means if we don't have a shell, none of
+##             our cron jobs will run successfully. Fun!
+#
+#sed -i 's,^root.*,root:x:0:0:root:/root:/sbin/nologin,g' "$tmp"/etc/passwd
 
 # Add a new iperf user and group without a password
 echo "iperf:x:520:" >> "$tmp"/etc/group
