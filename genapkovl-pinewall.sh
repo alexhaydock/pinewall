@@ -135,8 +135,9 @@ copyfile root:root 0644 /tmp/etc/unbound/unbound.conf "$tmp"/etc/unbound/unbound
 copyfile root:root 0644 /tmp/etc/unbound/adblock.list "$tmp"/etc/unbound/adblock.list
 
 # Add Pinehole adblock list downloader for Unbound
+# This should be 0755 to match the other scripts in /etc/periodic
 mkdir -p "$tmp"/etc/periodic/daily
-copyfile root:root 0744 /tmp/etc/periodic/daily/pinehole.sh "$tmp"/etc/periodic/daily/pinehole.sh
+copyfile root:root 0755 /tmp/etc/periodic/daily/pinehole "$tmp"/etc/periodic/daily/pinehole
 
 # Add IPv6 radvd config
 # It seems like radvd is quite particular about making sure its config is not world writable

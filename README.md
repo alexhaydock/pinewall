@@ -78,7 +78,7 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | nano                  | main    | Text editor                                                                            |
 | nftables              | main    | Firewall                                                                               |
 | nload                 | main    | Network throughput viewer                                                              |
-| pinehole.sh           | N/A     | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
+| pinehole              | N/A     | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
 | ppp-pppoe             | main    | The main PPP daemon for dialing PPPoE connections                                      |
 | raspberrypi           | main    | Raspberry Pi support tools and scripts                                                 |
 | rng-tools             | main    | Random number generator daemon, especially useful for Raspberry Pi systems             |
