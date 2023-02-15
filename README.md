@@ -86,6 +86,30 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | unbound               | main    | Recursive DNS resolver (with caching and filtering)                                    |
 | wireguard-tools-wg    | main    | Just enough WireGuard to set up WireGuard connections without also pulling in iptables |
 
+## How is service privilege managed?
+Below is a table of the services that run on a default Pinewall installation, along with whether or not they drop privilege and, if they do, what account they drop to.
+
+| Service      | Externally Accessible | Drops Privilege | User       |
+|--------------|-----------------------|-----------------|------------|
+| avahi-daemon | Yes                   | Yes             | avahi      |
+| chronyd      | Yes                   | Yes             | chrony     |
+| corerad      | Yes                   | Yes             | corerad    |
+| crond        | No                    | No              | root       |
+| dbus-daemon  | No                    | Yes             | messagebus |
+| dhcpd        | Yes                   | Yes             | dhcp       |
+| dropbear     | Yes                   | No              | root       |
+| iperf3       | Yes                   | Yes             | iperf      |
+| pppd         | No                    | No              | root       |
+| rngd         | No                    | No              | root       |
+| syslogd      | No                    | No              | root       |
+| unbound      | Yes                   | Yes             | unbound    |
+
+In the table above, "Externally Accessible" is used to define whether the process is accessible at a network level, regardless of whether this is on the WAN or LAN. Most of these Externally Accessible processes are only ever going to be exposed to a LAN anyway rather than a WAN, which reduces risk.
+
+Based on the information above, the most critically-privileged daemon we have running is `dropbear`, as it is both externally accessible and does not drop privilege. I am using `dropbear` for minimalism purposes, but I may consider switching back to OpenSSH as I generally trust the codebase a bit more than that of `dropbear`. Nevertheless, I never expose the `dropbear` service to the WAN anyway.
+
+It's worth noting that Pinewall also offers the chance to run WireGuard, but WireGuard is not listed above as a service as it does not run as a service in the traditional sense. WireGuard is a native part of the Linux kernel and is managed by creating a WireGuard interface in `/etc/network/interfaces` rather than any kind of service. Other distributions may use a service like `wg-quick` which wraps some additional convenience features into WireGuard setup, but this is not strictly needed. I do not use it in Pinewall because the dependency chain for `wg-quick` causes `iptables` to be installed, and I want to run a pure `nftables`-only setup.
+
 ## What doesn't work yet?
 * IPv6 ruleset for nftables
   * My production config for this is very functional, but I'm fully aware that the one in this repository needs a lot of work to be functional and useful. For obvious reasons, the configs in this repo are just examples rather than the full configs I run in production complete with my entire firewall layout and PPPoE passwords and such. Regrettably, this means they get a lot less attention than the ones I've actually got running in production.
