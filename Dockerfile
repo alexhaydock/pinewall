@@ -122,8 +122,8 @@ RUN mcopy -si /opt/pinewall.img /opt/pinewall/* ::
 # Set disk image label for PINEWALL
 RUN mlabel -i ./pinewall.img ::PINEWALL
 
-# Print the directory listing for the image we've built
-RUN mdir -i /opt/pinewall.img ::
+# Print the listing of APKs into a file
+RUN mdir -i pinewall.img ::apks/aarch64 | grep APK | grep -v APKINDEX | awk '{ print $6 }' | sort | sed s/\.apk$// > /opt/pinewall.txt
 
 # Compress our image since otherwise a lot of it is just unallocated blocks
 RUN gzip -9 /opt/pinewall.img
