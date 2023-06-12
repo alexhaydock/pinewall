@@ -15,3 +15,7 @@ arm_freq=1800
 # and each increment corresponds to a 0.025v step above the
 # Pi's base voltage)
 over_voltage=2
+# Set the min CPU freq to 1.5GHz (without this, we will sit at
+# a base clock of 1.2GHz when we're not boosting to 1.8GHz. This
+# should help latency a bit for a router application)
+arm_min_freq=1500
