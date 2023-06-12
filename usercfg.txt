@@ -11,11 +11,20 @@ dtoverlay=disable-bt
 #
 # Set the max CPU freq to 1.8GHz (Pi 4 default is 1.5GHz)
 arm_freq=1800
+#
 # Apply a 0.05v voltage increase (this is a decimal value
 # and each increment corresponds to a 0.025v step above the
-# Pi's base voltage)
-over_voltage=2
-# Set the min CPU freq to 1.5GHz (without this, we will sit at
-# a base clock of 1.2GHz when we're not boosting to 1.8GHz. This
-# should help latency a bit for a router application)
-arm_min_freq=1500
+# Pi's base voltage).
+#
+# I've disabled this for now as we might not need it. It
+# seems that the Pi Foundation have validated all Pi 4
+# models for 1.8GHz as a stable base frequency.
+#
+# See: https://www.raspberrypi.com/news/bullseye-bonus-1-8ghz-raspberry-pi-4/
+##over_voltage=2
+#
+# Disable 'Turbo' frequencies and allow us to sit at our arm_freq
+# value continuously. This will use more power but lower
+# overall system latency, which is fairly desirable for a
+# system acting as a router.
+force_turbo=1
