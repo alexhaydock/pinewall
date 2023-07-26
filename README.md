@@ -58,33 +58,33 @@ Here you can find a list of every package that Pinewall installs on top of the A
 
 You can find these packages defined in the `apks` variable inside either `mkimg.pinewall_x86.sh`, or `mkimg.pinewall_rpi.sh`.
 
-| Package               | Repo    | Functionality                                                                          |
-|-----------------------|---------|----------------------------------------------------------------------------------------|
-| avahi                 | main    | Multicast DNS proxy for relaying mDNS trafic across VLANS                              |
-| chrony                | main    | NTP Client & Server                                                                    |
-| conntrack-tools       | main    | Allows introspecting the kernel's conntrack table(s)                                   |
-| corerad               | testing | IPv6 Router Advertisement daemon                                                       |
-| dbus                  | main    | Dependency (of avahi)                                                                  |
-| dhcp-server-vanilla   | main    | ISC DCHPv4 Server                                                                      |
-| dns-root-hints        | main    | Provides DNSSEC root keys for Unbound                                                  |
-| doas                  | main    | Privilege escalation, similar to sudo                                                  |
-| dropbear              | main    | Minimal SSH server, similar to OpenSSH                                                 |
-| ethtool               | main    | Allows inspecting/configuring physical network interfaces                              |
-| htop                  | main    | System performance viewer                                                              |
-| ifupdown-ng-ppp       | main    | PPP connection integration with /etc/network/interfaces                                |
-| ifupdown-ng-wireguard | main    | WireGuard connection integration with /etc/network/interfaces                          |
-| iperf3                | main    | Network performance testing                                                            |
-| logrotate             | main    | Allows for automatic rotation of system logs                                           |
-| nano                  | main    | Text editor                                                                            |
-| nftables              | main    | Firewall                                                                               |
-| nload                 | main    | Network throughput viewer                                                              |
-| pinehole              | N/A     | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
-| ppp-pppoe             | main    | The main PPP daemon for dialing PPPoE connections                                      |
-| raspberrypi           | main    | Raspberry Pi support tools and scripts                                                 |
-| rng-tools             | main    | Random number generator daemon, especially useful for Raspberry Pi systems             |
-| tcpdump               | main    | Packet capturing                                                                       |
-| unbound               | main    | Recursive DNS resolver (with caching and filtering)                                    |
-| wireguard-tools-wg    | main    | Just enough WireGuard to set up WireGuard connections without also pulling in iptables |
+| Package               | Repo      | Functionality                                                                          |
+|-----------------------|-----------|----------------------------------------------------------------------------------------|
+| avahi                 | main      | Multicast DNS proxy for relaying mDNS trafic across VLANS                              |
+| chrony                | main      | NTP Client & Server                                                                    |
+| conntrack-tools       | main      | Allows introspecting the kernel's conntrack table(s)                                   |
+| corerad               | community | IPv6 Router Advertisement daemon                                                       |
+| dbus                  | main      | Dependency (of avahi)                                                                  |
+| dhcp-server-vanilla   | main      | ISC DCHPv4 Server                                                                      |
+| dns-root-hints        | main      | Provides DNSSEC root keys for Unbound                                                  |
+| doas                  | main      | Privilege escalation, similar to sudo                                                  |
+| dropbear              | main      | Minimal SSH server, similar to OpenSSH                                                 |
+| ethtool               | main      | Allows inspecting/configuring physical network interfaces                              |
+| htop                  | main      | System performance viewer                                                              |
+| ifupdown-ng-ppp       | main      | PPP connection integration with /etc/network/interfaces                                |
+| ifupdown-ng-wireguard | main      | WireGuard connection integration with /etc/network/interfaces                          |
+| iperf3                | main      | Network performance testing                                                            |
+| logrotate             | main      | Allows for automatic rotation of system logs                                           |
+| nano                  | main      | Text editor                                                                            |
+| nftables              | main      | Firewall                                                                               |
+| nload                 | main      | Network throughput viewer                                                              |
+| pinehole              | N/A       | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
+| ppp-pppoe             | main      | The main PPP daemon for dialing PPPoE connections                                      |
+| raspberrypi           | main      | Raspberry Pi support tools and scripts                                                 |
+| rng-tools             | main      | Random number generator daemon, especially useful for Raspberry Pi systems             |
+| tcpdump               | main      | Packet capturing                                                                       |
+| unbound               | main      | Recursive DNS resolver (with caching and filtering)                                    |
+| wireguard-tools-wg    | main      | Just enough WireGuard to set up WireGuard connections without also pulling in iptables |
 
 ## How is service privilege managed?
 Below is a table of the services that run on a default Pinewall installation, along with whether or not they drop privilege and, if they do, what account they drop to.

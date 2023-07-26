@@ -13,8 +13,5 @@
 # Stable Repo
 https://dl-cdn.alpinelinux.org/alpine/edge/main
 
-# Community Repo (disabled)
-##https://dl-cdn.alpinelinux.org/alpine/edge/community
-
-# Testing Repo (needed only for corerad, disable when no longer required)
-https://dl-cdn.alpinelinux.org/alpine/edge/testing
+# Community Repo (required for corerad)
+https://dl-cdn.alpinelinux.org/alpine/edge/community
