@@ -79,6 +79,7 @@ RUN chmod +x /genapkovl-pinewall.sh
 
 # Add in all our configs
 COPY config/etc/ /tmp/etc/
+COPY config/home/ /tmp/home/
 
 # Create overlays directory to store our outputted overlay
 RUN mkdir -p /tmp/overlays

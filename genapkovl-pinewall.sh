@@ -251,5 +251,5 @@ rc_add mdev sysinit
 # is needed for the live system
 rc_add modloop sysinit
 
-# Wrap up our custom /etc, /home and /var into an APK overlay file
-tar -c -C "$tmp" etc home var | gzip -9n > /tmp/overlays/$HOSTNAME.apkovl.tar.gz
+# Wrap up our custom /etc and /home into an APK overlay file
+tar -c -C "$tmp" etc home | gzip -9n > /tmp/overlays/$HOSTNAME.apkovl.tar.gz
