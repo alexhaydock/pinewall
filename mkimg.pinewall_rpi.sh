@@ -55,6 +55,7 @@ profile_pinewall_rpi() {
     radvd
     rng-tools
     tcpdump
+    ulogd
     unbound
     wireguard-tools-wg
     "

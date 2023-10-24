@@ -23,5 +23,6 @@ radvd
 raspberrypi
 rng-tools
 tcpdump
+ulogd
 unbound
 wireguard-tools-wg

@@ -1,5 +1,0 @@
-# Adapted from: https://wiki.nftables.org/wiki-nftables/index.php/Simple_ruleset_for_a_home_router
-
-define DEV_PRIVATE = eth1
-define DEV_WORLD = ppp0
-define NET_PRIVATE = 192.168.0.0/16

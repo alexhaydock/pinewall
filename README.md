@@ -83,6 +83,7 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | raspberrypi           | main      | Raspberry Pi support tools and scripts                                                 |
 | rng-tools             | main      | Random number generator daemon, especially useful for Raspberry Pi systems             |
 | tcpdump               | main      | Packet capturing                                                                       |
+| ulogd                 | main      | Acts as a log sink for receiving logs from nftables and forwarding them to syslog      |
 | unbound               | main      | Recursive DNS resolver (with caching and filtering)                                    |
 | wireguard-tools-wg    | main      | Just enough WireGuard to set up WireGuard connections without also pulling in iptables |
 
@@ -102,6 +103,7 @@ Below is a table of the services that run on a default Pinewall installation, al
 | pppd         | No                    | No              | root       |
 | rngd         | No                    | No              | root       |
 | syslogd      | No                    | No              | root       |
+| ulogd        | No                    | No              | root       |
 | unbound      | Yes                   | Yes             | unbound    |
 
 In the table above, "Externally Accessible" is used to define whether the process is accessible at a network level, regardless of whether this is on the WAN or LAN. Most of these Externally Accessible processes are only ever going to be exposed to a LAN anyway rather than a WAN, which reduces risk.
@@ -111,14 +113,12 @@ Based on the information above, the most critically-privileged daemon we have ru
 It's worth noting that Pinewall also offers the chance to run WireGuard, but WireGuard is not listed above as a service as it does not run as a service in the traditional sense. WireGuard is a native part of the Linux kernel and is managed by creating a WireGuard interface in `/etc/network/interfaces` rather than any kind of service. Other distributions may use a service like `wg-quick` which wraps some additional convenience features into WireGuard setup, but this is not strictly needed. I do not use it in Pinewall because the dependency chain for `wg-quick` causes `iptables` to be installed, and I want to run a pure `nftables`-only setup.
 
 ## What doesn't work yet?
-* IPv6 ruleset for nftables
+* IPv6 ruleset for nftables (in this repo)
   * My production config for this is very functional, but I'm fully aware that the one in this repository needs a lot of work to be functional and useful. For obvious reasons, the configs in this repo are just examples rather than the full configs I run in production complete with my entire firewall layout and PPPoE passwords and such. Regrettably, this means they get a lot less attention than the ones I've actually got running in production.
   * For the time being, I'd recommend [this post on the Alpine wiki](https://wiki.alpinelinux.org/wiki/Linux_Router_with_VPN_on_a_Raspberry_Pi_(IPv6)#nftables) which shows off a good IPv6 nftables ruleset.
 * DHCPv6
-  * Pinewall does not currently support DHCPv6 as either a server or a client.
+  * Pinewall does not currently support DHCPv6 as either a server or a client. I probably won't bother to implement this.
   * I'm fortunate enough to have a very forward-thinking ISP (shout-out to [AAISP](https://www.aa.net.uk/) in the UK) who routes a static IPv6 `/48` to me. I just pick static `/64` ranges from this allocation and assign them to my VLANs, rather than needing to deal with prefix delegation from upstream. For this reason, I haven't bothered including it in Pinewall.
-* Log monitoring and alerting
-  * I haven't really decided on my solution for this yet, but I'll probably end up using rsyslog with some janky output formatting to feed directly to a Splunk HTTP Event Collector (HEC) endpoint.
 
 ## Why Alpine Edge rather than the latest stable release?
 This is mostly down to the fact that the Linux kernel package for Raspberry Pi seems to update more rapidly than in the stable branch, though I cant say that this is entirely consistent. But I've had no problems so far running with Edge so I've decided to stick with that approach.
@@ -152,3 +152,16 @@ This is about as close as I can get to atomic container-style update (and the sy
 
 ## How can I add my own configs to this?
 The easiest method will just be to fork it here on GitLab and start changing things in the `config/` directory as you please. As a bonus, if you fork it here you'll get the benfits of the automatic CI/CD processes building images for you - even if you're using a free GitLab.com account. Try it out!
+
+## How to configure syslog forwarding?
+Edit the `/etc/conf.d/syslog` file to include your destination server that accepts UDP-formatted syslog. An example file is included in this repo:
+```
+# Here we forward logs over UDP to our local Splunk instance
+#
+# Note that without the -L flag, this setup will no longer
+# log locally to /var/log and will only log to the network:
+#
+#   -L              Log locally and via network (default is network only if -R)
+#
+SYSLOGD_OPTS="-t -R [2001:db8:1234:1]:3141"
+```

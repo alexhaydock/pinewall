@@ -146,8 +146,8 @@ copyfile root:root 0755 /tmp/etc/periodic/daily/pinehole "$tmp"/etc/periodic/dai
 
 # Add IPv6 radvd config
 # It seems like radvd is quite particular about making sure its config is not world writable
-mkdir -p "$tmp"/etc
-copyfile root:root 0400 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
+##mkdir -p "$tmp"/etc
+##copyfile root:root 0400 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
 
 # Add corerad config
 mkdir -p "$tmp"/etc/corerad
@@ -157,9 +157,11 @@ copyfile root:root 0644 /tmp/etc/corerad/config.toml "$tmp"/etc/corerad/config.t
 # need to be executable!
 copyfile root:root 0754 /tmp/etc/nftables.nft "$tmp"/etc/nftables.nft
 mkdir -p "$tmp"/etc/nftables.d
-copyfile root:root 0754 /tmp/etc/nftables.d/00-vars.nft "$tmp"/etc/nftables.d/00-vars.nft
-copyfile root:root 0754 /tmp/etc/nftables.d/10-firewall.nft "$tmp"/etc/nftables.d/10-firewall.nft
-copyfile root:root 0754 /tmp/etc/nftables.d/20-nat.nft "$tmp"/etc/nftables.d/20-nat.nft
+copyfile root:root 0754 /tmp/etc/nftables.d/rules.nft "$tmp"/etc/nftables.d/rules.nft
+
+# Add ulogd config
+mkdir -p "$tmp"/etc
+copyfile root:root 0644 /tmp/etc/ulogd.conf "$tmp"/etc/ulogd.conf
 
 # Add Avahi config
 mkdir -p "$tmp"/etc/avahi
@@ -186,9 +188,20 @@ copyfile root:root 0644 /tmp/etc/modules "$tmp"/etc/modules
 mkdir -p "$tmp"/etc/conf.d
 copyfile root:root 0644 /tmp/etc/conf.d/rngd "$tmp"/etc/conf.d/rngd
 
+# Add Busybox syslogd config
+mkdir -p "$tmp"/etc/conf.d
+copyfile root:root 0644 /tmp/etc/conf.d/syslog "$tmp"/etc/conf.d/syslog
+
 # Add inittab config
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/inittab "$tmp"/etc/inittab
+
+# [Pinewall user] Add htoprc to configure htop display output
+mkdir -p "$tmp"/home/pinewall/.config/htop
+copyfile 5000:5000 0644 /tmp/home/pinewall/.config/htop/htoprc "$tmp"/home/pinewall/.config/htop/htoprc
+
+# Double-check that the Pinewall home directory is owned by the Pinewall user
+chown -R 5000:5000 "$tmp"/home/pinewall
 
 # Copy LBU config so that LBU in our running environment will backup
 # to the "usb" device by default, which it will mount to /media/usb
@@ -214,16 +227,16 @@ rc_add urandom boot
 
 # Most of our services want to go here in the default runlevel
 rc_add acpid default
-rc_add avahi-daemon default
+#rc_add avahi-daemon default  # Disabling Avahi for now since I've managed to sort devices into proper trust-zones and don't need to cross them
 rc_add chronyd default
-rc_add corerad default  # Testing deprecation of radvd in favour of corerad
+rc_add corerad default
 rc_add crond default  # Previously disabled but I've re-enabled it since logrotate requires it
 rc_add dhcpd default
 rc_add dropbear default
 rc_add iperf3 default
-#rc_add radvd default  # Testing deprecation of radvd in favour of corerad
+#rc_add radvd default  # Deprecated in favour of corerad
+rc_add ulogd default
 rc_add unbound default
-
 
 rc_add mount-ro shutdown
 rc_add killprocs shutdown
@@ -238,5 +251,5 @@ rc_add mdev sysinit
 # is needed for the live system
 rc_add modloop sysinit
 
-# Wrap up our custom /etc and /home into an APK overlay file
+# Wrap up our custom /etc, /home and /var into an APK overlay file
 tar -c -C "$tmp" etc home var | gzip -9n > /tmp/overlays/$HOSTNAME.apkovl.tar.gz

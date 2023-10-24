@@ -1,5 +1,9 @@
 # Adapted from: https://wiki.nftables.org/wiki-nftables/index.php/Simple_ruleset_for_a_home_router
 
+define DEV_PRIVATE = eth1
+define DEV_WORLD = ppp0
+define NET_PRIVATE = 192.168.0.0/16
+
 table ip global {
     chain inbound_world {
         # accepting ping (icmp-echo-request) for diagnostic purposes.
@@ -43,5 +47,14 @@ table ip global {
         iifname $DEV_PRIVATE accept
 
         # the rest is dropped by the above policy
+    }
+}
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority 100; policy accept;
+
+        # masquerade private IP addresses
+        ip saddr $NET_PRIVATE oifname $DEV_WORLD masquerade
     }
 }
