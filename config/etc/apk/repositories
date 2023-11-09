@@ -13,5 +13,5 @@
 # Stable Repo
 https://dl-cdn.alpinelinux.org/alpine/edge/main
 
-# Community Repo (required for corerad)
-https://dl-cdn.alpinelinux.org/alpine/edge/community
+# Community Repo
+## https://dl-cdn.alpinelinux.org/alpine/edge/community

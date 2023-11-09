@@ -63,7 +63,6 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | avahi                 | main      | Multicast DNS proxy for relaying mDNS trafic across VLANS                              |
 | chrony                | main      | NTP Client & Server                                                                    |
 | conntrack-tools       | main      | Allows introspecting the kernel's conntrack table(s)                                   |
-| corerad               | community | IPv6 Router Advertisement daemon                                                       |
 | dbus                  | main      | Dependency (of avahi)                                                                  |
 | dhcp-server-vanilla   | main      | ISC DCHPv4 Server                                                                      |
 | dns-root-hints        | main      | Provides DNSSEC root keys for Unbound                                                  |
@@ -80,6 +79,7 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | nload                 | main      | Network throughput viewer                                                              |
 | pinehole              | N/A       | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
 | ppp-pppoe             | main      | The main PPP daemon for dialing PPPoE connections                                      |
+| radvd                 | main      | IPv6 Router Advertisement daemon                                                       |
 | raspberrypi           | main      | Raspberry Pi support tools and scripts                                                 |
 | rng-tools             | main      | Random number generator daemon, especially useful for Raspberry Pi systems             |
 | tcpdump               | main      | Packet capturing                                                                       |
@@ -94,13 +94,13 @@ Below is a table of the services that run on a default Pinewall installation, al
 |--------------|-----------------------|-----------------|------------|
 | avahi-daemon | Yes                   | Yes             | avahi      |
 | chronyd      | Yes                   | Yes             | chrony     |
-| corerad      | Yes                   | Yes             | corerad    |
 | crond        | No                    | No              | root       |
 | dbus-daemon  | No                    | Yes             | messagebus |
 | dhcpd        | Yes                   | Yes             | dhcp       |
 | dropbear     | Yes                   | No              | root       |
 | iperf3       | Yes                   | Yes             | iperf      |
 | pppd         | No                    | No              | root       |
+| radvd        | Yes                   | Yes             | radvd      |
 | rngd         | No                    | No              | root       |
 | syslogd      | No                    | No              | root       |
 | ulogd        | No                    | No              | root       |
