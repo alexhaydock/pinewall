@@ -5,12 +5,6 @@ profile_pinewall_rpi() {
   # Force aarch64
   arch="aarch64"
 
-  # Override the kernel_flavors variable that builds both "rpi" and "rpi4",
-  # even for aarch64. We don't want to support anything before the Pi 4 since
-  # anything below that had the ethernet controller on the USB bus so wouldn't
-  # make a great router anyway.
-  kernel_flavors="rpi4"
-
   # We don't want the kernel addons from the Standard profile, which includes
   # xtables-addons. We don't want any *tables stuff since we're fully nftables.
   kernel_addons=""
