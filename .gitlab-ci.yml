@@ -30,7 +30,7 @@ release:
   dependencies:
     - build
   script:
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.img.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/pinewall/config/pinewall.img.gz"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/pinewall.img.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/pinewall/rpi/pinewall.img.gz"'
   only:
     refs:
       - master  # Only run the actual release stage if we're running on the master branch (stops us accidentally releasing other branches)
