@@ -229,6 +229,7 @@ rc_add crond default  # Previously disabled but I've re-enabled it since logrota
 rc_add dhcpd default
 rc_add dropbear default
 rc_add iperf3 default
+rc_add irqbalance default
 rc_add radvd default
 rc_add ulogd default
 rc_add unbound default
