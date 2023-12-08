@@ -50,6 +50,9 @@ This is more of a set of scripts and configs that allows you to compose a custom
 * Raspberry Pi 4 / Compute Module 4
   * This is the main target platform, as it's what I actively deploy. This is where you can expect development, support, and prompt fixes for issues.
   * I will likely try and support new Pi revisions as they release, but nothing before the Pi 4 will be supported as previous revsions do not use a proper ethernet controller and are not capable of routing at gigabit speeds.
+* Raspberry Pi 5
+  * As of Dec 2023, I am shipping the unified `linux-rpi` kernel package that Alpine 3.19 uses, which should support both the Pi 4 and Pi 5.
+  * I do not have a Pi 5 (yet), so I haven't been able to test the image on it, but in theory it should be supported just as well as the Pi 4.
 * Generic x86_64 PC
   * Supported only on a best-effort basis and no longer automatically built by the GitLab CI processes.
 
@@ -73,6 +76,7 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | ifupdown-ng-ppp       | main      | PPP connection integration with /etc/network/interfaces                                |
 | ifupdown-ng-wireguard | main      | WireGuard connection integration with /etc/network/interfaces                          |
 | iperf3                | main      | Network performance testing                                                            |
+| irqbalance            | main      | Balances IRQs between cores on the system. May help with Realtek NIC driver throughput |
 | logrotate             | main      | Allows for automatic rotation of system logs                                           |
 | nano                  | main      | Text editor                                                                            |
 | nftables              | main      | Firewall                                                                               |
@@ -99,6 +103,7 @@ Below is a table of the services that run on a default Pinewall installation, al
 | dhcpd        | Yes                   | Yes             | dhcp       |
 | dropbear     | Yes                   | No              | root       |
 | iperf3       | Yes                   | Yes             | iperf      |
+| irqbalance   | No                    | No              | root       |
 | pppd         | No                    | No              | root       |
 | radvd        | Yes                   | Yes             | radvd      |
 | rngd         | No                    | No              | root       |
