@@ -21,12 +21,6 @@ build:
       - pinewall.img.gz
       - pinewall.txt
     expire_in: 1 day
-  except:
-    changes:
-      - .gitignore
-      - "*.md"  # Do not run if we've just updated documentation
-      - LICENSE
-      - logo.png
   tags:
     - aarch64
 
@@ -40,11 +34,5 @@ release:
   only:
     refs:
       - master  # Only run the actual release stage if we're running on the master branch (stops us accidentally releasing other branches)
-  except:
-    changes:
-      - .gitignore
-      - "*.md"  # Do not run if we've just updated documentation
-      - LICENSE
-      - logo.png
   tags:
     - aarch64
