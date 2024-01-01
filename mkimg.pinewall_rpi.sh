@@ -27,6 +27,7 @@ profile_pinewall_rpi() {
   # mkimg.pinewall_x86.sh:
   apks="$apks
     avahi
+    bird
     chrony
     conntrack-tools
     dbus

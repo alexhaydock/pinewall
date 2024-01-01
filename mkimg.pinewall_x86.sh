@@ -17,6 +17,7 @@ profile_pinewall_x86() {
   # from mkimg.base.sh (if we don't, we end up overwriting the variable)
   apks="$apks
     avahi
+    bird
     chrony
     conntrack-tools
     dbus
