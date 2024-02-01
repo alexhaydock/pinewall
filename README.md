@@ -11,8 +11,9 @@ Linux also seems to have the better networking stack these days (which Netgate s
 If I had to pick a proper vendor-supported Linux-based routing platform to use, I would probably pick [VyOS](https://vyos.io/), the still-developed OSS fork of Brocade's Vyatta. But hey -- a home or SoHO firewall/gateway device is actually pretty a pretty simple set of features -- why not just build one from scratch? That idea became this project.
 
 ## Official Repository Links
-* https://gitlab.com/pinewall/pinewall
 * https://github.com/alexhaydock/pinewall
+
+I previously hosted this on GitLab.com also, but I now maintain the main repository for this project on my own self-hosted GitLab instance. That repository is configured to mirror to the public repo on GitHub, which is presumably where you're reading this message.
 
 ## What's the goal?
 The core goals of this project are simplicity and minimalism. I want it to be my home router/gateway and nothing more.
@@ -41,7 +42,7 @@ That said, I've tried my best to document everything as thoroughly as possible a
 
 I'm also very willing to help out generally where I can if people get stuck (feel free to open issues) or want to try and implement something new on top of this. The best way to learn is through experimenting and trying to solve problems. I'm also open to sensible suggestions via PR that make the project a bit more adaptable to the needs of others (but without compromising the goals of simplicity and minimalism!).
 
-## Is this a custom distro / is this a fork of Alpine?
+## Is this a custom distro / a fork of Alpine?
 Not really.
 
 This is more of a set of scripts and configs that allows you to compose a custom Alpine Linux image that contains all the additional packages needed to run a Linux-based home router on a Raspberry Pi. Most of this is built around the native 'overlay' functionality provided by Alpine's [local backup utility](https://wiki.alpinelinux.org/wiki/Alpine_local_backup) - I've just tailored it specifically towards being a home router.
@@ -53,8 +54,6 @@ This is more of a set of scripts and configs that allows you to compose a custom
 * Raspberry Pi 5
   * As of Dec 2023, I am shipping the unified `linux-rpi` kernel package that Alpine 3.19 uses, which should support both the Pi 4 and Pi 5.
   * I do not have a Pi 5 (yet), so I haven't been able to test the image on it, but in theory it should be supported just as well as the Pi 4.
-* Generic x86_64 PC
-  * Supported only on a best-effort basis and no longer automatically built by the GitLab CI processes.
 
 ## What packages does Pinewall add on top of a standard Alpine Linux base?
 Here you can find a list of every package that Pinewall installs on top of the Alpine "Standard" profile, along with the justifcation for each package's presence.
@@ -130,24 +129,17 @@ It's worth noting that Pinewall also offers the chance to run WireGuard, but Wir
 ## Why Alpine Edge rather than the latest stable release?
 This is mostly down to the fact that the Linux kernel package for Raspberry Pi seems to update more rapidly than in the stable branch, though I cant say that this is entirely consistent. But I've had no problems so far running with Edge so I've decided to stick with that approach.
 
-## How can I download this?
-You can download built Raspberry Pi 4 images from the Pinewall GitLab Package Registry [here](https://gitlab.com/pinewall/pinewall/-/packages), where they are built weekly on Saturdays by a scheduled CI/CD run.
+## How can I build this locally for myself?
+Your best bet will be to import this repo into GitLab, where the [.gitlab-ci.yml](.gitlab-ci.yml) file will take care of setting up the pipeline for you.
 
-## How can I build this locally instead?
-Install Podman and the `qemu-user-static` to allow for cross-compilation (assuming you're not already running an `aarch64` system):
-```sh
-sudo apt install podman qemu-user-static
+If you try to build this on GitLab.com's free runners (which does work!), you will need to remove the `aarch64` tag from the `.gitlab-ci.yml` file (I use this tag locally to direct the pipeline to run only on my ARM-based runners, but it will build happily on x64_64 runners - only quite slowly):
+```yaml
+  tags:
+    - aarch64
 ```
-
-To build the Raspberry Pi image (`pinewall.img.gz`) run:
-```bash
-make image
-```
-
-This will output the built `pinewall.img.gz` into the current directory.
 
 ## How can I use this in production?
-Well the way _I_ run this in production is to use the exact images that the GitLab CI process builds and pushes to the Package Registry. I use Raspberry Pi Imager to write the `pinewall.img.gz` file directly to a microSD card.
+Well the way _I_ run this in production is to use the images built by the GitLab CI process in this repo. I use Raspberry Pi Imager to write the `pinewall.img.gz` file directly to a microSD card.
 
 I then have a second repo which contains a fork of the contents of the `config/` directory found in this repo, where I can add things that I can't publish to this repo, like my WireGuard host keys and config, and my PPP dialing passwords. That repo uses GitLab CI to build an APKOVERLAY file (using a similar `genapkovl-pinewall.sh` script to the one in this repo). I simply drop the built APKOVERLAY onto the microSD card I just flashed the fresh Pinewall image to and put it in my Raspberry Pi.
 
@@ -158,9 +150,9 @@ Similarly, I make an effort to make all configs as generic as possible so that t
 This is about as close as I can get to atomic container-style update (and the sysadmin's dream of treating all hosts as cattle rather than pets) with a home-grown firewall/gateway solution.
 
 ## How can I add my own configs to this?
-The easiest method will just be to fork it here on GitLab and start changing things in the `config/` directory as you please. As a bonus, if you fork it here you'll get the benfits of the automatic CI/CD processes building images for you - even if you're using a free GitLab.com account. Try it out!
+The easiest method will just be to fork it here on GitLab and start changing things in the `config/` directory as you please. As a bonus, if you fork it into GitLab.com you'll get the benfits of the automatic CI/CD processes building images for you - even if you're only using a free account. Try it out!
 
-## How to configure syslog forwarding?
+## How do I configure syslog forwarding?
 Edit the `/etc/conf.d/syslog` file to include your destination server that accepts UDP-formatted syslog. An example file is included in this repo:
 ```
 # Here we forward logs over UDP to our local Splunk instance
