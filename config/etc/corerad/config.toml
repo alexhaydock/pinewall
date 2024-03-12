@@ -17,7 +17,7 @@ advertise = true
   [[interfaces.rdnss]]
   ## RDNSS entries configured to last 1 week, as per conversation with Jen Linkova (Google)
   ## about a bug on macOS/iOS related to this expiring while hosts are asleep
-  lifetime = "604800"
+  lifetime = "604800s"
 
   # Specify a NDS DNS Search List
   [[interfaces.dnssl]]
