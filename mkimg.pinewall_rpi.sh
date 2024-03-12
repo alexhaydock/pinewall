@@ -30,6 +30,7 @@ profile_pinewall_rpi() {
     bird
     chrony
     conntrack-tools
+    corerad
     dbus
     dhcp-server-vanilla
     dns-root-hints
@@ -47,7 +48,6 @@ profile_pinewall_rpi() {
     nload
     openssl
     ppp-pppoe
-    radvd
     rng-tools
     tcpdump
     ulogd

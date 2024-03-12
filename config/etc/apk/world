@@ -3,6 +3,7 @@ avahi
 bird
 chrony
 conntrack-tools
+corerad
 dbus
 dhcp-server-vanilla
 dns-root-hints
@@ -20,7 +21,6 @@ nftables
 nload
 openssl
 ppp-pppoe
-radvd
 raspberrypi
 rng-tools
 tcpdump

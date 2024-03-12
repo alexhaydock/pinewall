@@ -145,9 +145,15 @@ mkdir -p "$tmp"/etc/periodic/daily
 copyfile root:root 0755 /tmp/etc/periodic/daily/pinehole "$tmp"/etc/periodic/daily/pinehole
 
 # Add IPv6 radvd config
+# (Retired in favour of corerad)
 # It seems like radvd is quite particular about making sure its config is not world writable
-mkdir -p "$tmp"/etc
-copyfile root:root 0400 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
+##mkdir -p "$tmp"/etc
+##copyfile root:root 0400 /tmp/etc/radvd.conf "$tmp"/etc/radvd.conf
+
+# Add corerad config
+# (Retired in favour of radvd)
+mkdir -p "$tmp"/etc/corerad
+copyfile root:root 0644 /tmp/etc/corerad/config.toml "$tmp"/etc/corerad/config.toml
 
 # Add nftables rules - note that these are 0754 unlike other files, as they
 # need to be executable!
@@ -225,12 +231,13 @@ rc_add urandom boot
 rc_add acpid default
 #rc_add avahi-daemon default  # Disabling Avahi for now since I've managed to sort devices into proper trust-zones and don't need to cross them
 rc_add chronyd default
+rc_add corerad default
 rc_add crond default  # Previously disabled but I've re-enabled it since logrotate requires it
 rc_add dhcpd default
 rc_add dropbear default
 rc_add iperf3 default
 rc_add irqbalance default
-rc_add radvd default
+#rc_add radvd default  # Switched to Corerad
 rc_add ulogd default
 rc_add unbound default
 
