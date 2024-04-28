@@ -1,16 +1,70 @@
-user USERNAMEHERE
-plugin rp-pppoe.so eth1
+# Define username@realm
+user username@isp
+
+# Load the PPPoE plugin
+#
+# Alpine Wiki seems to specify the interface on this
+# line along with the plugin but other implementations
+# seem to have the interface by itself on its own line
+#
+# Versions of pppd before 2.5.0 used rp-ppoe.so for this
+# filename, but subsequent versions just use 'pppoe.so'.
+#
+# See: https://gitlab.alpinelinux.org/alpine/aports/-/issues/14905
+plugin pppoe.so vlan888
+
+# Log to /var/log/ppp/ppp.log
+#
+# Disabled because enabling this option stops pppd from
+# writing to syslog and we want syslog instead.
+##logfile /var/log/ppp/ppp.log
+
+# Attempt to force a 1500 MTU
+#
+# Disabled since I'm on the TalkTalk backhaul with AAISP
+# and it seems like TT really aren't great at taking full
+# 1500 byte packets.
+#
+# See: https://support.aa.net.uk/MTU#Backhaul_networks
+#
+# If we want this to work, our ethernet interface that's 
+# connected to the PPP upstream would also need an MTU of 1508.
+##mtu 1500
+
+# Our IP is allocated dynamically by the IP
 noipdefault
+
+# We want to use this connection as the default route
 defaultroute
-hide-password
-lcp-echo-interval 1
-lcp-echo-failure 10
-noauth
+
+# Keep pppd alive in the event that there's a
+# disconnection or if we can't connect in the
+# first place
 persist
+
+# Never give up reconnecting
 maxfail 0
-mtu 1492
-noaccomp
-default-asyncmap
+
+# Wait 10 seconds between reconnect attempts. The default
+# for this is unclear but it might be 30 seconds
+holdoff 10
+
+# Do not ask the remote to authenticate itself
+noauth
+
+# Configure pppd to support IPv6 using the local
+# IPv4 address as the identifier
 +ipv6
 ipv6cp-use-ipaddr
-ifname pppoe
+
+# Disable asyncmap negotiation, forcing all control characters to
+# be escaped for both the transmit and the receive direction
+default-asyncmap
+
+# Disable Address/Control compression in both directions
+noaccomp
+
+# Configure Link Control Protocol echo rates
+# https://en.wikipedia.org/wiki/Link_Control_Protocol
+lcp-echo-interval 1
+lcp-echo-failure 10

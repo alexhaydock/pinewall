@@ -1,3 +1,0 @@
-# Mount disk with label PINECONF to /media/usb
-# Does not get mounted at boot (noauto) - lbu commit will do it automatically
-LABEL=PINECONF /media/usb ext4 noauto,defaults 0 0

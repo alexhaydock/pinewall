@@ -117,11 +117,6 @@ copyfile root:root 0755 /tmp/etc/init.d/iperf3 "$tmp"/etc/init.d/iperf3
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/motd "$tmp"/etc/motd
 
-# Copy our /etc/fstab which will mount disks labeled PINECONF
-# to /media/usb to allow us to use `lbu commit`.
-mkdir -p "$tmp"/etc
-copyfile root:root 0644 /tmp/etc/fstab "$tmp"/etc/fstab
-
 # Add sysctls
 mkdir -p "$tmp"/etc/sysctl.d
 copyfile root:root 0644 /tmp/etc/sysctl.d/local.conf "$tmp"/etc/sysctl.d/local.conf
@@ -204,11 +199,6 @@ copyfile 5000:5000 0644 /tmp/home/pinewall/.config/htop/htoprc "$tmp"/home/pinew
 
 # Double-check that the Pinewall home directory is owned by the Pinewall user
 chown -R 5000:5000 "$tmp"/home/pinewall
-
-# Copy LBU config so that LBU in our running environment will backup
-# to the "usb" device by default, which it will mount to /media/usb
-#mkdir -p "$tmp"/etc/lbu
-#copyfile root:root 0644 /tmp/etc/lbu/lbu.conf "$tmp"/etc/lbu/lbu.conf
 
 # Except where commented, these runlevels come from the defaults that can
 # be found after a basic Alpine Standard install to HDD with the defaults.
