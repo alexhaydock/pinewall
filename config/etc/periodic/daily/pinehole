@@ -1,0 +1,33 @@
+#!/bin/sh
+set -eu
+
+# /etc/periodic/daily/pinehole.sh
+
+# This script run daily at 2AM based on the Alpine Linux defaults
+# See the /etc/periodic/daily entry in `crontab -l` for specifics
+
+# Fail if we're not running as root
+# (if we're not, we won't be able to restart Unbound)
+if [ "$(id -u)" -ne 0 ]; then
+    echo 'This script must be run by root in order to restart Unbound.' >&2
+    exit 1
+fi
+
+# Remove previous adblock list
+rm -fv /tmp/adblock.list
+
+# Download fresh adblock list
+curl https://gitlab.com/alexhaydock/pinehole/-/raw/main/adblock.list -o /tmp/adblock.list
+
+# If the adblock list has >100,000 entries, assume the download
+# has completed and move it into place, restarting Unbound
+if [ "$(wc -l /tmp/adblock.list | cut -d " " -f1)" -gt "100000" ]; then
+    echo "List count is >100,000. Assuming our download has completed successfully."
+    echo "Loading adblock list into Unbound."
+    mv -fv /tmp/adblock.list /etc/unbound/adblock.list
+    echo "Restarting Unbound."
+    rc-service unbound restart
+else
+    echo "List count is <100,000. Maybe something is broken with the download?"
+    echo "Not loading adblock list into Unbound, just in case."
+fi

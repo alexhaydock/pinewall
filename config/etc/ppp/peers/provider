@@ -1,0 +1,16 @@
+user USERNAMEHERE
+plugin rp-pppoe.so eth1
+noipdefault
+defaultroute
+hide-password
+lcp-echo-interval 1
+lcp-echo-failure 10
+noauth
+persist
+maxfail 0
+mtu 1492
+noaccomp
+default-asyncmap
++ipv6
+ipv6cp-use-ipaddr
+ifname pppoe

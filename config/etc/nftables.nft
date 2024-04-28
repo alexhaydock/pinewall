@@ -1,0 +1,21 @@
+#!/usr/sbin/nft -f
+# vim:set ts=4:
+# You can find examples in /usr/share/nftables/.
+
+# NFTABLES HOOK ORDERING
+#   ingress --> prerouting --> input/output/forward --> postrouting
+#
+# Ingress chains get processed before all others and these are where we want to put our quick-drop rules
+# for performance - allowing us to drop malicious/invalid/broken packets really early and have them put
+# the least load possible on our system.
+
+# Clear all prior state
+flush ruleset
+
+# Include modular config files
+include "/etc/nftables.d/*.nft"
+
+# Notes:
+#
+# To set hook priorities, see this list for numeric values and keywords:
+#   https://wiki.nftables.org/wiki-nftables/index.php/Configuring_chains#Base_chain_priority

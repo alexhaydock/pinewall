@@ -1,0 +1,17 @@
+# We don't have the boot media configured here, which is deliberate.
+#
+# During boot, /media/cdrom/apks is set as the only repo in this file.
+#
+# During the boot process, the live media uses that repo to seed
+# packages specified by /etc/apk/world into the running system.
+#
+# From that point onwards though, we layer the apkovl on top
+# of the filesystem, which includes this file, and gives us access
+# to web-based repositories.
+#
+
+# Stable Repo
+https://uk.alpinelinux.org/alpine/edge/main
+
+# Community Repo
+https://uk.alpinelinux.org/alpine/edge/community

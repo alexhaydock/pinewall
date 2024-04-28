@@ -1,0 +1,28 @@
+# Based on the corerad.toml upstream reference file here:
+#   https://github.com/mdlayher/corerad/blob/main/internal/config/reference.toml
+
+# Advertise an IPv6 default route on eth0.
+[[interfaces]]
+names = ["vlan190", "vlan191", "vlan192", "vlan193", "vlan194"]
+advertise = true
+
+  # Advertise an on-link, autonomous prefix for all /64 addresses on eth0. This
+  # also enables stateless address autoconfiguration (SLAAC) for clients.
+  [[interfaces.prefix]]
+
+  # Serve route information for IPv6 routes destined to the loopback interface.
+  [[interfaces.route]]
+
+  # Inform clients of a recursive DNS server running on this interface.
+  [[interfaces.rdnss]]
+  ## RDNSS entries configured to last 1 week, as per conversation with Jen Linkova (Google)
+  ## about a bug on macOS/iOS related to this expiring while hosts are asleep
+  lifetime = "604800s"
+
+  # Specify a NDS DNS Search List
+  [[interfaces.dnssl]]
+  domain_names = ["home.arpa"]
+
+  # Specify the AAISP NAT64 prefix via PREF64
+  [[interfaces.pref64]]
+  prefix = "2001:8b0:6464:0:66::/96"

@@ -1,0 +1,8 @@
+# Here we forward logs over UDP to our local Splunk instance
+#
+# Note that without the -L flag, this setup will no longer
+# log locally to /var/log and will only log to the network:
+#
+#   -L              Log locally and via network (default is network only if -R)
+#
+SYSLOGD_OPTS="-t -R [2001:db8:1234:1]:3141"

@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# This script is run by pppd when there's a successful ppp connection.
+#
+
+# Restart chronyd on successful ppp connection, to force an NTP sync
+# this is important if we're on a Pi without an RTC.
+/sbin/rc-service chronyd restart
+
+# Sleep for 3 seconds
+sleep 3
+
+# Restart radvd on successful ppp connection, since it has a habit
+# of quitting when anything is wrong at all.
+#/sbin/rc-service radvd restart
+
+# Restart unbound on successful ppp connection too, as I've had issues
+# with it failing when using a DoT upstream when the clock isn't synced
+# yet.
+/sbin/rc-service unbound restart
