@@ -129,8 +129,9 @@ It's worth noting that Pinewall also offers the chance to run WireGuard, but Wir
 ## Why Alpine Edge rather than the latest stable release?
 This is mostly down to the fact that the Linux kernel package for Raspberry Pi seems to update more rapidly than in the stable branch, though I cant say that this is entirely consistent. But I've had no problems so far running with Edge so I've decided to stick with that approach.
 
-## How can I build this locally for myself?
-Your best bet will be to import this repo into GitLab, where the [.gitlab-ci.yml](.gitlab-ci.yml) file will take care of setting up the pipeline for you.
+## How can I use this for myself?
+### Building
+Your best bet will be to import this repo into GitLab, where the [.gitlab-ci.yml](.gitlab-ci.yml) file will take care of setting up the pipeline for you. This works even on GitLab.com free accounts. Give it a try!
 
 If you try to build this on GitLab.com's free runners (which does work!), you will need to remove the `aarch64` tag from the `.gitlab-ci.yml` file (I use this tag locally to direct the pipeline to run only on my ARM-based runners, but it will build happily on x64_64 runners - only quite slowly):
 ```yaml
@@ -138,19 +139,19 @@ If you try to build this on GitLab.com's free runners (which does work!), you wi
     - aarch64
 ```
 
-## How can I use this in production?
+### Adding custom configs
+The easiest method will just be to fork it on GitLab as described above and start changing things in the `config/` directory as you please.
+
+### Running in production
 Well the way _I_ run this in production is to use the images built by the GitLab CI process in this repo. I use Raspberry Pi Imager to write the `pinewall.img.gz` file directly to a microSD card.
 
-I then have a second repo which contains a fork of the contents of the `config/` directory found in this repo, where I can add things that I can't publish to this repo, like my WireGuard host keys and config, and my PPP dialing passwords. That repo uses GitLab CI to build an APKOVERLAY file (using a similar `genapkovl-pinewall.sh` script to the one in this repo). I simply drop the built APKOVERLAY onto the microSD card I just flashed the fresh Pinewall image to and put it in my Raspberry Pi.
+I then have a second repo which contains a fork of the contents of the `config/` directory found in this repo, where I can add things that I can't publish to this repo, like my WireGuard host keys and config, and my PPP dialing passwords. That repo uses GitLab CI to build an APKOVERLAY file (using a similar `genapkovl-pinewall.sh` script to the one in this repo). I simply drop the built APKOVERLAY onto the microSD card I just flashed the fresh Pinewall image to and put it in my Raspberry Pi. This is mostly because I keep this half of the repository public, though. If you keep your repository private you'll be able to get away with a nice single-repo flow that automatically builds the image and config layer together seamlessly.
 
 I keep a rotation of 2 microSD cards going for this, meaning that I never make changes to the current running deployment. Changes are always written to a new microSD card, and then I swap in the new card, taking the old card out. This means that if a new Pinewall image (or a new config change I've made in the overlay) causes a problem, I always have a way to roll back to the known-working config simply by putting in the previous microSD card.
 
 Similarly, I make an effort to make all configs as generic as possible so that they're not specific to the Pi's hardware (so no using IPv6 EUI-64 addresses that depend on the hardware MAC address, or other such things). This means that if my router/gateway fails, I can simply put the microSD card into a different Raspberry Pi 4 and boot it up and _boom_ - enterprise(-ish) redundancy at a fraction of the cost.
 
 This is about as close as I can get to atomic container-style update (and the sysadmin's dream of treating all hosts as cattle rather than pets) with a home-grown firewall/gateway solution.
-
-## How can I add my own configs to this?
-The easiest method will just be to fork it here on GitLab and start changing things in the `config/` directory as you please. As a bonus, if you fork it into GitLab.com you'll get the benfits of the automatic CI/CD processes building images for you - even if you're only using a free account. Try it out!
 
 ## How do I configure syslog forwarding?
 Edit the `/etc/conf.d/syslog` file to include your destination server that accepts UDP-formatted syslog. An example file is included in this repo:
