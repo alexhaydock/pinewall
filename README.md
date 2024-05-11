@@ -133,12 +133,6 @@ This is mostly down to the fact that the Linux kernel package for Raspberry Pi s
 ### Building
 Your best bet will be to import this repo into GitLab, where the [.gitlab-ci.yml](.gitlab-ci.yml) file will take care of setting up the pipeline for you. This works even on GitLab.com free accounts. Give it a try!
 
-If you try to build this on GitLab.com's free runners (which does work!), you will need to remove the `aarch64` tag from the `.gitlab-ci.yml` file (I use this tag locally to direct the pipeline to run only on my ARM-based runners, but it will build happily on x64_64 runners - only quite slowly):
-```yaml
-  tags:
-    - aarch64
-```
-
 ### Adding custom configs
 The easiest method will just be to fork it on GitLab as described above and start changing things in the `config/` directory as you please.
 

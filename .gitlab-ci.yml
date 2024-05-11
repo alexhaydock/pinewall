@@ -21,8 +21,6 @@ build:
       - pinewall.img.gz
       - pinewall.txt
     expire_in: 1 day
-  tags:
-    - aarch64
 
 release:
   image: docker.io/curlimages/curl:latest
@@ -34,5 +32,3 @@ release:
   only:
     refs:
       - master  # Only run the actual release stage if we're running on the master branch (stops us accidentally releasing other branches)
-  tags:
-    - aarch64
