@@ -1,6 +1,5 @@
 alpine-base
 avahi
-bird
 chrony
 conntrack-tools
 corerad

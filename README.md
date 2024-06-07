@@ -63,7 +63,6 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | Package               | Repo      | Functionality                                                                          |
 |-----------------------|-----------|----------------------------------------------------------------------------------------|
 | avahi                 | main      | Multicast DNS proxy for relaying mDNS trafic across VLANS                              |
-| bird                  | community | BGP daemon                                                                             |
 | chrony                | main      | NTP Client & Server                                                                    |
 | conntrack-tools       | main      | Allows introspecting the kernel's conntrack table(s)                                   |
 | corerad               | community | IPv6 Router Advertisement daemon                                                       |
@@ -97,7 +96,6 @@ Below is a table of the services that run on a default Pinewall installation, al
 | Service      | Externally Accessible | Drops Privilege | User       |
 |--------------|-----------------------|-----------------|------------|
 | avahi-daemon | Yes                   | Yes             | avahi      |
-| bird         | Yes                   | Yes             | bird       |
 | chronyd      | Yes                   | Yes             | chrony     |
 | corerad      | Yes                   | Yes             | corerad    |
 | crond        | No                    | No              | root       |
