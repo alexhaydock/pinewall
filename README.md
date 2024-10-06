@@ -124,9 +124,6 @@ It's worth noting that Pinewall also offers the chance to run WireGuard, but Wir
   * Pinewall does not currently support DHCPv6 as either a server or a client. I probably won't bother to implement this.
   * I'm fortunate enough to have a very forward-thinking ISP (shout-out to [AAISP](https://www.aa.net.uk/) in the UK) who routes a static IPv6 `/48` to me. I just pick static `/64` ranges from this allocation and assign them to my VLANs, rather than needing to deal with prefix delegation from upstream. For this reason, I haven't bothered including it in Pinewall.
 
-## Why Alpine Edge rather than the latest stable release?
-This is mostly down to the fact that the Linux kernel package for Raspberry Pi seems to update more rapidly than in the stable branch, though I cant say that this is entirely consistent. But I've had no problems so far running with Edge so I've decided to stick with that approach.
-
 ## How can I use this for myself?
 ### Building
 Your best bet will be to import this repo into GitLab, where the [.gitlab-ci.yml](.gitlab-ci.yml) file will take care of setting up the pipeline for you. This works even on GitLab.com free accounts. Give it a try!

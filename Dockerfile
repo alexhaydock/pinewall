@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:edge as builder
+FROM docker.io/library/alpine:3.20 as builder
 
 # Run an APK update so we have a recent cache ready in the Docker image
 # (if we don't do this then the "apk fetch" stages of the build that fetch
@@ -25,8 +25,9 @@ RUN mkdir /tmp/abuild
 WORKDIR /tmp/abuild
 
 # Clone the aports repo for our specific branch
-# If building from Alpine Edge, we need to use the master branch
-RUN git clone --depth 1 --branch master https://gitlab.alpinelinux.org/alpine/aports.git
+# If building from Alpine Edge, we need to use the `master` branch
+#RUN git clone --depth 1 --branch master https://gitlab.alpinelinux.org/alpine/aports.git
+RUN git clone --depth 1 --branch 3.20-stable https://gitlab.alpinelinux.org/alpine/aports.git
 
 # Add our custom profile into the abuild scripts directory
 COPY mkimg.pinewall_rpi.sh /tmp/abuild/aports/scripts/mkimg.pinewall_rpi.sh
@@ -57,7 +58,7 @@ WORKDIR /tmp/abuild/aports/scripts
 RUN mkdir /tmp/images
 
 # Build our image
-RUN ./mkimage.sh --tag edge --outdir /tmp/images --workdir /tmp/cache --arch aarch64 --repository https://uk.alpinelinux.org/alpine/edge/main --repository https://uk.alpinelinux.org/alpine/edge/community --profile pinewall_rpi
+RUN ./mkimage.sh --tag 3.20 --outdir /tmp/images --workdir /tmp/cache --arch aarch64 --repository https://uk.alpinelinux.org/alpine/v3.20/main --repository https://uk.alpinelinux.org/alpine/v3.20/community --profile pinewall_rpi
 
 # List the contents of our image directory
 # (should show our built image if everything worked)
@@ -65,7 +66,7 @@ RUN ls -lah /tmp/images
 
 # --------------------------------------------- #
 
-FROM docker.io/library/alpine:edge as overlay
+FROM docker.io/library/alpine:3.20 as overlay
 
 # Bind mount a directory into /tmp/overlays when running this image
 # to output a built overlay into it
@@ -89,13 +90,13 @@ RUN ./genapkovl-pinewall.sh
 # --------------------------------------------- #
 
 # Copy our built image into a new container
-FROM docker.io/library/alpine:edge
+FROM docker.io/library/alpine:3.20
 
 # Install mtools to build FAT32 images without mounting them
 RUN apk --no-cache add mtools
 
 # Copy our built images and settings from the build container
-COPY --from=builder /tmp/images/alpine-pinewall_rpi-edge-aarch64.tar.gz /tmp/images/pinewall.tar.gz
+COPY --from=builder /tmp/images/alpine-pinewall_rpi-3.20-aarch64.tar.gz /tmp/images/pinewall.tar.gz
 
 # Set workdir
 WORKDIR /opt

@@ -11,7 +11,7 @@
 #
 
 # Stable Repo
-https://uk.alpinelinux.org/alpine/edge/main
+https://uk.alpinelinux.org/alpine/v3.20/main
 
 # Community Repo
-https://uk.alpinelinux.org/alpine/edge/community
+https://uk.alpinelinux.org/alpine/v3.20/community
