@@ -10,8 +10,9 @@ profile_pinewall_x86() {
   kernel_addons=""
 
   # Include AMD and Intel microcode updates (taken from the default "Extended" profile)
-  boot_addons="amd-ucode intel-ucode"
-  initrd_ucode="/boot/amd-ucode.img /boot/intel-ucode.img"
+  # (Disabled since I'm only targeting KVM VMs for x86_64 targets)
+  ##boot_addons="amd-ucode intel-ucode"
+  ##initrd_ucode="/boot/amd-ucode.img /boot/intel-ucode.img"
 
   # Don't forget to include $apks below to include the ones which we already read into this variable
   # from mkimg.base.sh (if we don't, we end up overwriting the variable)
@@ -43,4 +44,7 @@ profile_pinewall_x86() {
     unbound
     wireguard-tools-wg
     "
+
+  # Build our APK overlay into the built image automatically
+  apkovl="genapkovl-pinewall.sh"
 }

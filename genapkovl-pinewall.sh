@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-set -xeu
+#!/bin/sh -e
 
 # Set hostname to "pinewall"
 HOSTNAME="pinewall"
@@ -67,7 +66,11 @@ copyfile root:root 0644 /tmp/etc/profile.d/timezone.sh "$tmp"/etc/profile.d/time
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /etc/group "$tmp"/etc/group
 copyfile root:root 0644 /etc/passwd "$tmp"/etc/passwd
-copyfile root:root 0644 /etc/shadow "$tmp"/etc/shadow
+
+# Add users with a shadow file based on the default shadow file in Alpine 3.20
+# We can't copy this from the running container since we're likely running as
+# the builder user at this point and won't be able to read the shadowfile
+copyfile root:root 0644 /tmp/etc/shadow_alpine320 "$tmp"/etc/shadow
 
 # Lock the root account
 # We're doing this by setting the /sbin/nologin shell
@@ -245,4 +248,4 @@ rc_add mdev sysinit
 rc_add modloop sysinit
 
 # Wrap up our custom /etc and /home into an APK overlay file
-tar -c -C "$tmp" etc home | gzip -9n > /tmp/overlays/$HOSTNAME.apkovl.tar.gz
+tar -c -C "$tmp" etc home | gzip -9n > $HOSTNAME.apkovl.tar.gz

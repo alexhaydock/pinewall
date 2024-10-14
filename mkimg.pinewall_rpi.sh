@@ -58,4 +58,7 @@ profile_pinewall_rpi() {
   apks="$apks
     raspberrypi
     "
+
+  # Build our APK overlay into the built image automatically
+  apkovl="genapkovl-pinewall.sh"
 }
