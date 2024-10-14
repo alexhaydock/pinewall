@@ -54,6 +54,9 @@ This is more of a set of scripts and configs that allows you to compose a custom
 * Raspberry Pi 5
   * As of Dec 2023, I am shipping the unified `linux-rpi` kernel package that Alpine 3.19 uses, which should support both the Pi 4 and Pi 5.
   * I do not have a Pi 5 (yet), so I haven't been able to test the image on it, but in theory it should be supported just as well as the Pi 4.
+* KVM/QEMU Virtual Machines (x86_64)
+  * As of Oct 2024, I'm moving towards supporting x86_64 ISOs again with the project.
+  * The only x86_64 'hardware' I officially support is KVM/QEMU VMs using VirtIO components and the Proxmox default `x86-64-v2-AES` CPU type (but other configs will probably work too).
 
 ## What packages does Pinewall add on top of a standard Alpine Linux base?
 Here you can find a list of every package that Pinewall installs on top of the Alpine "Standard" profile, along with the justifcation for each package's presence.
@@ -132,9 +135,7 @@ Your best bet will be to import this repo into GitLab, where the [.gitlab-ci.yml
 The easiest method will just be to fork it on GitLab as described above and start changing things in the `config/` directory as you please.
 
 ### Running in production
-Well the way _I_ run this in production is to use the images built by the GitLab CI process in this repo. I use Raspberry Pi Imager to write the `pinewall.img.gz` file directly to a microSD card.
-
-I then have a second repo which contains a fork of the contents of the `config/` directory found in this repo, where I can add things that I can't publish to this repo, like my WireGuard host keys and config, and my PPP dialing passwords. That repo uses GitLab CI to build an APKOVERLAY file (using a similar `genapkovl-pinewall.sh` script to the one in this repo). I simply drop the built APKOVERLAY onto the microSD card I just flashed the fresh Pinewall image to and put it in my Raspberry Pi. This is mostly because I keep this half of the repository public, though. If you keep your repository private you'll be able to get away with a nice single-repo flow that automatically builds the image and config layer together seamlessly.
+For production use, I use a fork of this repo hosted on my own internal GitLab instance, which has my non-public edits in the `config/` directory (WireGuard keys, PPPoE dialing passwords, etc). I use Raspberry Pi Imager to write the `pinewall.img.gz` files that GitLab builds directly to a microSD card for use in my Pi.
 
 I keep a rotation of 2 microSD cards going for this, meaning that I never make changes to the current running deployment. Changes are always written to a new microSD card, and then I swap in the new card, taking the old card out. This means that if a new Pinewall image (or a new config change I've made in the overlay) causes a problem, I always have a way to roll back to the known-working config simply by putting in the previous microSD card.
 

@@ -31,16 +31,22 @@ RUN git clone --depth 1 --branch 3.20-stable https://gitlab.alpinelinux.org/alpi
 
 # Add our custom profile into the abuild scripts directory
 COPY mkimg.pinewall_rpi.sh /tmp/abuild/aports/scripts/mkimg.pinewall_rpi.sh
+COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
 
 # Make our scripts executable
 RUN chmod +x /tmp/abuild/aports/scripts/mkimage.sh
 RUN chmod +x /tmp/abuild/aports/scripts/mkimg.pinewall_rpi.sh
+RUN chmod +x /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
+
+# Add in our configs
+COPY config/etc/ /tmp/etc/
+COPY config/home/ /tmp/home/
 
 # Add unprivileged builder user and change ownership of build directory
 # so we can launch the mkimage process unprivileged
 RUN adduser builder --disabled-password
 RUN addgroup builder abuild
-RUN chown -R builder:abuild /tmp/abuild
+RUN chown -R builder:abuild /tmp/abuild /tmp/etc /tmp/home
 
 # Become builder user and generate our build key
 # Most examples pass the -i flag to abuild-keygen, but that just installs
@@ -66,28 +72,8 @@ RUN ls -lah /tmp/images
 
 # --------------------------------------------- #
 
-FROM docker.io/library/alpine:3.20 as overlay
-
-# Bind mount a directory into /tmp/overlays when running this image
-# to output a built overlay into it
-
-# Add some packages that we'll use as sources for overlay data
-RUN apk --no-cache add tzdata
-
-# Add our custom APK overlay script
-COPY genapkovl-pinewall.sh /genapkovl-pinewall.sh
-RUN chmod +x /genapkovl-pinewall.sh
-
-# Add in all our configs
-COPY config/etc/ /tmp/etc/
-COPY config/home/ /tmp/home/
-
-# Create overlays directory to store our outputted overlay
-RUN mkdir -p /tmp/overlays
-
-RUN ./genapkovl-pinewall.sh
-
-# --------------------------------------------- #
+# This second-stage of the Dockerfile is focused on building a Raspberry Pi compatible
+# .img file for writing directly to a Pi microSD card
 
 # Copy our built image into a new container
 FROM docker.io/library/alpine:3.20
@@ -104,9 +90,6 @@ WORKDIR /opt
 # Extract the .tar.gz that Alpine's script builds for us
 RUN mkdir /opt/pinewall
 RUN tar -xvf /tmp/images/pinewall.tar.gz --no-same-owner -C /opt/pinewall
-
-# Import our overlay from the overlay build container
-COPY --from=overlay /tmp/overlays/pinewall.apkovl.tar.gz /opt/pinewall/pinewall.apkovl.tar.gz
 
 # Add in our Pi firmware tweaks
 COPY usercfg.txt /opt/pinewall/usercfg.txt
