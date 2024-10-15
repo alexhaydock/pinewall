@@ -171,7 +171,6 @@ copyfile root:root 0644 /tmp/etc/avahi/avahi-daemon.conf "$tmp"/etc/avahi/avahi-
 mkdir -p "$tmp"/etc/dhcp
 copyfile root:root 0644 /tmp/etc/dhcp/dhcpd.conf "$tmp"/etc/dhcp/dhcpd.conf
 copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-ranges.conf "$tmp"/etc/dhcp/dhcpd-ranges.conf
-copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-reservations.conf "$tmp"/etc/dhcp/dhcpd-reservations.conf
 
 # Add PPPoE settings
 mkdir -p "$tmp"/etc/ppp
@@ -183,6 +182,10 @@ copyfile root:root 0644 /tmp/etc/ppp/peers/provider "$tmp"/etc/ppp/peers/provide
 # Add modules file
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/modules "$tmp"/etc/modules
+
+# Add WireGuard config
+mkdir -p "$tmp"/etc/wireguard
+copyfile root:root 0600 /tmp/etc/wireguard/wg0.conf "$tmp"/etc/wireguard/wg0.conf
 
 # Add rngd config
 mkdir -p "$tmp"/etc/conf.d
@@ -196,7 +199,15 @@ copyfile root:root 0644 /tmp/etc/conf.d/syslog "$tmp"/etc/conf.d/syslog
 mkdir -p "$tmp"/etc
 copyfile root:root 0644 /tmp/etc/inittab "$tmp"/etc/inittab
 
-# [Pinewall user] Add htoprc to configure htop display output
+# [Pinewall user home directory] Add Dropbear key for SSH auth
+mkdir -p "$tmp"/home/pinewall/.ssh
+copyfile 5000:5000 0644 /tmp/home/pinewall/.ssh/authorized_keys "$tmp"/home/pinewall/.ssh/authorized_keys
+
+# Add Dropbear config (disables root login and disables password-based auth, so our public key in the file above needs to be correct!)
+mkdir -p "$tmp"/etc/conf.d
+copyfile root:root 0644 /tmp/etc/conf.d/dropbear "$tmp"/etc/conf.d/dropbear
+
+# [Pinewall user home directory] Add htoprc to configure htop display output
 mkdir -p "$tmp"/home/pinewall/.config/htop
 copyfile 5000:5000 0644 /tmp/home/pinewall/.config/htop/htoprc "$tmp"/home/pinewall/.config/htop/htoprc
 

@@ -10,10 +10,6 @@
 # Sleep for 3 seconds
 sleep 3
 
-# Restart radvd on successful ppp connection, since it has a habit
-# of quitting when anything is wrong at all.
-#/sbin/rc-service radvd restart
-
 # Restart unbound on successful ppp connection too, as I've had issues
 # with it failing when using a DoT upstream when the clock isn't synced
 # yet.
