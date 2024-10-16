@@ -50,7 +50,7 @@
 ## Investigating current DHCP leases
 
 * You can check the currently allocated DHCP leases with:
-  * `less /var/lib/dhcp/dhcpd.leases`
+  * `less /var/lib/kea/dhcp4.leases`
 
 
 ## Upgrading Alpine

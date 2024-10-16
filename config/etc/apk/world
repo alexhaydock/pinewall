@@ -4,7 +4,6 @@ chrony
 conntrack-tools
 corerad
 dbus
-dhcp-server-vanilla
 dns-root-hints
 doas
 dropbear
@@ -14,6 +13,7 @@ ifupdown-ng-ppp
 ifupdown-ng-wireguard
 iperf3
 irqbalance
+kea
 logrotate
 nano
 nftables

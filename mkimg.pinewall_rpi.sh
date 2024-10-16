@@ -31,7 +31,6 @@ profile_pinewall_rpi() {
     conntrack-tools
     corerad
     dbus
-    dhcp-server-vanilla
     dns-root-hints
     doas
     dropbear
@@ -41,6 +40,7 @@ profile_pinewall_rpi() {
     ifupdown-ng-wireguard
     iperf3
     irqbalance
+    kea
     logrotate
     nano
     nftables

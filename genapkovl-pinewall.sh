@@ -167,10 +167,9 @@ copyfile root:root 0644 /tmp/etc/ulogd.conf "$tmp"/etc/ulogd.conf
 mkdir -p "$tmp"/etc/avahi
 copyfile root:root 0644 /tmp/etc/avahi/avahi-daemon.conf "$tmp"/etc/avahi/avahi-daemon.conf
 
-# Add DHCP config
-mkdir -p "$tmp"/etc/dhcp
-copyfile root:root 0644 /tmp/etc/dhcp/dhcpd.conf "$tmp"/etc/dhcp/dhcpd.conf
-copyfile root:root 0644 /tmp/etc/dhcp/dhcpd-ranges.conf "$tmp"/etc/dhcp/dhcpd-ranges.conf
+# Add Kea DHCPv4 server config
+mkdir -p "$tmp"/etc/kea
+copyfile root:root 0644 /tmp/etc/kea/kea-dhcp4.conf "$tmp"/etc/kea/kea-dhcp4.conf
 
 # Add PPPoE settings
 mkdir -p "$tmp"/etc/ppp
@@ -237,10 +236,11 @@ rc_add acpid default
 rc_add chronyd default
 rc_add corerad default
 rc_add crond default  # Previously disabled but I've re-enabled it since logrotate requires it
-rc_add dhcpd default
+#rc_add dhcpd default  # ISC DHCPv4 server removed after ISC deprecated it in favour of Kea
 rc_add dropbear default
 rc_add iperf3 default
 rc_add irqbalance default
+rc_add kea-dhcp4 default
 #rc_add radvd default  # Switched to Corerad
 rc_add ulogd default
 rc_add unbound default

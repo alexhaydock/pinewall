@@ -70,7 +70,6 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | conntrack-tools       | main      | Allows introspecting the kernel's conntrack table(s)                                   |
 | corerad               | community | IPv6 Router Advertisement daemon                                                       |
 | dbus                  | main      | Dependency (of avahi)                                                                  |
-| dhcp-server-vanilla   | main      | ISC DCHPv4 Server                                                                      |
 | dns-root-hints        | main      | Provides DNSSEC root keys for Unbound                                                  |
 | doas                  | main      | Privilege escalation, similar to sudo                                                  |
 | dropbear              | main      | Minimal SSH server, similar to OpenSSH                                                 |
@@ -80,6 +79,7 @@ You can find these packages defined in the `apks` variable inside either `mkimg.
 | ifupdown-ng-wireguard | main      | WireGuard connection integration with /etc/network/interfaces                          |
 | iperf3                | main      | Network performance testing                                                            |
 | irqbalance            | main      | Balances IRQs between cores on the system. May help with Realtek NIC driver throughput |
+| kea                   | main      | ISC DCHPv4 Server                                                                      |
 | logrotate             | main      | Allows for automatic rotation of system logs                                           |
 | nano                  | main      | Text editor                                                                            |
 | nftables              | main      | Firewall                                                                               |
@@ -103,10 +103,10 @@ Below is a table of the services that run on a default Pinewall installation, al
 | corerad      | Yes                   | Yes             | corerad    |
 | crond        | No                    | No              | root       |
 | dbus-daemon  | No                    | Yes             | messagebus |
-| dhcpd        | Yes                   | Yes             | dhcp       |
 | dropbear     | Yes                   | No              | root       |
 | iperf3       | Yes                   | Yes             | iperf      |
 | irqbalance   | No                    | No              | root       |
+| kea-dhcp4    | Yes                   | Yes             | kea        |
 | pppd         | No                    | No              | root       |
 | rngd         | No                    | No              | root       |
 | syslogd      | No                    | No              | root       |
@@ -125,6 +125,7 @@ It's worth noting that Pinewall also offers the chance to run WireGuard, but Wir
   * For the time being, I'd recommend [this post on the Alpine wiki](https://wiki.alpinelinux.org/wiki/Linux_Router_with_VPN_on_a_Raspberry_Pi_(IPv6)#nftables) which shows off a good IPv6 nftables ruleset.
 * DHCPv6
   * Pinewall does not currently support DHCPv6 as either a server or a client. I probably won't bother to implement this.
+  * But now that I've switched to the Kea DHCP server, you ought to be able to get this going by simply editing `/etc/kea/kea-dhcp6.conf` if you want it.
   * I'm fortunate enough to have a very forward-thinking ISP (shout-out to [AAISP](https://www.aa.net.uk/) in the UK) who routes a static IPv6 `/48` to me. I just pick static `/64` ranges from this allocation and assign them to my VLANs, rather than needing to deal with prefix delegation from upstream. For this reason, I haven't bothered including it in Pinewall.
 
 ## How can I use this for myself?
