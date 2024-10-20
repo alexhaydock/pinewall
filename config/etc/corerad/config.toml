@@ -17,12 +17,18 @@ advertise = true
   [[interfaces.rdnss]]
   ## RDNSS entries configured to last 1 week, as per conversation with Jen Linkova (Google)
   ## about a bug on macOS/iOS related to this expiring while hosts are asleep
+  ##
+  ## This was fixed by a PR in Oct 2024, and can be removed when Alpine Stable is shipping
+  ## Corerad version v1.3.1
+  ## See: https://github.com/mdlayher/corerad/pull/48
   lifetime = "604800s"
 
   # Specify a NDS DNS Search List
   [[interfaces.dnssl]]
   domain_names = ["home.arpa"]
 
-  # Specify the AAISP NAT64 prefix via PREF64
   [[interfaces.pref64]]
-  prefix = "2001:8b0:6464:0:66::/96"
+  ## Send AAISP NAT64 prefix if we're on AAISP in the UK and want to use their upstream NAT64
+  ## If we comment this out then much like Unbound does, Corerad will also just default to using
+  ## the well-known NAT64 prefix of 64:ff9b::/96
+  #prefix = "2001:8b0:6464:0:66::/96"
