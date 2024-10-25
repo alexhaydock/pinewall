@@ -1,18 +1,11 @@
 profile_pinewall_x86() {
-  # Source the env vars from the "standard" profile below (see mkimg.base.sh)
-  profile_standard
+  # Source the env vars from the "virt" profile below (see mkimg.standard.sh)
+  # Note that this produces an image optimised for running as a virtual guest
+  # so it may not support physical hardware appropriately
+  profile_virt
 
   # Force x86_64
   arch="x86_64"
-
-  # We don't want the kernel addons from the Standard profile, which includes
-  # xtables-addons. We don't want any *tables stuff since we're fully nftables.
-  kernel_addons=""
-
-  # Include AMD and Intel microcode updates (taken from the default "Extended" profile)
-  # (Disabled since I'm only targeting KVM VMs for x86_64 targets)
-  ##boot_addons="amd-ucode intel-ucode"
-  ##initrd_ucode="/boot/amd-ucode.img /boot/intel-ucode.img"
 
   # Don't forget to include $apks below to include the ones which we already read into this variable
   # from mkimg.base.sh (if we don't, we end up overwriting the variable)

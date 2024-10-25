@@ -48,15 +48,15 @@ Not really.
 This is more of a set of scripts and configs that allows you to compose a custom Alpine Linux image that contains all the additional packages needed to run a Linux-based home router on a Raspberry Pi. Most of this is built around the native 'overlay' functionality provided by Alpine's [local backup utility](https://wiki.alpinelinux.org/wiki/Alpine_local_backup) - I've just tailored it specifically towards being a home router.
 
 ## What hardware does Pinewall support?
+* KVM/QEMU Virtual Machines (x86_64)
+  * As of Oct 2024, this is the main target platform, as this I now deploy Pinewall in production as a Proxmox VM.
+  * The only x86_64 'hardware' I officially support is KVM/QEMU VMs using VirtIO components and the Proxmox default `x86-64-v2-AES` CPU type. Other virtual configs are likely to work though.
+  * The x86_64 builds of Pinewall are based on the Alpine "Virtual" profile, [as seen on the Alpine download page](https://www.alpinelinux.org/downloads/). I don't think these builds will boot on physical x86 hardware properly.
 * Raspberry Pi 4 / Compute Module 4
-  * This is the main target platform, as it's what I actively deploy. This is where you can expect development, support, and prompt fixes for issues.
-  * I will likely try and support new Pi revisions as they release, but nothing before the Pi 4 will be supported as previous revsions do not use a proper ethernet controller and are not capable of routing at gigabit speeds.
+  * This was the previous primary target platform until Oct 2024, and should still experience decent support, though I'm not testing on this platform in production anymore so YMMV.
 * Raspberry Pi 5
   * As of Dec 2023, I am shipping the unified `linux-rpi` kernel package that Alpine 3.19 uses, which should support both the Pi 4 and Pi 5.
   * I do not have a Pi 5 (yet), so I haven't been able to test the image on it, but in theory it should be supported just as well as the Pi 4.
-* KVM/QEMU Virtual Machines (x86_64)
-  * As of Oct 2024, I'm moving towards supporting x86_64 ISOs again with the project.
-  * The only x86_64 'hardware' I officially support is KVM/QEMU VMs using VirtIO components and the Proxmox default `x86-64-v2-AES` CPU type (but other configs will probably work too).
 
 ## What packages does Pinewall add on top of a standard Alpine Linux base?
 Here you can find a list of every package that Pinewall installs on top of the Alpine "Standard" profile, along with the justifcation for each package's presence.
@@ -135,14 +135,17 @@ Your best bet will be to import this repo into GitLab, where the [.gitlab-ci.yml
 ### Adding custom configs
 The easiest method will just be to fork it on GitLab as described above and start changing things in the `config/` directory as you please.
 
-### Running in production
-For production use, I use a fork of this repo hosted on my own internal GitLab instance, which has my non-public edits in the `config/` directory (WireGuard keys, PPPoE dialing passwords, etc). I use Raspberry Pi Imager to write the `pinewall.img.gz` files that GitLab builds directly to a microSD card for use in my Pi.
+### Running in production (Raspberry Pi)
+For production use on the Raspberry Pi, I use a fork of this repo hosted on my own internal GitLab instance, which has my non-public edits in the `config/` directory (WireGuard keys, PPPoE dialing passwords, etc). I use Raspberry Pi Imager to write the `pinewall.img.gz` files that GitLab builds directly to a microSD card for use in my Pi.
 
 I keep a rotation of 2 microSD cards going for this, meaning that I never make changes to the current running deployment. Changes are always written to a new microSD card, and then I swap in the new card, taking the old card out. This means that if a new Pinewall image (or a new config change I've made in the overlay) causes a problem, I always have a way to roll back to the known-working config simply by putting in the previous microSD card.
 
 Similarly, I make an effort to make all configs as generic as possible so that they're not specific to the Pi's hardware (so no using IPv6 EUI-64 addresses that depend on the hardware MAC address, or other such things). This means that if my router/gateway fails, I can simply put the microSD card into a different Raspberry Pi 4 and boot it up and _boom_ - enterprise(-ish) redundancy at a fraction of the cost.
 
 This is about as close as I can get to atomic container-style update (and the sysadmin's dream of treating all hosts as cattle rather than pets) with a home-grown firewall/gateway solution.
+
+### Running in Production (QEMU/KVM VM)
+As of October 2024, my production setup for Pinewall is a VM hosted on the Proxmox hypervisor. The update and management flow is almost exactly the same as above, except the GitLab CI/CD build process builds an .iso image which I attach to a diskless Proxmox VM. To handle updates, I push a new ISO image to the platform.
 
 ## How do I configure syslog forwarding?
 Edit the `/etc/conf.d/syslog` file to include your destination server that accepts UDP-formatted syslog. An example file is included in this repo:
