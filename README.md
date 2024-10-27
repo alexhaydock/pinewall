@@ -1,4 +1,4 @@
-![Pinewall Logo](logo.png)
+![Pinewall Logo](logo.svg)
 
 # Pinewall
 A minimal Alpine Linux home firewall / router.
