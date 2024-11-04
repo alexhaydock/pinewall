@@ -1,19 +1,12 @@
 ![Pinewall Logo](logo.svg)
 
 # Pinewall
-A minimal Alpine Linux home firewall / router.
+A minimal Al**pine** Linux home fire**wall** / router. Optimised for running from RAM as a VM, or on a Raspberry Pi.
 
 ## Introduction
-There's some controversy right now (March 2021) around Netgate and pfSense and I have been looking to explore alternatives for a while. I could jump ship to OPNSense, but it's based on FreeBSD just like pfSense and [FreeBSD's code quality is being called into question too](https://arstechnica.com/gadgets/2021/03/buffer-overruns-license-violations-and-bad-code-freebsd-13s-close-call/) at the moment.
+I originally started work on this project in March 2021, when there was some controversy around Netgate (pfSense) [trying to push their knowingly sub-par WireGuard code into the FreeBSD kernel](https://arstechnica.com/gadgets/2021/03/buffer-overruns-license-violations-and-bad-code-freebsd-13s-close-call/). I wasn't really a fan of Netgate before this either, due to their [extremely unprofessional handling of OPNsense's forking of their project](https://opnsense.org/opnsense-com/).
 
-Linux also seems to have the better networking stack these days (which Netgate seem to be well aware of as they base [their extremely high performance TNSR router](https://www.tnsr.com/) platform on Linux rather than BSD). You also get to [play with eBPF and XDP Hardware Offload](https://blog.cloudflare.com/how-to-drop-10-million-packets/) if you're lucky enough to have compatible gear.
-
-If I had to pick a proper vendor-supported Linux-based routing platform to use, I would probably pick [VyOS](https://vyos.io/), the still-developed OSS fork of Brocade's Vyatta. But hey -- a home or SoHO firewall/gateway device is actually pretty a pretty simple set of features -- why not just build one from scratch? That idea became this project.
-
-## Official Repository Links
-* https://github.com/alexhaydock/pinewall
-
-I previously hosted this on GitLab.com also, but I now maintain the main repository for this project on my own self-hosted GitLab instance. That repository is configured to mirror to the public repo on GitHub, which is presumably where you're reading this message.
+So with the above in mind, I set out to create my own Linux-based home router distribution to replace what I previously used pfSense for. That became the Pinewall project, and I've been running it in production as my home router ever since.
 
 ## What's the goal?
 The core goals of this project are simplicity and minimalism. I want it to be my home router/gateway and nothing more.
@@ -23,7 +16,7 @@ At its core, a home router/firewall/gateway doesn't really do much. It routes, i
 In brief, I want this project to:
 
 * Replace pfSense in my home setup
-* Be based on Linux rather than FreeBSD
+* Be based on Linux
 * [Track a stable upstream release of the Linux kernel](https://security.googleblog.com/2021/08/linux-kernel-security-done-right.html)
 * Be free of unnecessary complexity and attack surface (GUIs etc)
 * Be minimal and simple to manage
@@ -32,20 +25,20 @@ In brief, I want this project to:
 * Have first-class IPv6 support
 
 ## Who is this for?
-Me.
+Me. (But feel free to use it!)
 
 This project is designed to be minimal and simple. The downside of this is that it may be slightly rigid in terms of conforming to my needs. If I don't need something, I didn't include it.
 
-Pinewall is also quite opinionated. It is designed from the ground-up to treat IPv6 as the primary target version of IP, with IPv4 support being provided on a best-effort basis. For this reason, many technologies associated with IPv4 are mostly ignored here (Inbound NAT Port Forwarding, Static Port Outbound NAT, UPnP). Pinewall is fully geared-up to support IPv6-only and IPv6-mostly networks, as this is how I deploy it in production.
+Pinewall is also quite opinionated. It is designed from the ground-up to treat IPv6 as the primary target version of IP, with IPv4 support being provided on a best-effort basis. Pinewall is fully geared-up to support IPv6-only and IPv6-mostly networks, as this is how I deploy it in production.
 
 That said, I've tried my best to document everything as thoroughly as possible and I'm using this public repo as my actual development workspace for the live version of Pinewall that I'm running in production at home. The hope there is that the code and processes in use here may benefit others who wish to opt for a similar setup.
 
 I'm also very willing to help out generally where I can if people get stuck (feel free to open issues) or want to try and implement something new on top of this. The best way to learn is through experimenting and trying to solve problems. I'm also open to sensible suggestions via PR that make the project a bit more adaptable to the needs of others (but without compromising the goals of simplicity and minimalism!).
 
 ## Is this a custom distro / a fork of Alpine?
-Not really.
+Not quite.
 
-This is more of a set of scripts and configs that allows you to compose a custom Alpine Linux image that contains all the additional packages needed to run a Linux-based home router on a Raspberry Pi. Most of this is built around the native 'overlay' functionality provided by Alpine's [local backup utility](https://wiki.alpinelinux.org/wiki/Alpine_local_backup) - I've just tailored it specifically towards being a home router.
+This is more of a set of scripts and configs that allows you to compose a custom Alpine Linux image that contains all the additional packages needed to run a Linux-based home router. Most of this is built around the native 'overlay' functionality provided by Alpine's [local backup utility](https://wiki.alpinelinux.org/wiki/Alpine_local_backup), and Alpine's very useful [mkimage.sh](https://gitlab.alpinelinux.org/alpine/aports/-/blob/master/scripts/mkimage.sh) scripts.
 
 ## What hardware does Pinewall support?
 * KVM/QEMU Virtual Machines (x86_64)
