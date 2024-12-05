@@ -1,7 +1,6 @@
 # Based on the corerad.toml upstream reference file here:
 #   https://github.com/mdlayher/corerad/blob/main/internal/config/reference.toml
 
-# Advertise an IPv6 default route on eth0.
 [[interfaces]]
 names = ["vlan190", "vlan191", "vlan193", "vlan194", "vlan195", "vlan201"]
 advertise = true
@@ -21,7 +20,7 @@ advertise = true
   ## This was fixed by a PR in Oct 2024, and can be removed when Alpine Stable is shipping
   ## Corerad version v1.3.1
   ## See: https://github.com/mdlayher/corerad/pull/48
-  lifetime = "604800s"
+  #lifetime = "604800s"
 
   # Specify a NDS DNS Search List
   [[interfaces.dnssl]]
