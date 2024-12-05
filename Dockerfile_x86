@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.20 as builder
+FROM docker.io/library/alpine:3.21 as builder
 
 # Run an APK update so we have a recent cache ready in the Docker image
 # (if we don't do this then the "apk fetch" stages of the build that fetch
@@ -27,7 +27,7 @@ WORKDIR /tmp/abuild
 # Clone the aports repo for our specific branch
 # If building from Alpine Edge, we need to use the `master` branch
 #RUN git clone --depth 1 --branch master https://gitlab.alpinelinux.org/alpine/aports.git
-RUN git clone --depth 1 --branch 3.20-stable https://gitlab.alpinelinux.org/alpine/aports.git
+RUN git clone --depth 1 --branch 3.21-stable https://gitlab.alpinelinux.org/alpine/aports.git
 
 # Add our custom profile into the abuild scripts directory
 COPY mkimg.pinewall_x86.sh /tmp/abuild/aports/scripts/mkimg.pinewall_x86.sh
@@ -64,7 +64,7 @@ WORKDIR /tmp/abuild/aports/scripts
 RUN mkdir /tmp/images
 
 # Build our image
-RUN ./mkimage.sh --tag 3.20 --outdir /tmp/images --workdir /tmp/cache --arch x86_64 --repository https://uk.alpinelinux.org/alpine/v3.20/main --repository https://uk.alpinelinux.org/alpine/v3.20/community --profile pinewall_x86
+RUN ./mkimage.sh --tag 3.21 --outdir /tmp/images --workdir /tmp/cache --arch x86_64 --repository https://uk.alpinelinux.org/alpine/v3.21/main --repository https://uk.alpinelinux.org/alpine/v3.21/community --profile pinewall_x86
 
 # List the contents of our image directory
 # (should show our built image if everything worked)
@@ -73,10 +73,10 @@ RUN ls -lah /tmp/images
 # --------------------------------------------- #
 
 # Copy our built image into a new container
-FROM docker.io/library/alpine:3.20
+FROM docker.io/library/alpine:3.21
 
 # Copy our built images and settings from the build container
-COPY --from=builder /tmp/images/alpine-pinewall_x86-3.20-x86_64.iso /opt/pinewall.iso
+COPY --from=builder /tmp/images/alpine-pinewall_x86-3.21-x86_64.iso /opt/pinewall.iso
 
 # We don't set an entrypoint in this container as our preferred method for
 # retrieving the built image from it is to use `podman create` to create an
