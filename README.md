@@ -103,4 +103,4 @@ The code:
 * Uses `proxmox_virtual_environment_file` to copy the latest discovered Pinewall EFI to the local ISO storage.
 * Uses `proxmox_virtual_environment_vm` to configure a VM with our specific requirements.
 
-You should probably be connected directly to the Proxmox MGMT interface if you try this deployment methodology. It probably won't go particularly well if you're accessing the Proxmox WebUI _through_ the gateway VM you deploy with this, as subsequent deployments will destroy the existing VM _first_, before trying to copy the new image. Ask me how I know.
+You should probably be connected directly to the Proxmox MGMT interface if you try this deployment methodology. It probably won't go particularly well if you're accessing Proxmox _through_ the gateway VM you deploy with this, as subsequent deployments will destroy the existing VM _first_, before trying to copy the new image. Ask me how I know.
