@@ -1,0 +1,20 @@
+#!/sbin/openrc-run
+# shellcheck shell=sh
+
+description="Enforce permissions or create users as required"
+
+depend() {
+    before iperf3
+}
+
+start() {
+    ebegin "Enforcing permissions and creating users as required"
+
+    # Create an unprivileged user for running the iperf server
+    addgroup -g 520 iperf > /dev/null 2>&1
+    adduser -D -H -u 520 -G iperf -h /home/iperf -s /sbin/nologin iperf > /dev/null 2>&1
+}
+
+stop() {
+    echo 'noop'
+}

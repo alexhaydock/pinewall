@@ -3,4 +3,4 @@
 # see `dropbear -h` for more information
 # -w disables root logins
 # -s disables password-based auth
-DROPBEAR_OPTS="-w -s"
+DROPBEAR_OPTS="-s"

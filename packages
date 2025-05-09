@@ -1,11 +1,20 @@
+# base
 alpine-base
-avahi
+ca-certificates
+eudev
+kbd-bkeymaps
+linux-firmware-none
+linux-lts
+tzdata
+util-linux
+
+# pinewall workload
 chrony
 conntrack-tools
 corerad
+curl
 dbus
 dns-root-hints
-doas
 dropbear
 ethtool
 htop
@@ -20,7 +29,6 @@ nftables
 nload
 openssl
 ppp-pppoe
-raspberrypi
 rng-tools
 tcpdump
 ulogd

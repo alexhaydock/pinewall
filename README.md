@@ -1,154 +1,106 @@
 ![Pinewall Logo](logo.svg)
 
 # Pinewall
-A minimal Al**pine** Linux home fire**wall** / router. Optimised for running from RAM as a VM, or on a Raspberry Pi.
+My minimal Al**pine** Linux home fire**wall** / router. Optimised for running from RAM as a QEMU VM.
 
-## Introduction
-I originally started work on this project in March 2021, when there was some controversy around Netgate (pfSense) [trying to push their knowingly sub-par WireGuard code into the FreeBSD kernel](https://arstechnica.com/gadgets/2021/03/buffer-overruns-license-violations-and-bad-code-freebsd-13s-close-call/). I wasn't really a fan of Netgate before this either, due to their [extremely unprofessional handling of OPNsense's forking of their project](https://opnsense.org/opnsense-com/).
+Pinewall is built with the goal of running entirely from RAM, immutably. It builds into a single packed EFI binary which can be run directly with QEMU or, in theory, booted on physical UEFI-based hardware.
 
-So with the above in mind, I set out to create my own Linux-based home router distribution to replace what I previously used pfSense for. That became the Pinewall project, and I've been running it in production as my home router ever since.
-
-## What's the goal?
-The core goals of this project are simplicity and minimalism. I want it to be my home router/gateway and nothing more.
-
-At its core, a home router/firewall/gateway doesn't really do much. It routes, it NATs, and it does DHCP. That's about it. There are some other neat features you can add, and I have a feature matrix further down in this README, but those are the key features, and when your project has so few "moving parts", it makes sense to start from a very minimal state -- and that's where Alpine Linux comes in.
-
-In brief, I want this project to:
-
-* Replace pfSense in my home setup
-* Be based on Linux
-* [Track a stable upstream release of the Linux kernel](https://security.googleblog.com/2021/08/linux-kernel-security-done-right.html)
-* Be free of unnecessary complexity and attack surface (GUIs etc)
-* Be minimal and simple to manage
-* Be easy to back up and migrate config
-* Be crash safe and resiliant to power loss (needs to run from RAM)
-* Have first-class IPv6 support
+I deploy this in production to Proxmox using OpenTofu.
 
 ## Who is this for?
 Me. (But feel free to use it!)
 
-This project is designed to be minimal and simple. The downside of this is that it may be slightly rigid in terms of conforming to my needs. If I don't need something, I didn't include it.
+The core goals of this project are simplicity and minimalism. I want it to be my home router/gateway and nothing more. Pinewall is an opinionated project based on my own requirements. If I don't need something, I didn't include it.
 
-Pinewall is also quite opinionated. It is designed from the ground-up to treat IPv6 as the primary target version of IP, with IPv4 support being provided on a best-effort basis. Pinewall is fully geared-up to support IPv6-only and IPv6-mostly networks, as this is how I deploy it in production.
+But with that in mind, I've tried to document things as well as I can in this public repo and you're very welcome to fork the project and use it for your own needs.
 
-That said, I've tried my best to document everything as thoroughly as possible and I'm using this public repo as my actual development workspace for the live version of Pinewall that I'm running in production at home. The hope there is that the code and processes in use here may benefit others who wish to opt for a similar setup.
+## Is this a custom distro / a fork?
+Not really.
 
-I'm also very willing to help out generally where I can if people get stuck (feel free to open issues) or want to try and implement something new on top of this. The best way to learn is through experimenting and trying to solve problems. I'm also open to sensible suggestions via PR that make the project a bit more adaptable to the needs of others (but without compromising the goals of simplicity and minimalism!).
+This is based heavily on Alpine Linux's [alpine-make-rootfs](https://github.com/alpinelinux/alpine-make-rootfs) which does a lot of the heavy lifting of building a base Alpine Linux system for us. From there, I just inject all the relevant packages and configs required to build a competent home router.
 
-## Is this a custom distro / a fork of Alpine?
-Not quite.
+From there, I owe a lot of the credit for the next-step code to Filippo Valsorda and his [frood](https://words.filippo.io/dispatches/frood/) project which is very similar to this one, but aims to be an immutable NAS instead.
 
-This is more of a set of scripts and configs that allows you to compose a custom Alpine Linux image that contains all the additional packages needed to run a Linux-based home router. Most of this is built around the native 'overlay' functionality provided by Alpine's [local backup utility](https://wiki.alpinelinux.org/wiki/Alpine_local_backup), and Alpine's very useful [mkimage.sh](https://gitlab.alpinelinux.org/alpine/aports/-/blob/master/scripts/mkimage.sh) scripts.
+## Hardware Support
+Officially I only `x86_64` based QEMU Virtual Machines. Specifically running on Proxmox, as that's how I'm running it in production.
 
-## What hardware does Pinewall support?
-* KVM/QEMU Virtual Machines (x86_64)
-  * As of Oct 2024, this is the main target platform, as this I now deploy Pinewall in production as a Proxmox VM.
-  * The only x86_64 'hardware' I officially support is KVM/QEMU VMs using VirtIO components and the Proxmox default `x86-64-v2-AES` CPU type. Other virtual configs are likely to work though.
-  * The x86_64 builds of Pinewall are based on the Alpine "Virtual" profile, [as seen on the Alpine download page](https://www.alpinelinux.org/downloads/). I don't think these builds will boot on physical x86 hardware properly.
-* Raspberry Pi 4 / Compute Module 4
-  * This was the previous primary target platform until Oct 2024, and should still experience decent support, though I'm not testing on this platform in production anymore so YMMV.
-* Raspberry Pi 5
-  * As of Dec 2023, I am shipping the unified `linux-rpi` kernel package that Alpine 3.19 uses, which should support both the Pi 4 and Pi 5.
-  * I do not have a Pi 5 (yet), so I haven't been able to test the image on it, but in theory it should be supported just as well as the Pi 4.
+But there's a good chance this will run on a wide range of `x86_64` hardware. If you build the EFI image in an `aarch64` environment there's a good chance it will "just work" on ARM hardware too as long as it can boot EFI binaries.
 
-## What packages does Pinewall add on top of a standard Alpine Linux base?
-Here you can find a list of every package that Pinewall installs on top of the Alpine "Standard" profile, along with the justifcation for each package's presence.
+## Prerequisites
+To build Pinewall, you will need:
+* Podman installed with the ability to launch `--privileged` containers.
+* Your distribution's `qemu` package installed, if you want to test the built image locally.
+* Proxmox installed on a remote host (to deploy to, if you like).
+* OpenTofu installed (if you want to deploy the built image to the Proxmox host).
 
-You can find these packages defined in the `apks` variable inside either `mkimg.pinewall_x86.sh`, or `mkimg.pinewall_rpi.sh`.
+## Usage
+### Adding custom config
+The config presented here is _mostly_ what I use in production with some notable differences. For security reasons, the `network`, `nftables.d`, and obviously `ppp` and `wireguard` directories are intended for demo purposes than as fully functional configs. But hopefully this is a decent base if you want to build your own project on top of this.
 
-| Package               | Repo      | Functionality                                                                          |
-|-----------------------|-----------|----------------------------------------------------------------------------------------|
-| avahi                 | main      | Multicast DNS proxy for relaying mDNS trafic across VLANS                              |
-| chrony                | main      | NTP Client & Server                                                                    |
-| conntrack-tools       | main      | Allows introspecting the kernel's conntrack table(s)                                   |
-| corerad               | community | IPv6 Router Advertisement daemon                                                       |
-| dbus                  | main      | Dependency (of avahi)                                                                  |
-| dns-root-hints        | main      | Provides DNSSEC root keys for Unbound                                                  |
-| doas                  | main      | Privilege escalation, similar to sudo                                                  |
-| dropbear              | main      | Minimal SSH server, similar to OpenSSH                                                 |
-| ethtool               | main      | Allows inspecting/configuring physical network interfaces                              |
-| htop                  | main      | System performance viewer                                                              |
-| ifupdown-ng-ppp       | main      | PPP connection integration with /etc/network/interfaces                                |
-| ifupdown-ng-wireguard | main      | WireGuard connection integration with /etc/network/interfaces                          |
-| iperf3                | main      | Network performance testing                                                            |
-| irqbalance            | main      | Balances IRQs between cores on the system. May help with Realtek NIC driver throughput |
-| kea                   | main      | ISC DCHPv4 Server                                                                      |
-| logrotate             | main      | Allows for automatic rotation of system logs                                           |
-| nano                  | main      | Text editor                                                                            |
-| nftables              | main      | Firewall                                                                               |
-| nload                 | main      | Network throughput viewer                                                              |
-| pinehole              | N/A       | Minimal Pinewall-focused implementation of just the adblock functionality from Pi-Hole |
-| ppp-pppoe             | main      | The main PPP daemon for dialing PPPoE connections                                      |
-| raspberrypi           | main      | Raspberry Pi support tools and scripts                                                 |
-| rng-tools             | main      | Random number generator daemon, especially useful for Raspberry Pi systems             |
-| tcpdump               | main      | Packet capturing                                                                       |
-| ulogd                 | main      | Acts as a log sink for receiving logs from nftables and forwarding them to syslog      |
-| unbound               | main      | Recursive DNS resolver (with caching and filtering)                                    |
-| wireguard-tools-wg    | main      | Just enough WireGuard to set up WireGuard connections without also pulling in iptables |
+* Files go in `root/`
+* Packages go in `packages`
+* Service updates and user passwords go in `setup.sh`
+* If you need to configure permissions or other things during early system boot, `root/etc/init.d/enforceperms` will probably help.
 
-## How is service privilege managed?
-Below is a table of the services that run on a default Pinewall installation, along with whether or not they drop privilege and, if they do, what account they drop to.
+### Building a new image
+You can build a new image with:
 
-| Service      | Externally Accessible | Drops Privilege | User       |
-|--------------|-----------------------|-----------------|------------|
-| avahi-daemon | Yes                   | Yes             | avahi      |
-| chronyd      | Yes                   | Yes             | chrony     |
-| corerad      | Yes                   | Yes             | corerad    |
-| crond        | No                    | No              | root       |
-| dbus-daemon  | No                    | Yes             | messagebus |
-| dropbear     | Yes                   | No              | root       |
-| iperf3       | Yes                   | Yes             | iperf      |
-| irqbalance   | No                    | No              | root       |
-| kea-dhcp4    | Yes                   | Yes             | kea        |
-| pppd         | No                    | No              | root       |
-| rngd         | No                    | No              | root       |
-| syslogd      | No                    | No              | root       |
-| ulogd        | No                    | No              | root       |
-| unbound      | Yes                   | Yes             | unbound    |
-
-In the table above, "Externally Accessible" is used to define whether the process is accessible at a network level, regardless of whether this is on the WAN or LAN. Most of these Externally Accessible processes are only ever going to be exposed to a LAN anyway rather than a WAN, which reduces risk.
-
-Based on the information above, the most critically-privileged daemon we have running is `dropbear`, as it is both externally accessible and does not drop privilege. I am using `dropbear` for minimalism purposes, but I may consider switching back to OpenSSH as I generally trust the codebase a bit more than that of `dropbear`. Nevertheless, I never expose the `dropbear` service to the WAN anyway.
-
-It's worth noting that Pinewall also offers the chance to run WireGuard, but WireGuard is not listed above as a service as it does not run as a service in the traditional sense. WireGuard is a native part of the Linux kernel and is managed by creating a WireGuard interface in `/etc/network/interfaces` rather than any kind of service. Other distributions may use a service like `wg-quick` which wraps some additional convenience features into WireGuard setup, but this is not strictly needed. I do not use it in Pinewall because the dependency chain for `wg-quick` causes `iptables` to be installed, and I want to run a pure `nftables`-only setup.
-
-## What doesn't work yet?
-* IPv6 ruleset for nftables (in this repo)
-  * My production config for this is very functional, but I'm fully aware that the one in this repository needs a lot of work to be functional and useful. For obvious reasons, the configs in this repo are just examples rather than the full configs I run in production complete with my entire firewall layout and PPPoE passwords and such. Regrettably, this means they get a lot less attention than the ones I've actually got running in production.
-  * For the time being, I'd recommend [this post on the Alpine wiki](https://wiki.alpinelinux.org/wiki/Linux_Router_with_VPN_on_a_Raspberry_Pi_(IPv6)#nftables) which shows off a good IPv6 nftables ruleset.
-* DHCPv6
-  * Pinewall does not currently support DHCPv6 as either a server or a client. I probably won't bother to implement this.
-  * But now that I've switched to the Kea DHCP server, you ought to be able to get this going by simply editing `/etc/kea/kea-dhcp6.conf` if you want it.
-  * I'm fortunate enough to have a very forward-thinking ISP (shout-out to [AAISP](https://www.aa.net.uk/) in the UK) who routes a static IPv6 `/48` to me. I just pick static `/64` ranges from this allocation and assign them to my VLANs, rather than needing to deal with prefix delegation from upstream. For this reason, I haven't bothered including it in Pinewall.
-
-## How can I use this for myself?
-### Building
-Your best bet will be to import this repo into GitLab, where the [.gitlab-ci.yml](.gitlab-ci.yml) file will take care of setting up the pipeline for you. This works even on GitLab.com free accounts. Give it a try!
-
-### Adding custom configs
-The easiest method will just be to fork it on GitLab as described above and start changing things in the `config/` directory as you please.
-
-### Running in production (Raspberry Pi)
-For production use on the Raspberry Pi, I use a fork of this repo hosted on my own internal GitLab instance, which has my non-public edits in the `config/` directory (WireGuard keys, PPPoE dialing passwords, etc). I use Raspberry Pi Imager to write the `pinewall.img.gz` files that GitLab builds directly to a microSD card for use in my Pi.
-
-I keep a rotation of 2 microSD cards going for this, meaning that I never make changes to the current running deployment. Changes are always written to a new microSD card, and then I swap in the new card, taking the old card out. This means that if a new Pinewall image (or a new config change I've made in the overlay) causes a problem, I always have a way to roll back to the known-working config simply by putting in the previous microSD card.
-
-Similarly, I make an effort to make all configs as generic as possible so that they're not specific to the Pi's hardware (so no using IPv6 EUI-64 addresses that depend on the hardware MAC address, or other such things). This means that if my router/gateway fails, I can simply put the microSD card into a different Raspberry Pi 4 and boot it up and _boom_ - enterprise(-ish) redundancy at a fraction of the cost.
-
-This is about as close as I can get to atomic container-style update (and the sysadmin's dream of treating all hosts as cattle rather than pets) with a home-grown firewall/gateway solution.
-
-### Running in Production (QEMU/KVM VM)
-As of October 2024, my production setup for Pinewall is a VM hosted on the Proxmox hypervisor. The update and management flow is almost exactly the same as above, except the GitLab CI/CD build process builds an .iso image which I attach to a diskless Proxmox VM. To handle updates, I push a new ISO image to the platform.
-
-## How do I configure syslog forwarding?
-Edit the `/etc/conf.d/syslog` file to include your destination server that accepts UDP-formatted syslog. An example file is included in this repo:
+```sh
+./pinewall build
 ```
-# Here we forward logs over UDP to our local Splunk instance
-#
-# Note that without the -L flag, this setup will no longer
-# log locally to /var/log and will only log to the network:
-#
-#   -L              Log locally and via network (default is network only if -R)
-#
-SYSLOGD_OPTS="-t -R [2001:db8:1234:1]:3141"
+
+Once the build is complete you will see a status report about the built EFI binary:
+
+```text
+* Created image! [2025-05-09T20:37:42Z]
+-rw-r--r--    1 root     root      151.3M May  9 20:37 /mnt/images/pinewall.2025050902.efi.img
 ```
+
+The finished EFI binaries end up in `images/` in the local working directory.
+
+_Note:_ The `.img` suffix here is largely cosmetic. I use that because the `bpg/proxmox` Terraform provider is only capable of operating on a restricted set of suffixes which it considers legitimate "images", and `.efi` is not one of them.
+
+### Testing the image (locally)
+It's easy to test the newly built image locally with QEMU:
+
+```sh
+./pinewall qemu
+```
+
+This will boot the image directly in QEMU. You may wish to edit the command for this in the `pinewall` file as especially the network aspect might not be sufficient for proper local testing.
+
+This is the full command the `pinewall` script runs, for easy copy-paste and tweaking:
+
+```sh
+qemu-system-x86_64 -m 2G -nographic -bios /usr/share/edk2/ovmf/OVMF_CODE.fd -kernel images/"$image" -device virtio-net,netdev=nic -netdev user,hostname=pinewall,id=nic
+```
+
+_Note:_ If you are not running Fedora, your distribution may but the UEFI OVMF image in a different location. You may need to update this before the command will work.
+
+### Testing the image (Proxmox)
+If you want to test on Proxmox, you can do much the same as the above, though you will need to create the VM with the `qm create` command.
+
+This example will create a Proxmox VM with VM ID `123`, and a network interface bridged to `vmbr0` on VLAN 201. You can expand it as you desire.
+
+Importantly, to test like this, you will need to copy the packed EFI binary from the `pinewall build` process over to a destination on the Proxmox host, which you can see is passed to QEMU directly using the `--args` flag.
+
+```sh
+qm create 123 --args '-kernel /var/lib/vz/template/iso/pinewall.efi.img' --balloon 0 --bios ovmf --cores 4 --memory 2048 --name pinewall -net0 virtio,bridge=vmbr0,tag=201 --onboot 1 -serial0 socket -vga serial0
+```
+
+### Production deployment (Terraform + Proxmox)
+If you want a more robust production deployment (which is essentially a more automated version of the test process above) you can use Terraform:
+
+```sh
+./pinewall deploy
+```
+
+The `pinewall` script isn't doing much here. Only discovering the latest built version of the Pinewall EFI image before calling `tofu apply`.
+
+You will want to edit the Terraform code in `proxmox.tf` if you want to use this option, but it should be easy to understand.
+
+The code:
+* Uses `proxmox_virtual_environment_file` to copy the latest discovered Pinewall EFI to the local ISO storage.
+* Uses `proxmox_virtual_environment_vm` to configure a VM with our specific requirements.
+
+You should probably be connected directly to the Proxmox MGMT interface if you try this deployment methodology. It probably won't go particularly well if you're accessing the Proxmox WebUI _through_ the gateway VM as subsequent deployments will destroy the existing VM _first_, before copying over the new file.
