@@ -35,7 +35,7 @@ To build Pinewall, you will need:
 
 ## Usage
 ### Adding custom config
-The config presented here is _mostly_ what I use in production with some notable differences. For security reasons, the `network`, `nftables.d`, and obviously `ppp` and `wireguard` directories are intended for demo purposes than as fully functional configs. But hopefully this is a decent base if you want to build your own project on top of this.
+The config presented here is _mostly_ what I use in production with some notable differences. For security reasons, the `network`, `nftables.d`, and obviously `ppp` and `wireguard` directories are intended for demo purposes rather than as fully functional configs. But hopefully this is a decent base if you want to build your own project on top of this.
 
 * Files go in `root/`
 * Packages go in `packages`
