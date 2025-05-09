@@ -17,9 +17,9 @@ But with that in mind, I've tried to document things as well as I can in this pu
 ## Is this a custom distro / a fork?
 Not really.
 
-This is based heavily on Alpine Linux's [alpine-make-rootfs](https://github.com/alpinelinux/alpine-make-rootfs) which does a lot of the heavy lifting of building a base Alpine Linux system for us. From there, I just inject all the relevant packages and configs required to build a competent home router.
+This is based heavily on Alpine Linux's [alpine-make-rootfs](https://github.com/alpinelinux/alpine-make-rootfs) which does a lot of the heavy lifting of building a base Alpine Linux system for us. From there, I just inject all the relevant packages and configs required to build a competent home router and then pack the whole thing into a single [UKI](https://wiki.archlinux.org/title/Unified_kernel_image).
 
-From there, I owe a lot of the credit for the EFI UKI packing code to Filippo Valsorda and his [frood](https://words.filippo.io/dispatches/frood/) project - which is very similar to this one but aims to be an immutable NAS instead.
+I owe a lot of the credit for the UKI packing code to Filippo Valsorda and his [frood](https://words.filippo.io/dispatches/frood/) project - which is very similar to this one but aims to be an immutable NAS instead.
 
 ## Hardware Support
 Officially I only `x86_64` based QEMU Virtual Machines. Specifically running on Proxmox, as that's how I'm running it in production.
