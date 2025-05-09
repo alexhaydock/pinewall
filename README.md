@@ -17,12 +17,12 @@ But with that in mind, I've tried to document things as well as I can in this pu
 ## Is this a custom distro / a fork?
 Not really.
 
-This is based heavily on Alpine Linux's [alpine-make-rootfs](https://github.com/alpinelinux/alpine-make-rootfs) which does a lot of the heavy lifting of building a base Alpine Linux system for us. From there, I just inject all the relevant packages and configs required to build a competent home router and then pack the whole thing into a single [UKI](https://wiki.archlinux.org/title/Unified_kernel_image).
+This is based heavily on Alpine Linux's [alpine-make-rootfs](https://github.com/alpinelinux/alpine-make-rootfs) which does a lot of the heavy lifting of building a base Alpine Linux system for us. From there, I just inject all the relevant packages and configs required to build a competent home router and then pack the whole thing into a bootable [UKI](https://wiki.archlinux.org/title/Unified_kernel_image).
 
 I owe a lot of the credit for the UKI packing code to Filippo Valsorda and his [frood](https://words.filippo.io/dispatches/frood/) project - which is very similar to this one but aims to be an immutable NAS instead.
 
 ## Hardware Support
-Officially I only `x86_64` based QEMU Virtual Machines. Specifically running on Proxmox, as that's how I'm running it in production.
+Officially I only support `x86_64` based QEMU Virtual Machines. Specifically running on Proxmox, as that's how I'm running it in production.
 
 But there's a good chance this will run on a wide range of `x86_64` hardware. If you build the EFI image in an `aarch64` environment there's a good chance it will "just work" on ARM hardware too as long as it can boot EFI binaries.
 
