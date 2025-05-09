@@ -5,7 +5,7 @@ My minimal Al**pine** Linux home fire**wall** / router. Optimised for running fr
 
 Pinewall is built with the goal of running entirely from RAM, immutably. It builds into a single packed EFI binary which can be run directly with QEMU or, in theory, booted on physical UEFI-based hardware.
 
-I deploy this in production to Proxmox using OpenTofu.
+I deploy this in production to Proxmox using Terraform.
 
 ## Who is this for?
 Me. (But feel free to use it!)
@@ -19,7 +19,7 @@ Not really.
 
 This is based heavily on Alpine Linux's [alpine-make-rootfs](https://github.com/alpinelinux/alpine-make-rootfs) which does a lot of the heavy lifting of building a base Alpine Linux system for us. From there, I just inject all the relevant packages and configs required to build a competent home router.
 
-From there, I owe a lot of the credit for the next-step code to Filippo Valsorda and his [frood](https://words.filippo.io/dispatches/frood/) project which is very similar to this one, but aims to be an immutable NAS instead.
+From there, I owe a lot of the credit for the EFI UKI packing code to Filippo Valsorda and his [frood](https://words.filippo.io/dispatches/frood/) project - which is very similar to this one but aims to be an immutable NAS instead.
 
 ## Hardware Support
 Officially I only `x86_64` based QEMU Virtual Machines. Specifically running on Proxmox, as that's how I'm running it in production.
@@ -58,7 +58,7 @@ Once the build is complete you will see a status report about the built EFI bina
 
 The finished EFI binaries end up in `images/` in the local working directory.
 
-_Note:_ The `.img` suffix here is largely cosmetic. I use that because the `bpg/proxmox` Terraform provider is only capable of operating on a restricted set of suffixes which it considers legitimate "images", and `.efi` is not one of them.
+_Note:_ The use of the `.img` suffix here is largely cosmetic. I use that because the `bpg/proxmox` Terraform provider is only capable of operating on a restricted set of suffixes which it considers legitimate "images", and `.efi` is not one of them.
 
 ### Testing the image (locally)
 It's easy to test the newly built image locally with QEMU:
@@ -67,15 +67,15 @@ It's easy to test the newly built image locally with QEMU:
 ./pinewall qemu
 ```
 
-This will boot the image directly in QEMU. You may wish to edit the command for this in the `pinewall` file as especially the network aspect might not be sufficient for proper local testing.
+This will boot the image directly in QEMU. You may wish to edit the command for this in the `pinewall` script as especially the network aspect might not be sufficient for your local testing.
 
-This is the full command the `pinewall` script runs, for easy copy-paste and tweaking:
+This is the full command the `pinewall` script runs, for easy copy-paste and hacking:
 
 ```sh
 qemu-system-x86_64 -m 2G -nographic -bios /usr/share/edk2/ovmf/OVMF_CODE.fd -kernel images/"$image" -device virtio-net,netdev=nic -netdev user,hostname=pinewall,id=nic
 ```
 
-_Note:_ If you are not running Fedora, your distribution may but the UEFI OVMF image in a different location. You may need to update this before the command will work.
+_Note:_ If you are not running Fedora, your distribution may put the UEFI OVMF image in a different location. You may need to update this before the command will work.
 
 ### Testing the image (Proxmox)
 If you want to test on Proxmox, you can do much the same as the above, though you will need to create the VM with the `qm create` command.
@@ -103,4 +103,4 @@ The code:
 * Uses `proxmox_virtual_environment_file` to copy the latest discovered Pinewall EFI to the local ISO storage.
 * Uses `proxmox_virtual_environment_vm` to configure a VM with our specific requirements.
 
-You should probably be connected directly to the Proxmox MGMT interface if you try this deployment methodology. It probably won't go particularly well if you're accessing the Proxmox WebUI _through_ the gateway VM as subsequent deployments will destroy the existing VM _first_, before copying over the new file.
+You should probably be connected directly to the Proxmox MGMT interface if you try this deployment methodology. It probably won't go particularly well if you're accessing the Proxmox WebUI _through_ the gateway VM you deploy with this, as subsequent deployments will destroy the existing VM _first_, before trying to copy the new image.
