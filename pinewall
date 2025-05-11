@@ -52,10 +52,19 @@ case "$1" in
             -netdev user,hostname=pinewall,id=nic
         ;;
     deploy)
+        (
         # Deploy to Proxmox
+        export PROXMOX_VE_USERNAME="root@pam"
+        export PROXMOX_VE_PASSWORD="$(sudo tpm2 rsadecrypt -c ~/.ssh/tpm-amd/mykey.ctx ~/.ssh/api_key_prox_nas.enc)"
         export TF_VAR_image_name=$(latest_image)
-        tofu apply
-        ;;
+        podman run -it --rm -v "$PWD":/mnt:z \
+            --env PROXMOX_VE_USERNAME="${PROXMOX_VE_USERNAME}" \
+            --env PROXMOX_VE_PASSWORD="${PROXMOX_VE_PASSWORD}" \
+            --env TF_VAR_image_name="${TF_VAR_image_name}" \
+            --workdir /mnt \
+            docker.io/library/alpine:3.21 sh -c \
+              'apk add --no-cache opentofu && tofu apply'
+        )
     "")
         echo "Usage: $0 <subcommand>"
         echo
