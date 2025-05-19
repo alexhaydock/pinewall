@@ -40,7 +40,7 @@ case "$1" in
         mkdir -p "$PWD"/images
         chmod +x "$PWD"/root/etc/init.d/*  # Ensure that all init.d scripts are executable otherwise we risk a failure when starting the system
         podman run --privileged --rm -it -v "$PWD":/mnt:z -w /root \
-            docker.io/library/alpine:3.21 /mnt/pinewall-build.sh /mnt/images/"$image"
+            docker.io/library/alpine:edge /mnt/pinewall-build.sh /mnt/images/"$image"
         ;;
     test)
         image=$(latest_image)
@@ -62,9 +62,10 @@ case "$1" in
             --env PROXMOX_VE_PASSWORD \
             --env TF_VAR_image_name \
             --workdir /mnt \
-            docker.io/library/alpine:3.21 sh -c \
+            docker.io/library/alpine:edge sh -c \
               'apk add --no-cache opentofu && tofu apply'
         )
+        ;;
     "")
         echo "Usage: $0 <subcommand>"
         echo
