@@ -42,7 +42,7 @@ case "$1" in
         podman run --privileged --rm -it -v "$PWD":/mnt:z -w /root \
             docker.io/library/alpine:3.21 /mnt/pinewall-build.sh /mnt/images/"$image"
         ;;
-    qemu)
+    test)
         image=$(latest_image)
         echo "Running image $image in QEMU (terminate with Ctrl-A X," \
             "shutdown with Ctrl-A C system_powerdown)"
@@ -55,7 +55,7 @@ case "$1" in
         (
         # Deploy to Proxmox
         export PROXMOX_VE_USERNAME="root@pam"
-        export PROXMOX_VE_PASSWORD="$(sudo tpm2 rsadecrypt -c ~/.ssh/tpm-amd/mykey.ctx ~/.ssh/api_key_prox_rtr.enc)"
+        export PROXMOX_VE_PASSWORD="$(sudo tpm2 rsadecrypt -c 0x81010001 ~/.ssh/tpm-$(hostname)/api_key_prox_rtr.enc)"
         export TF_VAR_image_name=$(latest_image)
         podman run -it --rm -v "$PWD":/mnt:z \
             --env PROXMOX_VE_USERNAME \
