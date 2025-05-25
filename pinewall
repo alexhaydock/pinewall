@@ -39,7 +39,7 @@ case "$1" in
         echo "Building image $image"
         mkdir -p "$PWD"/images
         chmod +x "$PWD"/root/etc/init.d/*  # Ensure that all init.d scripts are executable otherwise we risk a failure when starting the system
-        podman run --privileged --rm -it -v "$PWD":/mnt:z -w /root \
+        podman run --rm -it -v "$PWD":/mnt:z -w /root \
             docker.io/library/alpine:edge /mnt/pinewall-build.sh /mnt/images/"$image"
         ;;
     test)
