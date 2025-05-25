@@ -28,10 +28,10 @@ But there's a good chance this will run on a wide range of `x86_64` hardware. If
 
 ## Prerequisites
 To build Pinewall, you will need:
-* Podman installed with the ability to launch `--privileged` containers.
-* Your distribution's `qemu` package installed, if you want to test the built image locally.
-* Proxmox installed on a remote host (to deploy to, if you like).
-* OpenTofu installed (if you want to deploy the built image to the Proxmox host).
+* `podman` - to build images.
+* `qemu` - to test built images.
+* Proxmox - (optional) on a remote host to deploy to.
+* `opentofu` - (optional) for deploying to the remote Proxmox host.
 
 ## Usage
 ### Adding custom config
