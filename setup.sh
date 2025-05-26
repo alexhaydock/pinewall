@@ -43,6 +43,7 @@ rc_add corerad default
 rc_add dropbear default
 rc_add iperf3 default
 rc_add kea-dhcp4 default
+rc_add node-exporter default
 rc_add ulogd default
 rc_add unbound default
 

@@ -29,6 +29,7 @@ nftables
 nload
 openssl
 ppp-pppoe
+prometheus-node-exporter
 rng-tools
 tcpdump
 ulogd
