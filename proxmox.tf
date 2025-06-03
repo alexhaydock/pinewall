@@ -57,7 +57,7 @@ resource "proxmox_virtual_environment_vm" "pinewall_vm" {
 
   cpu {
     cores = 4
-    type  = "x86-64-v2-AES" # defaults to `qemu64` if we don't specify
+    type  = "x86-64-v3-AES" # defaults to `qemu64` if we don't specify
   }
 
   memory {
