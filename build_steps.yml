@@ -128,7 +128,7 @@
 
 - name: Copy base Terraform config
   ansible.builtin.template:
-    src: terraform-base.tf
+    src: terraform-base.tf.j2
     dest: '{{ playbook_dir }}/terraform/terraform-base.tf'
 
 - name: Create a Terraform deployment file for each VM
