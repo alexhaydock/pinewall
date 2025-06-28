@@ -28,10 +28,9 @@ case "$1" in
         export PROXMOX_VE_USERNAME="root@pam"
         export PROXMOX_VE_PASSWORD="$(sudo tpm2 rsadecrypt -c 0x81010001 ~/.ssh/tpm-$(hostname)/api_key_prox_rtr.enc)"
         # Discover the primary IP of this deployment host
-        export TF_VAR_deployment_host_ip="$(tailscale ip --1)"
-        # Source Proxmox vars and then deploy
+        export TF_VAR_deployment_host_ip="$(ip -4 addr show dev "$(ip route show default | awk '/default/ {print $5}')" | awk '/inet / {print $2}' | cut -d/ -f1)"
+        # Deploy using OpenTofu
         cd "$PWD/terraform"
-        . $HOME/.ssh/vars.sh
         podman run -it --rm -v "$PWD":/mnt:z \
             --env PROXMOX_VE_USERNAME \
             --env PROXMOX_VE_PASSWORD \
