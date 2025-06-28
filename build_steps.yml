@@ -27,10 +27,25 @@
 - name: Ensure all init.d scripts are executable in destination filesystem
   ansible.builtin.shell: |
     set -euo pipefail
-    chmod +x *
+    chmod +x ./*
   args:
     chdir: '{{ playbook_dir }}/staging/{{ vm_hostname }}/root/etc/init.d/'
   changed_when: false
+
+- name: Ensure periodic cron scripts are executable in destination filesystem
+  ansible.builtin.shell: |
+    set -euo pipefail
+    chmod +x ./*/*
+  args:
+    chdir: '{{ playbook_dir }}/staging/{{ vm_hostname }}/root/etc/periodic/'
+  changed_when: false
+
+# Download base adblock.list for Unbound
+- name: Download base adblock.list for Unbound
+  ansible.builtin.get_url:
+    url: https://gitlab.com/alexhaydock/pinehole/-/raw/main/adblock.list
+    dest: '{{ playbook_dir }}/staging/{{ vm_hostname }}/root/etc/unbound/adblock.list'
+    force: true
 
 # Build image
 - name: Install pre-reqs on host
