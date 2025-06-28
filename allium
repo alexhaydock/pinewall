@@ -18,10 +18,10 @@ case "$1" in
     deploy)
         (
         # Start local webserver to host the images we've built for Proxmox to grab
-        podman stop eo-tor-deploy 2>/dev/null || true
-        podman rm eo-tor-deploy 2>/dev/null || true
+        podman stop allium-image-deploy 2>/dev/null || true
+        podman rm allium-image-deploy 2>/dev/null || true
         podman run -d --rm -v "$PWD"/images:/usr/share/nginx/html/images:ro,z \
-            --name eo-tor-deploy \
+            --name allium-image-deploy \
             -p 8080:80 \
             docker.io/library/nginx:alpine
         # Discover Proxmox credentials from TPM
@@ -38,14 +38,9 @@ case "$1" in
             --workdir /mnt \
             --entrypoint /bin/sh \
             ghcr.io/opentofu/opentofu:latest -c \
-              'tofu init && tofu fmt && \
-              tofu plan \
-                -target=proxmox_virtual_environment_download_file.efi_image_aegis \
-                -target=proxmox_virtual_environment_vm.efi_vm_aegis \
-                -out plan && \
-              tofu apply plan'
+              'tofu init && tofu fmt && tofu apply'
         # Stop local webserver container
-        podman stop eo-tor-deploy || true
+        podman stop allium-image-deploy || true
         )
         ;;
     "")
