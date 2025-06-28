@@ -64,14 +64,6 @@ _Note:_ The use of the `.img` suffix here is largely cosmetic. I use that becaus
 It's easy to test the newly built image locally with QEMU:
 
 ```sh
-./allium test
-```
-
-This will boot the image directly in QEMU. You may wish to edit the command for this in the `pinewall` script as especially the network aspect might not be sufficient for your local testing.
-
-This is the full command the `pinewall` script runs, for easy copy-paste and hacking:
-
-```sh
 qemu-system-x86_64 -m 2G -nographic -bios /usr/share/edk2/ovmf/OVMF_CODE.fd -kernel images/"$image" -device virtio-net,netdev=nic -netdev user,hostname=pinewall,id=nic
 ```
 
