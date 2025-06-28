@@ -127,7 +127,7 @@
     state: directory
 
 - name: Copy base Terraform config
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: terraform-base.tf
     dest: '{{ playbook_dir }}/terraform/terraform-base.tf'
 
@@ -137,7 +137,7 @@
     dest: '{{ playbook_dir }}/terraform/{{ vm_hostname }}.tf'
 
 # Clean up tempdir
-- name: Delete temp build directory for this relay
+- name: Delete temp build directory for this image
   ansible.builtin.file:
     path: '{{ builddir.path }}'
     state: absent

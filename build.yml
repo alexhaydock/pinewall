@@ -7,6 +7,8 @@
     kernelbranch: 'virt'           # expected values: `lts`, `virt`, `stable`
     vm_hostname: 'pinewall'
     prox_node_name: 'proxnet'      # proxmox node name - used by Terraform
+    prox_selfsigned: 'false'       # expected values: `true`, `false`
+    prox_url: 'https://cursedrouter.infected.systems:8006/'
     prox_vmid: '200'               # proxmox dest VMID - used by Terraform
     packageset: |
       alpine-base

@@ -12,7 +12,7 @@ resource "proxmox_virtual_environment_download_file" "efi_image_{{ vm_hostname }
 resource "proxmox_virtual_environment_vm" "efi_vm_{{ vm_hostname }}" {
   name        = "{{ vm_hostname }}"
   description = "Managed by Terraform"
-  tags        = ["alpine", "terraform", "tor"]
+  tags        = ["alpine", "terraform", "pinewall"]
 
   # Specify node to deploy to, VMID and auto-boot status
   node_name       = "{{ prox_node_name }}"

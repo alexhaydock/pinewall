@@ -13,8 +13,8 @@ terraform {
 variable "deployment_host_ip" {}
 
 provider "proxmox" {
-  endpoint = "https://cursedrouter.infected.systems:8006/"
+  endpoint = "{{ prox_url }}"
 
   # Needed if using a self-signed Proxmox TLS cert
-  insecure = false
+  insecure = {{ prox_selfsigned }}
 }
