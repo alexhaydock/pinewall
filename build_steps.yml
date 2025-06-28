@@ -1,0 +1,128 @@
+---
+# Determine output filename
+- name: Determine next incremental release name to use based on files already in the images/ directory
+  ansible.builtin.shell: |
+    set -euo pipefail
+    current_date="{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
+    counter=1
+    while [ -e "{{ vm_hostname }}.${current_date}$(printf %02d $counter).efi.img" ]; do
+        counter=$((counter + 1))
+    done
+    echo "{{ vm_hostname }}.${current_date}$(printf %02d $counter)"
+  args:
+    chdir: '{{ playbook_dir }}/images'
+  register: outputfilename
+  changed_when: false
+
+- name: Set output filename as variable
+  ansible.builtin.set_fact:
+    allium_release_name: '{{ outputfilename.stdout }}'
+
+# Copy static files
+- name: Copy static files for filesystem
+  ansible.builtin.copy:
+    src: '{{ playbook_dir }}/filesystem/static/root/'
+    dest: '{{ playbook_dir }}/staging/{{ vm_hostname }}/root/'
+
+- name: Ensure all init.d scripts are executable in destination filesystem
+  ansible.builtin.shell: |
+    set -euo pipefail
+    chmod +x *
+  args:
+    chdir: '{{ playbook_dir }}/staging/{{ vm_hostname }}/root/etc/init.d/'
+  changed_when: false
+
+# Build image
+- name: Install pre-reqs on host
+  ansible.builtin.package:
+    name:
+      - rsync
+      - systemd-efistub
+      - ukify
+    state: present
+
+- name: Fetch alpine-make-rootfs
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/alpinelinux/alpine-make-rootfs/v0.7.0/alpine-make-rootfs
+    dest: '{{ playbook_dir }}/alpine-make-rootfs'
+    checksum: 'sha256:91ceb95b020260832417b01e45ce02c3a250c4527835d1bdf486bf44f80287dc'
+    mode: '0750'
+
+- name: Create build directory as temp dir
+  ansible.builtin.tempfile:
+    state: directory
+  register: builddir
+
+- name: Create /etc inside builddir
+  ansible.builtin.file:
+    path: '{{ builddir.path }}/etc/mkinitfs/'
+    state: directory
+
+- name: Stop mkinitfs from running during apk install
+  ansible.builtin.copy:
+    content: 'disable_trigger=yes'
+    dest: '{{ builddir.path }}/etc/mkinitfs/mkinitfs.conf'
+
+- name: Create an os-release ID for this build run
+  ansible.builtin.copy:
+    content: '{{ allium_release_name }}'
+    dest: '{{ builddir.path }}/etc/allium-release'
+
+- name: Run alpine-make-rootfs
+  ansible.builtin.shell: |
+    set -euo pipefail
+    {{ playbook_dir }}/alpine-make-rootfs "{{ builddir.path }}" {{ playbook_dir }}/postinstall/setup.sh
+    ls -lahR "{{ builddir.path }}"
+  environment:
+    ALPINE_BRANCH: '{{ alpinebranch }}'
+    SCRIPT_CHROOT: 'no'
+    FS_SKEL_DIR: '{{ playbook_dir }}/staging/{{ vm_hostname }}/root/'
+    FS_SKEL_CHOWN: 'root:root'
+    PACKAGES: '{{ packageset }}'
+  changed_when: true
+
+- name: Build initramfs
+  ansible.builtin.shell: |
+    set -euo pipefail
+    find . -path "./boot" -prune -o -print | cpio -o -H newc | gzip > "{{ builddir.path }}/boot/initramfs-{{ kernelbranch }}"
+  args:
+    chdir: '{{ builddir.path }}'
+  changed_when: true
+
+- name: Create output directory
+  ansible.builtin.file:
+    path: '{{ playbook_dir }}/images'
+    state: directory
+
+- name: Build EFI unified kernel image
+  ansible.builtin.shell: |
+    set -euo pipefail
+    ukify build --output {{ playbook_dir }}/images/{{ allium_release_name }}.efi.img --cmdline "$CMDLINE" \
+    --linux "{{ builddir.path }}/boot/vmlinuz-{{ kernelbranch }}" \
+    --initrd "{{ builddir.path }}/boot/initramfs-{{ kernelbranch }}" \
+    --os-release "@{{ builddir.path }}/etc/allium-release"
+  environment:
+    CMDLINE: 'rdinit=/sbin/init console=ttyS0'
+  changed_when: true
+
+# Update Terraform deployment code
+- name: Create Terraform output dir
+  ansible.builtin.file:
+    path: '{{ playbook_dir }}/terraform/'
+    state: directory
+
+- name: Copy base Terraform config
+  ansible.builtin.copy:
+    src: terraform-base.tf
+    dest: '{{ playbook_dir }}/terraform/terraform-base.tf'
+
+- name: Create a Terraform deployment file for each VM
+  ansible.builtin.template:
+    src: terraform-vm.tf.j2
+    dest: '{{ playbook_dir }}/terraform/{{ vm_hostname }}.tf'
+
+# Clean up tempdir
+- name: Delete temp build directory for this relay
+  ansible.builtin.file:
+    path: '{{ builddir.path }}'
+    state: absent

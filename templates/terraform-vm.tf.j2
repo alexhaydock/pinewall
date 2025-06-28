@@ -1,0 +1,68 @@
+resource "proxmox_virtual_environment_download_file" "efi_image_{{ vm_hostname }}" {
+  content_type = "iso"
+  datastore_id = "local"
+
+  # Specify node to deploy to
+  node_name = "{{ prox_node_name }}"
+
+  file_name = "{{ allium_release_name }}.efi.img"
+  url       = "http://${var.deployment_host_ip}:8080/images/{{ allium_release_name }}.efi.img"
+}
+
+resource "proxmox_virtual_environment_vm" "efi_vm_{{ vm_hostname }}" {
+  name        = "{{ vm_hostname }}"
+  description = "Managed by Terraform"
+  tags        = ["alpine", "terraform", "tor"]
+
+  # Specify node to deploy to, VMID and auto-boot status
+  node_name       = "{{ prox_node_name }}"
+  vm_id           = {{ prox_vmid }}
+  on_boot         = true
+  stop_on_destroy = true
+
+  # Ensure we copy our EFI image first before trying to start the VM
+  depends_on = [proxmox_virtual_environment_download_file.efi_image_{{ vm_hostname }}]
+
+  # The magic that allows us to do direct EFI boot in Proxmox
+  kvm_arguments = "-kernel /var/lib/vz/template/iso/{{ allium_release_name }}.efi.img"
+
+  # Enables UEFI firmware (needed to boot an EFI binary)
+  bios = "ovmf"
+
+  cpu {
+    cores = 4
+    type  = "host" # defaults to `qemu64` if we don't specify
+  }
+
+  memory {
+    dedicated = 2048 # 2 GB
+    floating  = 0    # disables ballooning
+  }
+
+  # WAN Interface
+  network_device {
+    bridge = "vmbr3"
+  }
+
+  # LAN Interface
+  network_device {
+    bridge = "vmbr4"
+  }
+
+  operating_system {
+    type = "l26" # Linux 2.6+
+  }
+
+  # Attach a VirtIO RNG to the VM
+  # We seemingly need to be "root@pam" to do this
+  rng {
+    source = "/dev/urandom"
+  }
+
+  # Attach a serial device and use it as our console output
+  # in the Proxmox WebUI
+  serial_device {}
+  vga {
+    type = "serial0"
+  }
+}

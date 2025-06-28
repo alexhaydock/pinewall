@@ -1,5 +1,8 @@
 # Pinewall artifacts
-images
+alpine-make-rootfs
+images/
+staging/
+terraform/
 
 # Terraform
 .terraform.lock.hcl

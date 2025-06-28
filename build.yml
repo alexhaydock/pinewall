@@ -1,0 +1,47 @@
+---
+- name: Pinewall image builder
+  hosts: localhost
+
+  vars:
+    alpinebranch: 'latest-stable'  # expected values: `latest-stable`, `edge`
+    kernelbranch: 'virt'           # expected values: `lts`, `virt`, `stable`
+    vm_hostname: 'pinewall'
+    prox_node_name: 'proxnet'      # proxmox node name - used by Terraform
+    prox_vmid: '200'               # proxmox dest VMID - used by Terraform
+    packageset: |
+      alpine-base
+      ca-certificates
+      chrony
+      linux-{{ kernelbranch }}
+      linux-firmware-none
+      rng-tools
+      tzdata
+      util-linux
+      conntrack-tools
+      corerad
+      curl
+      dbus
+      dns-root-hints
+      dropbear
+      ethtool
+      htop
+      ifupdown-ng-ppp
+      ifupdown-ng-wireguard
+      iperf3
+      irqbalance
+      kea
+      logrotate
+      nano
+      nftables
+      nload
+      openssl
+      ppp-pppoe
+      prometheus-node-exporter
+      tcpdump
+      ulogd
+      unbound
+      wireguard-tools-wg
+
+  tasks:
+    - name: Run image build steps
+      ansible.builtin.include_tasks: build_steps.yml

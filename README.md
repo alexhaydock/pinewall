@@ -46,7 +46,7 @@ The config presented here is _mostly_ what I use in production with some notable
 You can build a new image with:
 
 ```sh
-./pinewall build
+./allium build
 ```
 
 Once the build is complete you will see a status report about the built EFI binary:
@@ -64,7 +64,7 @@ _Note:_ The use of the `.img` suffix here is largely cosmetic. I use that becaus
 It's easy to test the newly built image locally with QEMU:
 
 ```sh
-./pinewall qemu
+./allium test
 ```
 
 This will boot the image directly in QEMU. You may wish to edit the command for this in the `pinewall` script as especially the network aspect might not be sufficient for your local testing.
@@ -92,7 +92,7 @@ qm create 123 --args '-kernel /var/lib/vz/template/iso/pinewall.efi.img' --ballo
 If you want a more robust production deployment (which is essentially a more automated version of the test process above) you can use Terraform:
 
 ```sh
-./pinewall deploy
+./allium deploy
 ```
 
 The `pinewall` script isn't doing much here. Only discovering the latest built version of the Pinewall EFI image before calling `tofu apply`.
