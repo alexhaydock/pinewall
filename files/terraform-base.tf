@@ -7,10 +7,10 @@ terraform {
   }
 }
 
-# Import the Tailscale IP of this node from our environment
+# Import the primary IP of this node from our environment
 # vars, so we can use it to transfer the file to the destination
 # host without being root on the Proxmox host
-variable "tailscale_ip" {}
+variable "deployment_host_ip" {}
 
 provider "proxmox" {
   endpoint = "https://cursedrouter.infected.systems:8006/"
