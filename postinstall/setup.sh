@@ -58,6 +58,7 @@ rc_add nftables boot
 rc_add node-exporter default
 rc_add ulogd default
 rc_add unbound default
+rc_add unbound-exporter default
 
 # update password for root
 # (default pw is `hello`)

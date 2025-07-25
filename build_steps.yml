@@ -86,7 +86,7 @@
 - name: Run alpine-make-rootfs
   ansible.builtin.shell: |
     set -euo pipefail
-    {{ playbook_dir }}/alpine-make-rootfs "{{ builddir.path }}" {{ playbook_dir }}/postinstall/setup.sh
+    {{ playbook_dir }}/alpine-make-rootfs --repositories-file {{ playbook_dir }}/repositories "{{ builddir.path }}" {{ playbook_dir }}/postinstall/setup.sh
     ls -lahR "{{ builddir.path }}"
   environment:
     ALPINE_BRANCH: '{{ alpinebranch }}'
