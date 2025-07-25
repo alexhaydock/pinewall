@@ -30,7 +30,6 @@
       ifupdown-ng-ppp
       ifupdown-ng-wireguard
       iperf3
-      irqbalance
       kea
       logrotate
       nano
