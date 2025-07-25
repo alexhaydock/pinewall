@@ -38,7 +38,7 @@
       openssl
       ppp-pppoe
       prometheus-node-exporter
-      prometheus-unbound-exporter  # Requires testing repo
+      prometheus-unbound-exporter
       tcpdump
       ulogd
       unbound
