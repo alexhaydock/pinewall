@@ -21,7 +21,6 @@
       util-linux
       conntrack-tools
       corerad
-      curl
       dbus
       dns-root-hints
       dropbear
