@@ -29,9 +29,9 @@ But there's a good chance this will run on a wide range of `x86_64` hardware. If
 ## Prerequisites
 To build Pinewall, you will need:
 * `podman` - to build images.
-* `qemu` - to test built images.
+* `just` - to run the deployment script.
+* `qemu` - (optional) to test built images.
 * Proxmox - (optional) on a remote host to deploy to.
-* `opentofu` - (optional) for deploying to the remote Proxmox host.
 
 ## Usage
 ### Adding custom config
@@ -46,7 +46,7 @@ The config presented here is _mostly_ what I use in production with some notable
 You can build a new image with:
 
 ```sh
-./allium build
+just build
 ```
 
 Once the build is complete you will see a status report about the built EFI binary:
@@ -84,7 +84,7 @@ qm create 123 --args '-kernel /var/lib/vz/template/iso/pinewall.efi.img' --ballo
 If you want a more robust production deployment (which is essentially a more automated version of the test process above) you can use Terraform:
 
 ```sh
-./allium deploy
+just deploy
 ```
 
 The `pinewall` script isn't doing much here. Only discovering the latest built version of the Pinewall EFI image before calling `tofu apply`.
