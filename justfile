@@ -1,5 +1,9 @@
 set ignore-comments
-set quiet
+# quiet mode does not ship in Ubuntu 24.04's version of `just`
+#set quiet
+
+# Because we're setting variables directly in our recipes
+set shell := ["bash", "-cu"]
 
 help:
     echo ''
@@ -23,20 +27,19 @@ build:
 
 deploy:
     # Start local webserver to host the images we've built for Proxmox to grab
-    podman stop podman-image-deploy 2>/dev/null || true
-    podman rm podman-image-deploy 2>/dev/null || true
+    podman stop pinewall-image-deploy 2>/dev/null || true
+    podman rm pinewall-image-deploy 2>/dev/null || true
     podman run -d --rm -v "$PWD"/images:/usr/share/nginx/html/images:ro,z \
-        --name podman-image-deploy \
+        --name pinewall-image-deploy \
         -p 8080:80 \
         docker.io/library/nginx:alpine
-    # Discover Proxmox credentials from TPM
-    export PROXMOX_VE_USERNAME="root@pam"
-    export PROXMOX_VE_PASSWORD="$(sudo tpm2 rsadecrypt -c 0x81010001 ~/.ssh/tpm-$(hostname)/api_key_prox_rtr.enc)"
-    # Discover the primary IP of this deployment host
-    export TF_VAR_deployment_host_ip="$(ip -4 addr show dev "$(ip route show default | awk '/default/ {print $5}')" | awk '/inet / {print $2}' | cut -d/ -f1)"
+
     # Deploy using OpenTofu
-    (
-    cd "$PWD/terraform"
+    # (after discovering Proxmox creds from TPM and the IP of our local machine)
+    export PROXMOX_VE_USERNAME="root@pam" && \
+    export PROXMOX_VE_PASSWORD="$(sudo tpm2 rsadecrypt -c 0x81010001 ~/.ssh/tpm-$(hostname)/api_key_prox_rtr.enc)" && \
+    export TF_VAR_deployment_host_ip="$(ip -4 addr show dev "$(ip route show default | awk '/default/ {print $5}')" | awk '/inet / {print $2}' | cut -d/ -f1)" && \
+    cd "$PWD/terraform" && \
     podman run -it --rm -v "$PWD":/mnt:z \
         --env PROXMOX_VE_USERNAME \
         --env PROXMOX_VE_PASSWORD \
@@ -45,6 +48,6 @@ deploy:
         --entrypoint /bin/sh \
         ghcr.io/opentofu/opentofu:latest -c \
             'tofu init && tofu fmt && tofu apply'
-    )
+
     # Stop local webserver container
-    podman stop podman-image-deploy || true
+    podman stop pinewall-image-deploy || true
