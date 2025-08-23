@@ -1,60 +1,316 @@
-# Adapted from: https://wiki.nftables.org/wiki-nftables/index.php/Simple_ruleset_for_a_home_router
+# Define interfaces
+define nic_wan = eth0
+define nic_mgmt = vlan111
+define nic_lan = vlan192
 
-define DEV_PRIVATE = eth1
-define DEV_WORLD = ppp0
-define NET_PRIVATE = 192.168.0.0/16
+# Define main public IPv4 for this router here
+define main_masquerade_v4 = 203.0.113.171
 
-table ip global {
-    chain inbound_world {
-        # accepting ping (icmp-echo-request) for diagnostic purposes.
-        # However, it also lets probes discover this host is alive.
-        # This sample accepts them within a certain rate limit:
+# Define other ranges
+define net_rfc1918 = { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 }
+
+table inet filter {
+    # Create prerouting table to implement BCP38 compliance (Reverse Path Filtering) for
+    # IPv6 as well as just IPv4 (IPv4 is controlled by the rp_filter sysctls we set in sysctl.d)
+    #
+    # This is taken from the implementation of firewalld that ships native code to enable IPv6
+    # RP filtering. I most recently updated this against the code shipping in Fedora 37.
+    #
+    # It's worth noting that at least one kernel developer has indicated absolutely no desire for
+    # IPv6 RP filtering to be brought to the kernel via sysctl like it works in IPv4, and even
+    # hinted at a desire to remove the IPv4 implementation.
+    #
+    # So I think this will be the accepted approach for implementing this going forward.
+    chain RP_FILTER {
+        type filter hook prerouting priority filter + 10; policy accept;
+        meta nfproto ipv6 fib saddr . mark . iif oif missing log prefix "RULE=DropInReversePathFilterChain" group 1 drop
+    }
+
+    chain INPUT {
+        type filter hook input priority filter; policy drop;
+
+        # Allow esablished/related connections
+        ct state established,related accept
+
+        # Allow/deny certain packets from any NIC (including WAN)
+        jump IN_ANY
+
+        # Allow incoming loopback
+        iifname "lo" accept
+
+        # Process packets coming in on our WAN interface
+        iifname $nic_wan jump IN_WAN
+    
+        # For each of our LAN interfaces, jump to the chain for that interface
+        iifname $nic_mgmt jump IN_MGMT
+        iifname $nic_green jump IN_PRIMARY_LAN
+
+        # Default drop for some things we don't want to log
+        jump IN_NOLOG_DROP
+
+        # Default drop with logging
+        jump IN_LOG_DROP
+    }
+
+    chain FORWARD {
+        type filter hook forward priority filter; policy drop;
+
+        # Allow esablished/related connections
+        ct state established,related accept
+    
+        # For each of our LAN interfaces, jump to the chain for that interface
+        iifname $nic_mgmt jump FWD_MGMT
+        iifname $nic_green jump FWD_PRIMARY_LAN
+
+        # Default drop with logging
+        jump FWD_LOG_DROP
+    }
+
+    chain OUTPUT {
+        type filter hook output priority filter; policy accept;
+    }
+
+    chain IN_ANY {
+        # Allow certain inbound ICMPv4 on all interfaces (including WAN)
+        # See: http://shouldiblockicmp.com/
+        # Note: destination-unreachable is ICMP Type 3, which contains ICMP Code 4 (frag-needed). We don't need to allow frag-needed independently.
+        icmp type { destination-unreachable, echo-request, time-exceeded } limit rate 30/second accept
+
+        # Allow certain inbound ICMPv6 on all interfaces (including WAN)
+        # See: http://shouldiblockicmp.com/
+        icmpv6 type { packet-too-big, echo-request, time-exceeded } limit rate 30/second accept
+
+        # Drop a bunch of traffic that we simply never expect or want to see coming from the
+        # WAN and which is often attack-related. This also protects us against misconfigurations
+        # on rules for this router directly, but also for forwarding rules related to hosts on any
+        # of our VLANs, since we jump to this chain really early in both the INPUT and FORWARD chains.
+        iifname $nic_wan tcp dport { ssh, telnet, netbios-ns, netbios-dgm, netbios-ssn, microsoft-ds, mysql, smtp, ms-wbt-server, postgresql } jump LOG_DROP_BANNED_INGRESS
+    }
+
+    chain IN_WAN {
+        # Allow DHCPv6-PD on link local addr from ISP
+        ip6 saddr fe80::/10 udp sport dhcpv6-server udp dport dhcpv6-client ct state established,new accept
+
+        # Allow router advertisements and solicitation from ISP
+        ip6 saddr fe80::/10 icmpv6 type nd-router-advert accept
+        ip6 saddr fe80::/10 icmpv6 type nd-neighbor-solicit accept
+        ip6 saddr fe80::/10 icmpv6 type nd-neighbor-advert accept
+    }
+
+    chain IN_MGMT {
+        # We're really quite restrictive here but we do allow ICMPv6, as
+        # without it we're not able to do any IPv6 comms at all
+
+        meta l4proto ipv6-icmp accept \
+        comment "Allow all ICMPv6 into this router from MGMT VLAN"
+
+        tcp dport {9100, 9167} accept \
+        comment "Allow access to Prometheus metrics exporters on this host"
+    }
+
+    chain IN_PRIMARY_LAN {
+        # Allow services hosted on this router
+        jump IN_LAN_SERVICES
+    }
+
+    chain IN_LAN_SERVICES {
+        udp dport { domain, bootps, ntp, mdns } accept \
+        comment "Allow DNS, DHCP, NTP, mDNS into this router from LAN networks"
+
+        tcp dport domain accept \
+        comment "Allow TCP DNS into this router from LAN networks"
+
+        meta l4proto ipv6-icmp accept \
+        comment "Allow all ICMPv6 into this router from LAN networks"
+
+        meta l4proto { tcp, udp } th dport 5201 accept \
+        comment "Allow iperf3 into this router from LAN networks"
+    }
+
+    chain FWD_MGMT {
+        # Do not allow MGMT VLAN to anywhere by default
+        # (Especially not out to internet)
         #
-        # icmp type echo-request limit rate 5/second accept
-
-        # allow SSH connections from some well-known internet host
-        ip saddr 81.209.165.42 tcp dport ssh accept
+        # Explicit allow rules only!
     }
 
-    chain inbound_private {
-        # accepting ping (icmp-echo-request) for diagnostic purposes.
-        icmp type echo-request limit rate 5/second accept
-
-        # allow DHCP, DNS and SSH from the private network
-        ip protocol . th dport vmap { tcp . 22 : accept, udp . 53 : accept, tcp . 53 : accept, udp . 67 : accept}
+    chain FWD_PRIMARY_LAN {
+        # Allow Green/VPN VLAN out to internet
+        jump FWD_EGRESS_TO_INTERNET
     }
 
-    chain inbound {
-        type filter hook input priority 0; policy drop;
+    chain IN_NOLOG_DROP {
+        # (Note that there is a separate ff02::2 address used to mean all-routers so we should be safe to drop this traffic here)
+        ip6 daddr ff02::1 drop comment "Drop traffic to IPv6 all-device multicast address without logging"
 
-        # Allow traffic from established and related packets, drop invalid
-        ct state vmap { established : accept, related : accept, invalid : drop }
-
-        # allow loopback traffic, anything else jump to chain for further evaluation
-        iifname vmap { lo : accept, $DEV_WORLD : jump inbound_world, $DEV_PRIVATE : jump inbound_private }
-
-        # the rest is dropped by the above policy
+        iifname $nic_wan drop comment "Drop incoming unsolicited traffic from WAN without logging"
     }
 
-    chain forward {
-        type filter hook forward priority 0; policy drop;
+    chain FWD_EGRESS_TO_INTERNET {
+        # Filter some undesirable egress traffic
+        oifname $nic_wan tcp dport { telnet, netbios-ns, netbios-dgm, netbios-ssn, microsoft-ds } jump LOG_DROP_BANNED_EGRESS
 
-        # Allow traffic from established and related packets, drop invalid
-        ct state vmap { established : accept, related : accept, invalid : drop }
+        # Allow everything else to egress to internet
+        oifname $nic_wan accept
+    }
 
-        # connections from the internal net to the internet or to other
-        # internal nets are allowed
-        iifname $DEV_PRIVATE accept
+    chain IN_LOG_DROP {
+        log prefix "RULE=DropInInputChain" group 1 drop
+    }
 
-        # the rest is dropped by the above policy
+    chain FWD_LOG_DROP {
+        log prefix "RULE=DropInForwardChain" group 1 drop
+    }
+
+    chain LOG_ACCEPT_ALLOWED_INGRESS {
+        log prefix "RULE=AllowAllowedIngress" group 1 accept
+    }
+
+    chain LOG_DROP_BANNED_EGRESS {
+        log prefix "RULE=RejectBannedEgress" group 1 reject
+    }
+
+    chain LOG_DROP_BANNED_EGRESS_JAIL {
+        log prefix "RULE=DropBannedEgressFromJail" group 1 drop
+    }
+
+    chain LOG_DROP_BANNED_INGRESS {
+        log prefix "RULE=DropBannedIngress" group 1 drop
     }
 }
 
+# NAT Table (IPv4 only)
+# Translation of packets happens to our single external address
+# Forwarding of ports through our public interfaces
+#
 table ip nat {
-    chain postrouting {
-        type nat hook postrouting priority 100; policy accept;
+    chain POSTROUTING {
+        type nat hook postrouting priority srcnat; policy accept;
 
-        # masquerade private IP addresses
-        ip saddr $NET_PRIVATE oifname $DEV_WORLD masquerade
+        # Instead of using a masquerade rule in this section, we use SNAT, which is faster
+        # as it doesn't incur the cost of regularly looking up the IP of the outgoing interface.
+        #
+        # We have the luxury of skipping that as we have static IPs.
+        #
+        # But, as a caveat, I'm not sure how it handles port collision where we're NATing
+        # multiple internal RFC1918 addresses to a single public IPv4. For a masquerade
+        # function we can do `masquerade random`, but I'm not sure what the equivalent
+        # would be here.
+
+        # Handle our main IPv4 NAT
+        ip saddr $net_rfc1918 oifname $nic_wan snat to $main_masquerade_v4 \
+        comment "For IPv4 packets from all RFC1918 ranges destined for the internet, NAT to our main public IP"
+    }
+}
+
+# Mangle Table (IPv6 only)
+#
+table ip6 mangle {
+    chain PREROUTING {
+        type filter hook prerouting priority mangle; policy accept;
+
+        # Drop unusually large ping packets
+        icmpv6 type echo-request meta length 170-65535 drop
+    }
+}
+
+# Raw Table (IPv4 and IPv6)
+#
+table inet raw {
+    # Bogon tables from: https://ipgeolocation.io/resources/bogon.html
+    set v4-bogon-bn-nonagg-set {
+        type ipv4_addr
+        flags interval
+        elements = {
+            0.0.0.0/8,
+            10.0.0.0/8,
+            100.64.0.0/10,
+            127.0.0.0/8,
+            169.254.0.0/16,
+            172.16.0.0/12,
+            192.0.0.0/24,
+            192.0.2.0/24,
+            192.168.0.0/16,
+            198.18.0.0/15,
+            198.51.100.0/24,
+            203.0.113.0/24,
+            240.0.0.0/4
+        }
+    }
+
+    # I've removed some of the bogons from the list because they
+    # didn't pass the nftables filter test that runs when loading
+    # the filters.
+    #
+    # I also removed fe80::/10 because I think we need to be able
+    # to do comms from the router itself on fe80::/10 ranges for
+    # doing DHCPv6 or prefix discovery or whatever it is that happens
+    # between us and the ISP's server(s) advertised as the default
+    # route.
+    #
+    set v6-bogon-bn-nonagg-set {
+        type ipv6_addr
+        flags interval
+        elements = {
+            ::ffff:0:0/96,
+            ::/96,
+            100::/64,
+            2001:10::/28,
+            2001:db8::/32,
+            fc00::/7,
+            fec0::/10,
+            2002::/24,
+            2002:a00::/24,
+            2002:7f00::/24,
+            2002:a9fe::/32,
+            2002:ac10::/28,
+            2002:c000::/40,
+            2002:c000:200::/40,
+            2002:c0a8::/32,
+            2002:c612::/31,
+            2002:c633:6400::/40,
+            2002:cb00:7100::/40,
+            2002:e000::/20,
+            2002:f000::/20,
+            2001::/40,
+            2001:0:a00::/40,
+            2001:0:7f00::/40,
+            2001:0:a9fe::/48,
+            2001:0:ac10::/44,
+            2001:0:c000::/56,
+            2001:0:c000:200::/56,
+            2001:0:c0a8::/48,
+            2001:0:c612::/47,
+            2001:0:c633:6400::/56,
+            2001:0:cb00:7100::/56,
+            2001:0:e000::/36,
+            2001:0:f000::/36
+        }
+    }
+
+    chain PREROUTING {
+        type filter hook prerouting priority raw; policy accept;
+
+        # Block specified bogons coming in from ISP
+        iifname $nic_wan ip saddr @v4-bogon-bn-nonagg-set jump LOG_DROP_BOGON_IN
+        iifname $nic_wan ip6 saddr @v6-bogon-bn-nonagg-set jump LOG_DROP_BOGON_IN
+    }
+
+    chain POSTROUTING {
+        type filter hook postrouting priority raw; policy accept;
+
+        # Drop any remaining bogons that try to leave the router via the WAN
+        oifname $nic_wan ip daddr @v4-bogon-bn-nonagg-set jump LOG_DROP_BOGON_OUT
+        oifname $nic_wan ip6 daddr @v6-bogon-bn-nonagg-set jump LOG_DROP_BOGON_OUT
+    }
+
+    chain LOG_DROP_BOGON_IN {
+        log prefix "RULE=DropIncomingBogon" group 1 drop
+    }
+
+    chain LOG_DROP_BOGON_OUT {
+        # I wanted to use `reject` here but we can't for some reason. Maybe that's
+        # not supported in the postrouting chain?
+        log prefix "RULE=DropOutgoingBogon" group 1 drop
     }
 }

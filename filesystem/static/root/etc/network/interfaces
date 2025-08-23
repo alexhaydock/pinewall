@@ -2,32 +2,39 @@
 auto lo
 iface lo inet loopback
 
-# WAN
-auto eth1
-iface eth1 inet manual
-
-# PPPoE
-auto pppoe
-iface pppoe inet ppp
-   provider aaisp
-   pre-up /sbin/ip link set eth1 up
-
-# Default untagged LAN interface
+# [VLAN 0 on eth0] WAN
+# The only real thing that defines this as our upstream interface
+# is the fact that the inet and inet6 definitions here each have
+# a gateway configured
 auto eth0
 iface eth0 inet static
-        address 10.10.10.1
-        netmask 255.255.255.0
+	address 203.0.113.171
+	netmask 255.255.255.248
+	gateway 203.0.113.169
+iface eth0 inet6 static
+	address 2001:db8:dead:beef::3/64
+	gateway 2001:db8:dead:beef::1
+	autoconf 0
+	accept_ra 0
+	privext 0
 
-# Example VLAN interface
-auto vlan301
-iface vlan301 inet static
-	address 10.2.0.1
+# [VLAN 111 on eth1] MGMT
+auto vlan111
+iface vlan111 inet static
+	address 192.168.200.1
 	netmask 255.255.255.0
-	vlan-raw-device eth0
+	vlan-raw-device eth1
 
-# Example VPN interface
-auto wg0
-iface wg0 inet static
-       requires eth0
-       use wireguard
-       address 192.168.42.1
+# [VLAN 192 on eth1] Primary LAN
+auto vlan192
+iface vlan192 inet static
+	address 192.168.192.1
+	netmask 255.255.255.0
+	vlan-raw-device eth1
+iface vlan190 inet6 static
+	address fe80::192/64
+	address 2001:db8:beef:cafe::1/64
+	autoconf 0
+	accept_ra 0
+	privext 0
+	vlan-raw-device eth1

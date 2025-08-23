@@ -9,7 +9,7 @@
     prox_node_name: 'proxnet'      # proxmox node name - used by Terraform
     prox_selfsigned: 'false'       # expected values: `true`, `false`
     prox_url: 'https://cursedrouter.infected.systems:8006/'
-    prox_vmid: '200'               # proxmox dest VMID - used by Terraform
+    prox_vmid: '300'               # proxmox dest VMID - used by Terraform
     packageset: |
       alpine-base
       ca-certificates
@@ -26,8 +26,6 @@
       dropbear
       ethtool
       htop
-      ifupdown-ng-ppp
-      ifupdown-ng-wireguard
       iperf3
       kea
       logrotate
@@ -35,13 +33,11 @@
       nftables
       nload
       openssl
-      ppp-pppoe
       prometheus-node-exporter
       prometheus-unbound-exporter
       tcpdump
       ulogd
       unbound
-      wireguard-tools-wg
 
   tasks:
     - name: Run image build steps

@@ -16,7 +16,7 @@
 
 - name: Set output filename as variable
   ansible.builtin.set_fact:
-    allium_release_name: '{{ outputfilename.stdout }}'
+    pinewall_release_name: '{{ outputfilename.stdout }}'
 
 # Copy static files
 - name: Copy static files for filesystem
@@ -80,8 +80,8 @@
 
 - name: Create an os-release ID for this build run
   ansible.builtin.copy:
-    content: '{{ allium_release_name }}'
-    dest: '{{ builddir.path }}/etc/allium-release'
+    content: '{{ pinewall_release_name }}'
+    dest: '{{ builddir.path }}/etc/pinewall-release'
 
 - name: Run alpine-make-rootfs
   ansible.builtin.shell: |
@@ -112,10 +112,10 @@
 - name: Build EFI unified kernel image
   ansible.builtin.shell: |
     set -euo pipefail
-    ukify build --output {{ playbook_dir }}/images/{{ allium_release_name }}.efi.img --cmdline "$CMDLINE" \
+    ukify build --output {{ playbook_dir }}/images/{{ pinewall_release_name }}.efi.img --cmdline "$CMDLINE" \
     --linux "{{ builddir.path }}/boot/vmlinuz-{{ kernelbranch }}" \
     --initrd "{{ builddir.path }}/boot/initramfs-{{ kernelbranch }}" \
-    --os-release "@{{ builddir.path }}/etc/allium-release"
+    --os-release "@{{ builddir.path }}/etc/pinewall-release"
   environment:
     CMDLINE: 'rdinit=/sbin/init console=ttyS0'
   changed_when: true

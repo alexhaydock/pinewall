@@ -2,7 +2,7 @@
 #   https://github.com/mdlayher/corerad/blob/main/internal/config/reference.toml
 
 [[interfaces]]
-names = ["vlan190", "vlan191", "vlan193", "vlan194", "vlan195", "vlan201"]
+names = ["vlan192"]
 advertise = true
 
   # Advertise an on-link, autonomous prefix for all /64 addresses on eth0. This

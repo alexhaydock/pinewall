@@ -1,7 +1,7 @@
 ![Pinewall Logo](logo.svg)
 
 # Pinewall
-My minimal Al**pine** Linux home fire**wall** / router. Optimised for running from RAM as a QEMU VM.
+My minimal Al**pine** Linux home fire**wall** / router. Optimised for running from RAM as a QEMU VM and for easy deployment of updates via Terraform.
 
 Pinewall is built with the goal of running entirely from RAM, immutably. It builds into a single packed EFI binary which can be run directly with QEMU or, in theory, booted on physical UEFI-based hardware.
 
@@ -24,10 +24,10 @@ I owe a lot of the credit for the UKI packing code to Filippo Valsorda and his [
 ## Hardware Support
 Officially I only support `x86_64` based QEMU Virtual Machines. Specifically running on Proxmox, as that's how I'm running it in production.
 
-But there's a good chance this will run on a wide range of `x86_64` hardware. If you build the EFI image in an `aarch64` environment there's a good chance it will "just work" on ARM hardware too as long as it can boot EFI binaries.
+But there's a good chance this will run on a wide range of `x86_64` hardware (if you build with the `lts` rather than `virt` kernel). If you build the EFI image in an `aarch64` environment there's a good chance it will "just work" on ARM hardware too as long as it can boot EFI binaries.
 
 ## Prerequisites
-To build Pinewall, you will need:
+To deploy Pinewall, you will need:
 * `podman` - to build images.
 * `just` - to run the deployment script.
 * `qemu` - (optional) to test built images.
@@ -35,7 +35,7 @@ To build Pinewall, you will need:
 
 ## Usage
 ### Adding custom config
-The config presented here is _mostly_ what I use in production with some notable differences. For security reasons, the `network`, `nftables.d`, and obviously `ppp` and `wireguard` directories are intended for demo purposes rather than as fully functional configs. But hopefully this is a decent base if you want to build your own project on top of this.
+The config presented in this repo is adapted from a fully-working config I use for one of my network deployments. With the exception of the use of RFC 5737 and RFC 3849 documentation IPs in place of my own public static addresses, this ought to boot and work just fine.
 
 * Files go in `root/`
 * Packages go in `packages`
@@ -49,14 +49,7 @@ You can build a new image with:
 just build
 ```
 
-Once the build is complete you will see a status report about the built EFI binary:
-
-```text
-* Created image! [2025-05-09T20:37:42Z]
--rw-r--r--    1 root     root      151.3M May  9 20:37 /mnt/images/pinewall.2025050902.efi.img
-```
-
-The finished EFI binaries end up in `images/` in the local working directory.
+During the build you should see some fairly comprehensive Ansible output as the various tasks are completed to compile the image. The finished EFI binaries end up in `images/` in the local working directory.
 
 _Note:_ The use of the `.img` suffix here is largely cosmetic. I use that because the `bpg/proxmox` Terraform provider is only capable of operating on a restricted set of suffixes which it considers legitimate "images", and `.efi` is not one of them.
 
@@ -87,9 +80,9 @@ If you want a more robust production deployment (which is essentially a more aut
 just deploy
 ```
 
-The `pinewall` script isn't doing much here. Only discovering the latest built version of the Pinewall EFI image before calling `tofu apply`.
+The `just` script isn't doing much here. Only discovering the latest built version of the Pinewall EFI image before calling `tofu apply`.
 
-You will want to edit the Terraform code in `proxmox.tf` if you want to use this option, but it should be easy to understand.
+You will want to edit the Terraform VM template in `templates/` before running `just build` if you want to use this deployment method, but it should be easy to understand.
 
 The code:
 * Uses `proxmox_virtual_environment_file` to copy the latest discovered Pinewall EFI to the local ISO storage.
