@@ -4,4 +4,4 @@
 #
 # ARGS="--web.listen-address=':9100'"
 
-ARGS="--web.listen-address='192.168.200.1:9100'"
+ARGS="--web.listen-address='127.0.0.1:9100'"

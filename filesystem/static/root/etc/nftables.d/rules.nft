@@ -1,7 +1,6 @@
 # Define interfaces
 define nic_wan = eth0
-define nic_mgmt = vlan111
-define nic_primary_lan = vlan192
+define nic_lan = vlan192
 
 # Define main public IPv4 for this router here
 define main_masquerade_v4 = 203.0.113.171
@@ -42,8 +41,7 @@ table inet filter {
         iifname $nic_wan jump IN_WAN
     
         # For each of our LAN interfaces, jump to the chain for that interface
-        iifname $nic_mgmt jump IN_MGMT
-        iifname $nic_primary_lan jump IN_PRIMARY_LAN
+        iifname $nic_lan jump IN_LAN
 
         # Default drop for some things we don't want to log
         jump IN_NOLOG_DROP
@@ -59,8 +57,7 @@ table inet filter {
         ct state established,related accept
     
         # For each of our LAN interfaces, jump to the chain for that interface
-        iifname $nic_mgmt jump FWD_MGMT
-        iifname $nic_primary_lan jump FWD_PRIMARY_LAN
+        iifname $nic_lan jump FWD_LAN
 
         # Default drop with logging
         jump FWD_LOG_DROP
@@ -97,18 +94,7 @@ table inet filter {
         ip6 saddr fe80::/10 icmpv6 type nd-neighbor-advert accept
     }
 
-    chain IN_MGMT {
-        # We're really quite restrictive here but we do allow ICMPv6, as
-        # without it we're not able to do any IPv6 comms at all
-
-        meta l4proto ipv6-icmp accept \
-        comment "Allow all ICMPv6 into this router from MGMT VLAN"
-
-        tcp dport {9100, 9167} accept \
-        comment "Allow access to Prometheus metrics exporters on this host"
-    }
-
-    chain IN_PRIMARY_LAN {
+    chain IN_LAN {
         # Allow services hosted on this router
         jump IN_LAN_SERVICES
     }
@@ -127,14 +113,7 @@ table inet filter {
         comment "Allow iperf3 into this router from LAN networks"
     }
 
-    chain FWD_MGMT {
-        # Do not allow MGMT VLAN to anywhere by default
-        # (Especially not out to internet)
-        #
-        # Explicit allow rules only!
-    }
-
-    chain FWD_PRIMARY_LAN {
+    chain FWD_LAN {
         # Allow primary LAN out to internet
         jump FWD_EGRESS_TO_INTERNET
     }

@@ -18,23 +18,14 @@ iface eth0 inet6 static
 	accept_ra 0
 	privext 0
 
-# [VLAN 111 on eth1] MGMT
-auto vlan111
-iface vlan111 inet static
-	address 192.168.200.1
-	netmask 255.255.255.0
-	vlan-raw-device eth1
-
-# [VLAN 192 on eth1] Primary LAN
-auto vlan192
-iface vlan192 inet static
+# [VLAN 0 on eth1] Primary LAN
+auto eth1
+iface eth1 inet static
 	address 192.168.192.1
 	netmask 255.255.255.0
-	vlan-raw-device eth1
-iface vlan192 inet6 static
+iface eth1 inet6 static
 	address fe80::192/64
 	address 2001:db8:beef:cafe::1/64
 	autoconf 0
 	accept_ra 0
 	privext 0
-	vlan-raw-device eth1
