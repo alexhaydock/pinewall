@@ -46,7 +46,7 @@ resource "proxmox_virtual_environment_vm" "efi_vm_{{ vm_hostname }}" {
 
   # LAN Interface
   network_device {
-    bridge = "vmbr4"
+    bridge = "vmbr5"
   }
 
   operating_system {
