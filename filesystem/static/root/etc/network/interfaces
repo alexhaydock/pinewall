@@ -31,7 +31,7 @@ iface vlan192 inet static
 	address 192.168.192.1
 	netmask 255.255.255.0
 	vlan-raw-device eth1
-iface vlan190 inet6 static
+iface vlan192 inet6 static
 	address fe80::192/64
 	address 2001:db8:beef:cafe::1/64
 	autoconf 0
