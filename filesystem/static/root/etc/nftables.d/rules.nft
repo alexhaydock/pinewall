@@ -1,7 +1,7 @@
 # Define interfaces
 define nic_wan = eth0
 define nic_mgmt = vlan111
-define nic_lan = vlan192
+define nic_primary_lan = vlan192
 
 # Define main public IPv4 for this router here
 define main_masquerade_v4 = 203.0.113.171
@@ -43,7 +43,7 @@ table inet filter {
     
         # For each of our LAN interfaces, jump to the chain for that interface
         iifname $nic_mgmt jump IN_MGMT
-        iifname $nic_green jump IN_PRIMARY_LAN
+        iifname $nic_primary_lan jump IN_PRIMARY_LAN
 
         # Default drop for some things we don't want to log
         jump IN_NOLOG_DROP
@@ -60,7 +60,7 @@ table inet filter {
     
         # For each of our LAN interfaces, jump to the chain for that interface
         iifname $nic_mgmt jump FWD_MGMT
-        iifname $nic_green jump FWD_PRIMARY_LAN
+        iifname $nic_primary_lan jump FWD_PRIMARY_LAN
 
         # Default drop with logging
         jump FWD_LOG_DROP
@@ -135,7 +135,7 @@ table inet filter {
     }
 
     chain FWD_PRIMARY_LAN {
-        # Allow Green/VPN VLAN out to internet
+        # Allow primary LAN out to internet
         jump FWD_EGRESS_TO_INTERNET
     }
 
