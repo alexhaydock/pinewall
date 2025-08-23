@@ -1,6 +1,6 @@
 # Define interfaces
 define nic_wan = eth0
-define nic_lan = vlan192
+define nic_lan = eth1
 
 # Define main public IPv4 for this router here
 define main_masquerade_v4 = 203.0.113.171
