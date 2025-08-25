@@ -13,7 +13,7 @@ iface eth0 inet static
 	gateway 203.0.113.169
 iface eth0 inet6 static
 	address 2001:db8:dead:beef::3/64
-	gateway 2001:db8:dead:beef::1
+	gateway fe80::1
 	autoconf 0
 	accept_ra 0
 	privext 0
