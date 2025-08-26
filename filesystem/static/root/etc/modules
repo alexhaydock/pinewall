@@ -1,5 +1,3 @@
 af_packet
 ipv6
-pppoe
-wireguard
 ptp_kvm
