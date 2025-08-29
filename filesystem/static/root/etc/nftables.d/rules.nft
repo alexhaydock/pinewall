@@ -85,13 +85,18 @@ table inet filter {
     }
 
     chain IN_WAN {
-        # Allow DHCPv6-PD on link local addr from ISP
-        ip6 saddr fe80::/10 udp sport dhcpv6-server udp dport dhcpv6-client ct state established,new accept
-
-        # Allow router advertisements and solicitation from ISP
-        ip6 saddr fe80::/10 icmpv6 type nd-router-advert accept
-        ip6 saddr fe80::/10 icmpv6 type nd-neighbor-solicit accept
-        ip6 saddr fe80::/10 icmpv6 type nd-neighbor-advert accept
+        ip6 nexthdr icmpv6 icmpv6 type {
+            destination-unreachable,
+            packet-too-big,
+            time-exceeded,
+            parameter-problem,
+            nd-router-solicit,
+            nd-router-advert,
+            nd-neighbor-solicit,
+            nd-neighbor-advert,
+            echo-request,
+            echo-reply
+        } accept comment "Allow enough ICMPv6 for WAN to work without being too wide-open"
     }
 
     chain IN_LAN {
