@@ -1,4 +1,9 @@
 ---
+- name: Create output directory if it doesn't already exist
+  ansible.builtin.file:
+    path: '{{ playbook_dir }}/images/'
+    state: directory
+
 # Determine output filename
 - name: Determine next incremental release name to use based on files already in the images/ directory
   ansible.builtin.shell: |
