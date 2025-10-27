@@ -1,6 +1,7 @@
 # Pinewall artifacts
 alpine-make-rootfs
 images/
+sloci-image
 staging/
 terraform/
 

@@ -57,15 +57,26 @@
   ansible.builtin.package:
     name:
       - rsync
+      - syft
       - systemd-efistub
+      - tar  # Busybox tar is not enough for sloci-image script
       - ukify
     state: present
 
 - name: Fetch alpine-make-rootfs
   ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/alpinelinux/alpine-make-rootfs/v0.7.0/alpine-make-rootfs
+    url: https://raw.githubusercontent.com/alpinelinux/alpine-make-rootfs/refs/tags/v0.7.2/alpine-make-rootfs
     dest: '{{ playbook_dir }}/alpine-make-rootfs'
-    checksum: 'sha256:91ceb95b020260832417b01e45ce02c3a250c4527835d1bdf486bf44f80287dc'
+    checksum: 'sha256:9641ccda385b307dbf28123e68969351f297f3d339aa30d530df7c7ad7df9a03'
+    mode: '0750'
+
+# Fetch our patched version of sloci-image that doesn't use relative paths
+# in the built OCI artefact (otherwise Syft complains)
+- name: Fetch sloci-image
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/alexhaydock/sloci-image/refs/heads/no-relative-paths/sloci-image
+    dest: '{{ playbook_dir }}/sloci-image'
+    checksum: 'sha256:9a94f0634c806a62fc3636441d722e3f3ab822714edd92fe5c7a9a2c5446dbce'
     mode: '0750'
 
 - name: Create build directory as temp dir
@@ -92,13 +103,29 @@
   ansible.builtin.shell: |
     set -euo pipefail
     {{ playbook_dir }}/alpine-make-rootfs --repositories-file {{ playbook_dir }}/repositories "{{ builddir.path }}" {{ playbook_dir }}/postinstall/setup.sh
-    ls -lahR "{{ builddir.path }}"
   environment:
     ALPINE_BRANCH: '{{ alpinebranch }}'
     SCRIPT_CHROOT: 'no'
     FS_SKEL_DIR: '{{ playbook_dir }}/staging/{{ vm_hostname }}/root/'
     FS_SKEL_CHOWN: 'root:root'
     PACKAGES: '{{ packageset }}'
+  changed_when: true
+
+- name: Create output directory for image and SBOM
+  ansible.builtin.file:
+    path: '{{ playbook_dir }}/images'
+    state: directory
+
+- name: Run sloci-image to build an OCI version of the image
+  ansible.builtin.shell: |
+    set -euo pipefail
+    {{ playbook_dir }}/sloci-image --tar --entrypoint /start.sh {{ builddir.path }} oci:{{ pinewall_release_name }}
+  args:
+    chdir: '/tmp'
+  changed_when: true
+
+- name: Run Syft to produce SBOM for OCI version of the image
+  ansible.builtin.command: 'syft /tmp/oci-{{ pinewall_release_name }}-x86_64-linux.oci-image.tar --from oci-archive -o syft-json={{ playbook_dir }}/images/{{ pinewall_release_name }}_sbom.syft.json -o spdx-json={{ playbook_dir }}/images/{{ pinewall_release_name }}_sbom.spdx.json'
   changed_when: true
 
 - name: Build initramfs
