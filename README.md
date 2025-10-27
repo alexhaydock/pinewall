@@ -95,7 +95,7 @@ One of the benefits of running an image-based system is that we gain the ability
 
 As part of the build process, Ansible invokes [Syft](https://github.com/anchore/syft/) to build an SBOM for our image in both SPDX and Syft formats.
 
-We can run Grype from the main Pinewall directory, where it will pick up the default `.grype.yaml` (which excludes the `linux-kernel` package due to too many false positives, and the custom `.grype.tmpl` (which adds more columns to our output for additional context):
+We can run Grype from the main Pinewall directory, where it will pick up the default `.grype.yaml` (which excludes the `linux-kernel` package due to too many false positives), and the custom `.grype.tmpl` (which adds more columns to our output for additional context):
 
 ```sh
 grype --distro "alpine:3.22" -o template -t .grype.tmpl --only-fixed sbom:images/pinewall.2025102701_sbom.syft.json
