@@ -105,12 +105,10 @@ grype --distro "alpine:3.22" -o template -t .grype.tmpl --only-fixed sbom:images
 
 This approach will show all vulnerabilities that have fixes available, and will include our full supply-chain - including, among other things, compiled Golang binaries which have upstream modules that need updating.
 
-The default command above will give us the full context of the state of our supply-chain, which is useful, but not always actionable (for instance if fixes need to be deployed upstream).
-
-For an approach that only shows _actionable_ vulnerabilities (i.e. ones with fixes which can be applied via APK), we can run a command like the following:
+Seeing the full context of vulnerabilities in our supply-chain is useful, but not always actionable if fixes need to be deployed by upstream developers. For an approach that only shows _actionable_ vulnerabilities (i.e. ones with fixes which we could apply now via APK), we can run a command like the following:
 
 ```sh
 grype --distro "alpine:3.22" -c .grype-ci.yaml --fail-on high --only-fixed sbom:images/pinewall.2025102701_sbom.syft.json
 ```
 
-Which will exclude Go modules from our output. It will also return a non-zero error code if any High or above severity vulnerabilities are detected in the image, making it quite useful to include in a scheduled CI pipeline run.
+This version of the command will exclude Go modules from our output. It will also return a non-zero error code if any High or above severity vulnerabilities are detected in the image, making it quite useful to include in a scheduled CI pipeline run.
