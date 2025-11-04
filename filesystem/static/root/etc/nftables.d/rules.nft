@@ -71,11 +71,11 @@ table inet filter {
         # Allow certain inbound ICMPv4 on all interfaces (including WAN)
         # See: http://shouldiblockicmp.com/
         # Note: destination-unreachable is ICMP Type 3, which contains ICMP Code 4 (frag-needed). We don't need to allow frag-needed independently.
-        icmp type { destination-unreachable, echo-request, time-exceeded } limit rate 30/second accept
+        icmp type { destination-unreachable, echo-request, time-exceeded } accept
 
         # Allow certain inbound ICMPv6 on all interfaces (including WAN)
         # See: http://shouldiblockicmp.com/
-        icmpv6 type { packet-too-big, echo-request, time-exceeded } limit rate 30/second accept
+        icmpv6 type { packet-too-big, echo-request, time-exceeded } accept
 
         # Drop a bunch of traffic that we simply never expect or want to see coming from the
         # WAN and which is often attack-related. This also protects us against misconfigurations
