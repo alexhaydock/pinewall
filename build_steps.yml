@@ -125,7 +125,11 @@
   changed_when: true
 
 - name: Run Syft to produce SBOM for OCI version of the image
-  ansible.builtin.command: 'syft /tmp/oci-{{ pinewall_release_name }}-x86_64-linux.oci-image.tar --from oci-archive -o syft-json={{ playbook_dir }}/images/{{ pinewall_release_name }}_sbom.syft.json -o cyclonedx-json={{ playbook_dir }}/images/{{ pinewall_release_name }}_sbom.cyclonedx.json'
+  ansible.builtin.shell: |
+    syft /tmp/oci-{{ pinewall_release_name }}-x86_64-linux.oci-image.tar \
+    --from oci-archive \
+    -o syft-json={{ playbook_dir }}/images/{{ pinewall_release_name }}_sbom.syft.json \
+    -o cyclonedx-json={{ playbook_dir }}/images/{{ pinewall_release_name }}_sbom.cyclonedx.json'
   changed_when: true
 
 - name: Build initramfs
