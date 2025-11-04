@@ -2,8 +2,11 @@
 name: pinewall-build
 
 on:
+  # Run on pushes to any branch
   push:
-    branches: [main]
+  # Run every Saturday at 04:15
+  schedule:
+    - cron: '15 4 * * 6'
 
 jobs:
   build:
