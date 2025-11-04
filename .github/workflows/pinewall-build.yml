@@ -12,11 +12,14 @@ jobs:
   build:
     name: Build Pinewall image
     runs-on: ubuntu-latest
-    container:
-      image: quay.io/podman/stable:latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # We can't run Podman-in-Podman directly in GitHub Actions
+      # so we need to use this community-maintained action
+      - name: Emulate Docker CLI with Podman
+        uses: k8s-crafts/podman-cli-action@v1
 
       - name: Run Ansible buildscript inside Podman
         run: |
