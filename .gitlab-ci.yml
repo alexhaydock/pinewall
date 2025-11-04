@@ -1,7 +1,10 @@
 ---
 pinewall-build:
-  # Use the official Podman image.
   image: quay.io/podman/stable:latest
   stage: build
   script:
-    - podman run --rm -it -v "$PWD":/mnt --entrypoint /bin/sh --workdir /mnt --mount="type=tmpfs,tmpfs-size=512M,destination=/tmp" docker.io/library/alpine:latest -c 'apk --no-cache add ansible && ansible-playbook build.yml'
+    - podman run --rm -v "${CI_PROJECT_DIR}":/mnt \
+        --entrypoint /bin/sh \
+        --workdir /mnt \
+        --mount="type=tmpfs,tmpfs-size=512M,destination=/tmp" \
+        docker.io/library/alpine:latest -c 'apk --no-cache add ansible && ansible-playbook build.yml'

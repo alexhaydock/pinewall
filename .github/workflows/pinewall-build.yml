@@ -1,0 +1,23 @@
+name: pinewall-build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build Pinewall image
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/podman/stable:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Ansible buildscript inside Podman
+        run: |
+          podman run --rm -v "${GITHUB_WORKSPACE}":/mnt \
+            --entrypoint /bin/sh \
+            --workdir /mnt \
+            --mount type=tmpfs,tmpfs-size=512M,destination=/tmp \
+            docker.io/library/alpine:latest -c "apk --no-cache add ansible && ansible-playbook build.yml"
