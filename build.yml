@@ -14,11 +14,6 @@
       alpine-base
       ca-certificates
       chrony
-      linux-{{ kernelbranch }}
-      linux-firmware-none
-      rng-tools
-      tzdata
-      util-linux
       conntrack-tools
       corerad
       dbus
@@ -28,16 +23,22 @@
       htop
       iperf3
       kea
+      linux-{{ kernelbranch }}
+      linux-firmware-none
       logrotate
+      mokutil
       nano
       nftables
       nload
       openssl
       prometheus-node-exporter
       prometheus-unbound-exporter
+      rng-tools
       tcpdump
+      tzdata
       ulogd
       unbound
+      util-linux
 
   tasks:
     - name: Run image build steps

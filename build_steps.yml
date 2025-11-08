@@ -57,6 +57,7 @@
   ansible.builtin.package:
     name:
       - rsync
+      - sbsigntool
       - syft
       - systemd-efistub
       - tar  # Busybox tar is not enough for sloci-image script
@@ -145,13 +146,25 @@
     path: '{{ playbook_dir }}/images'
     state: directory
 
-- name: Build EFI unified kernel image
+# Based heavily on Example 2 from:
+#   https://www.man7.org/linux/man-pages//man1/ukify.1.html#EXAMPLES
+#
+# We can't sign PCR values here using some of the PCR options that
+# ukify has, because that relies on the systemd-measure binary
+# during the signing process, and predictably Alpine doesn't package
+# that.
+- name: Build and sign EFI unified kernel image
   ansible.builtin.shell: |
     set -euo pipefail
-    ukify build --output {{ playbook_dir }}/images/{{ pinewall_release_name }}.efi.img --cmdline "$CMDLINE" \
+    ukify build \
+    --output "{{ playbook_dir }}/images/{{ pinewall_release_name }}.efi.img" \
+    --cmdline "$CMDLINE" \
     --linux "{{ builddir.path }}/boot/vmlinuz-{{ kernelbranch }}" \
     --initrd "{{ builddir.path }}/boot/initramfs-{{ kernelbranch }}" \
-    --os-release "@{{ builddir.path }}/etc/pinewall-release"
+    --os-release "@{{ builddir.path }}/etc/pinewall-release" \
+    --secureboot-private-key="{{ playbook_dir }}/keys/db-priv.pem" \
+    --secureboot-certificate="{{ playbook_dir }}/keys/db-cert.pem" \
+    --sign-kernel
   environment:
     CMDLINE: 'rdinit=/sbin/init console=ttyS0'
   changed_when: true

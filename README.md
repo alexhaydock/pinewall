@@ -53,16 +53,57 @@ During the build you should see some fairly comprehensive Ansible output as the 
 
 _Note:_ The use of the `.img` suffix here is largely cosmetic. I use that because the `bpg/proxmox` Terraform provider is only capable of operating on a restricted set of suffixes which it considers legitimate "images", and `.efi` is not one of them.
 
-### Testing the image (locally)
-It's easy to test the newly built image locally with QEMU:
+### Testing: Local (No Secure Boot)
+It's easy to test the newly built image locally with QEMU (example uses Fedora).
 
+Boot the image directly like this:
 ```sh
-qemu-system-x86_64 -m 2G -nographic -bios /usr/share/edk2/ovmf/OVMF_CODE.fd -kernel images/"$image" -device virtio-net,netdev=nic -netdev user,hostname=pinewall,id=nic
+qemu-system-x86_64 \
+  -name pinewall \
+  -machine q35,smm=on,vmport=off,accel=kvm \
+  -m 2G \
+  -nographic \
+  -drive if=pflash,format=qcow2,unit=0,file=/usr/share/edk2/ovmf/OVMF_CODE_4M.qcow2,readonly=on \
+  -kernel images/<imagename>.efi.img
 ```
 
 _Note:_ If you are not running Fedora, your distribution may put the UEFI OVMF image in a different location. You may need to update this before the command will work.
 
-### Testing the image (Proxmox)
+### Testing: Local (With Secure Boot)
+See the "Generating Secure Boot / Measured Boot keys" section further down if you want to make use of this approach.
+
+Install `virt-firmware`:
+```sh
+sudo dnf install -y python3-virt-firmware
+```
+
+Add the Secure Boot key we're signing our images with to the default blank `qcow2` VARS store, and toggle Secure Boot mode to enabled:
+```sh
+virt-fw-vars \
+  --input /usr/share/edk2/ovmf/OVMF_VARS_4M.qcow2 \
+  --output /tmp/vars.qcow2 \
+  --set-pk-cert $(uuidgen) keys/pk-cert.pem \
+  --add-db-cert $(uuidgen) keys/db-cert.pem \
+  --microsoft-db none \
+  --microsoft-kek none \
+  --secure-boot
+```
+
+Note that we use `OVMF_VARS_4M.qcow2` as the source for the VARS file in the command above. This is a default (empty) VARS store, unlike `OVMF_VARS_4M.secboot.qcow2` which already has a number of Microsoft, Red Hat, etc keys enrolled in it. Using the blank store and the `none` arguments for the Microsoft keys means we can be sure that only **our** key is being used to validate the signed OS image.
+
+Boot the image directly like this:
+```sh
+qemu-system-x86_64 \
+  -name pinewall \
+  -machine q35,smm=on,vmport=off,accel=kvm \
+  -m 2G \
+  -nographic \
+  -drive if=pflash,format=qcow2,unit=0,file=/usr/share/edk2/ovmf/OVMF_CODE_4M.secboot.qcow2,readonly=on \
+  -drive if=pflash,format=qcow2,unit=1,file=/tmp/vars.qcow2 \
+  -kernel images/<imagename>.efi.img
+```
+
+### Testing: Proxmox
 If you want to test on Proxmox, you can do much the same as the above, though you will need to create the VM with the `qm create` command.
 
 This example will create a Proxmox VM with VM ID `123`, and a network interface bridged to `vmbr0` on VLAN 201. You can expand it as you desire.
@@ -112,3 +153,35 @@ grype --distro "alpine:3.22" -c .grype-ci.yaml --fail-on high --only-fixed sbom:
 ```
 
 This version of the command will exclude Go modules from our output. It will also return a non-zero error code if any High or above severity vulnerabilities are detected in the image, making it quite useful to include in a scheduled CI pipeline run.
+
+### Generating Secure Boot / Measured Boot keys
+These keys are needed as part of the `ukify build` process.
+
+With `ukify genkey`, we can generate the following keys in the `keys/` dir at the root of the repo:
+* Secure Boot keys to sign the overall UKI for the UEFI firmware to boot
+* PCR keys to sign the `enter-initrd` phase of the boot process
+  * Normally we'd have a second key here for further phases like `leave-initrd`, but in Pinewall's design we never actually leave the initrd/initramfs so we can skip it
+  * I'm also not actually using the PCR keys to sign anything (yet), since `ukify` depends on `systemd-measure` to do this, and it's predictably not packaged in Alpine. That can be a future TODO item.
+
+```sh
+ukify genkey \
+  --secureboot-private-key=keys/db-priv.pem \
+  --secureboot-certificate=keys/db-cert.pem \
+  --pcr-private-key=keys/tpm2-pcr-initrd-priv.pem \
+  --pcr-public-key=keys/tpm2-pcr-initrd-cert.pem
+```
+
+The Secure Boot keys generated above are Secure Boot DB keys. We also need to generate a Platform Key (PK) to provide the overall root-of-trust for our custom Secure Boot chain:
+```sh
+openssl req -newkey rsa:4096 -nodes -keyout keys/pk-priv.key -new -x509 -sha256 -days 3650 -subj "/CN=Pinewall Secure Boot PK/" -out keys/pk-cert.pem
+```
+
+In our setup, the PK functionally doesn't get used. It is required in the Secure Boot spec to validate any _updates_ provided to the Secure Boot DB or DBX. We won't be pushing any updates, as our machines are ephemeral and we'd just build a new VARS store if needed. We do need to add a PK regardless, otherwise Secure Boot will remain in Setup mode and won't actually do any enforcing. The _actual_ security in our chain is coming from enrolling the DB certificate, which is being used to validate our signed UKI.
+
+We can validate that Secure Boot is working in our installed environment, and inspect our enrolled PK/DB keys with:
+```sh
+mokutil --sb-state && mokutil --pk | grep "Issuer:" && mokutil --db 
+| grep "Issuer:"
+```
+
+(Yes, there are private keys already in the `keys/` directory in this repo. Maybe you're here because your repo scanning tool found them. No, they're never used for any prod systems. They're mostly just here as an example so the scheduled GitHub Actions pipeline.)
