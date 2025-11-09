@@ -180,8 +180,7 @@ In our setup, the PK functionally doesn't get used. It is required in the Secure
 
 We can validate that Secure Boot is working in our installed environment, and inspect our enrolled PK/DB keys with:
 ```sh
-mokutil --sb-state && mokutil --pk | grep "Issuer:" && mokutil --db 
-| grep "Issuer:"
+mokutil --sb-state && echo 'PK Keys:' && mokutil --pk | grep "Issuer:" && echo 'DB Keys:' && mokutil --db | grep "Issuer:"
 ```
 
 (Yes, there are private keys already in the `keys/` directory in this repo. Maybe you're here because your repo scanning tool found them. No, they're never used for any prod systems. They're mostly just here as an example so the scheduled GitHub Actions pipeline.)
