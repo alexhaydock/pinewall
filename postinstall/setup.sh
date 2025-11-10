@@ -66,4 +66,6 @@ rc_add unbound-exporter default
 # Again, this is the same as echoing the same string into `chpasswd`
 # but we operate on the shadowfile directly because we're not chrooted
 # into the environment here
+#
+# shellcheck disable=SC2016
 sed -i 's|^root:[^:]*:|root:$6$UIgiYBYh6IhLhm5D$Q2ZN2Pruh3ZJdJmjKiLdZQ5ziPT/1SFSmAhAuK4yttgUxG6cpdDUagWL8Egl.uKUz1JiyjeeqDjxwfT1x9T3b.:|' "$ROOTFS"/etc/shadow

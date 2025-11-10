@@ -1,7 +1,7 @@
 ---
 - name: Create output directory if it doesn't already exist
   ansible.builtin.file:
-    path: '{{ playbook_dir }}/images/'
+    path: '{{ playbook_dir }}/images'
     state: directory
 
 # Determine output filename
@@ -112,22 +112,22 @@
     PACKAGES: '{{ packageset }}'
   changed_when: true
 
-- name: Create output directory for image and SBOM
-  ansible.builtin.file:
-    path: '{{ playbook_dir }}/images'
+- name: Create OCI directory as temp dir
+  ansible.builtin.tempfile:
     state: directory
+  register: ocidir
 
 - name: Run sloci-image to build an OCI version of the image
   ansible.builtin.shell: |
     set -euo pipefail
     {{ playbook_dir }}/sloci-image --tar --entrypoint /start.sh {{ builddir.path }} oci:{{ pinewall_release_name }}
   args:
-    chdir: '/tmp'
+    chdir: '{{ ocidir.path }}'
   changed_when: true
 
 - name: Run Syft to produce SBOM for OCI version of the image
   ansible.builtin.shell: |
-    syft /tmp/oci-{{ pinewall_release_name }}-x86_64-linux.oci-image.tar \
+    syft {{ ocidir.path }}/oci-{{ pinewall_release_name }}-x86_64-linux.oci-image.tar \
     --from oci-archive \
     -o syft-json={{ playbook_dir }}/images/{{ pinewall_release_name }}_sbom.syft.json \
     -o cyclonedx-json={{ playbook_dir }}/images/{{ pinewall_release_name }}_sbom.cyclonedx.json
@@ -186,7 +186,11 @@
     dest: '{{ playbook_dir }}/terraform/{{ vm_hostname }}.tf'
 
 # Clean up tempdir
-- name: Delete temp build directory for this image
+- name: Delete temp build directories for this image
   ansible.builtin.file:
-    path: '{{ builddir.path }}'
+    path: '{{ item }}'
     state: absent
+  with_items:
+    - '{{ builddir.path }}'
+    - '{{ ocidir.path }}'
+...
