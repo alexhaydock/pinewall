@@ -69,7 +69,7 @@ qemu-system-x86_64 \
 
 _Note:_ If you are not running Fedora, your distribution may put the UEFI OVMF image in a different location. You may need to update this before the command will work.
 
-### Testing: Local (With Secure Boot)
+### Testing: Local (With Secure Boot and traditional UEFI VARS store)
 See the "Generating Secure Boot / Measured Boot keys" section further down if you want to make use of this approach.
 
 Install `virt-firmware`:
@@ -89,7 +89,7 @@ virt-fw-vars \
   --secure-boot
 ```
 
-Note that we use `OVMF_VARS_4M.qcow2` as the source for the VARS file in the command above. This is a default (empty) VARS store, unlike `OVMF_VARS_4M.secboot.qcow2` which already has a number of Microsoft, Red Hat, etc keys enrolled in it. Using the blank store and the `none` arguments for the Microsoft keys means we can be sure that only **our** key is being used to validate the signed OS image.
+Note that we use `OVMF_VARS_4M.qcow2` as the source for the VARS file in the command above. This is a default (empty) VARS store, unlike `OVMF_VARS_4M.secboot.qcow2` which already has a number of Microsoft, Red Hat, etc keys enrolled in it. Using the blank store and the `none` arguments for the Microsoft keys means we can be sure that only **our** key is being used to validate the signed OS image. This means we don't need to worry about maintaining up-to-date DBX (revocation) lists.
 
 Boot the image directly like this:
 ```sh
@@ -100,6 +100,35 @@ qemu-system-x86_64 \
   -nographic \
   -drive if=pflash,format=qcow2,unit=0,file=/usr/share/edk2/ovmf/OVMF_CODE_4M.secboot.qcow2,readonly=on \
   -drive if=pflash,format=qcow2,unit=1,file=/tmp/vars.qcow2 \
+  -kernel images/<imagename>.efi.img
+```
+
+### Testing: Local (With Secure Boot and JSON-based UEFI VARS store)
+> [!WARNING]  
+> This is an experimental feature that was introduced in QEMU 10.0. The OVMF_CODE build being used must be built with `QEMU_PV_VARS=TRUE` otherwise it will just hang. The current Fedora builds of `OVMF_CODE_4M.secboot.qcow2` are built to expect a pflash-backed variable store rather than a JSON-backed one.
+
+This method makes use of the [Host UEFI variable service](https://www.qemu.org/docs/master/devel/uefi-vars.html#host-uefi-variable-service) available in more recent versions of QEMU to provide the Secure Boot keys to the VM as a JSON object.
+
+Generate the JSON-based UEFI VARS store:
+```sh
+virt-fw-vars \
+  --output-json /tmp/vars.json \
+  --set-pk-cert $(uuidgen) keys/pk-cert.pem \
+  --add-db-cert $(uuidgen) keys/db-cert.pem \
+  --microsoft-db none \
+  --microsoft-kek none \
+  --secure-boot
+```
+
+Boot the VM using the JSON VARS store:
+```sh
+qemu-system-x86_64 \
+  -name pinewall \
+  -machine q35,smm=off,vmport=off,accel=kvm \
+  -m 2G \
+  -nographic \
+  -drive if=pflash,format=qcow2,unit=0,file=YOUR_OVMF_CODE.qcow2,readonly=on \
+  -device uefi-vars-x64,jsonfile=/tmp/vars.json \
   -kernel images/<imagename>.efi.img
 ```
 
@@ -183,4 +212,4 @@ We can validate that Secure Boot is working in our installed environment, and in
 mokutil --sb-state && echo 'PK Keys:' && mokutil --pk | grep "Issuer:" && echo 'DB Keys:' && mokutil --db | grep "Issuer:"
 ```
 
-(Yes, there are private keys already in the `keys/` directory in this repo. Maybe you're here because your repo scanning tool found them. No, they're never used for any prod systems. They're mostly just here as an example so the scheduled GitHub Actions pipeline.)
+(Yes, there are private keys already in the `keys/` directory in this repo. Maybe you're here because your repo scanning tool found them. No, they're never used for any prod systems. They're mostly just here as an example so the scheduled GitHub Actions pipeline actually works.)
