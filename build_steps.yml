@@ -166,7 +166,9 @@
     --secureboot-certificate="{{ playbook_dir }}/keys/db-cert.pem" \
     --sign-kernel
   environment:
-    CMDLINE: 'rdinit=/sbin/init console=ttyS0'
+    # Enable PSI explicitly which is the supported mechanism on Alpine
+    #   https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/25068#note_180512
+    CMDLINE: 'rdinit=/sbin/init console=ttyS0 psi=1'
   changed_when: true
 
 # Update Terraform deployment code
