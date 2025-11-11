@@ -104,12 +104,12 @@ qemu-system-x86_64 \
 ```
 
 ### Testing: Local (With Secure Boot and JSON-based UEFI VARS store)
-> [!WARNING]  
-> This is an experimental feature that was introduced in QEMU 10.0. The OVMF_CODE build being used must be built with `QEMU_PV_VARS=TRUE` otherwise it will just hang. The current Fedora builds of `OVMF_CODE_4M.secboot.qcow2` are built to expect a pflash-backed variable store rather than a JSON-backed one.
+> [!IMPORTANT]  
+> This is a fairly new feature that was introduced in QEMU 10.0. To use this, the OVMF firmware build being used must be built with `QEMU_PV_VARS=TRUE`, otherwise the VM will just hang. Fedora ship this build as `OVMF.qemuvars.fd`.
 
 This method makes use of the [Host UEFI variable service](https://www.qemu.org/docs/master/devel/uefi-vars.html#host-uefi-variable-service) available in more recent versions of QEMU to provide the Secure Boot keys to the VM as a JSON object.
 
-Generate the JSON-based UEFI VARS store:
+Generate a JSON-based UEFI VARS store:
 ```sh
 virt-fw-vars \
   --output-json /tmp/vars.json \
@@ -120,14 +120,14 @@ virt-fw-vars \
   --secure-boot
 ```
 
-Boot the VM using the JSON VARS store:
+Boot the VM using the JSON VARS store (note that we boot with SMM off here as we don't need it when using paravirtualised vars, unlike when we're attaching the pflash disk as above):
 ```sh
 qemu-system-x86_64 \
   -name pinewall \
   -machine q35,smm=off,vmport=off,accel=kvm \
   -m 2G \
   -nographic \
-  -drive if=pflash,format=qcow2,unit=0,file=YOUR_OVMF_CODE.qcow2,readonly=on \
+  -drive if=pflash,format=raw,unit=0,file=/usr/share/edk2/ovmf/OVMF.qemuvars.fd,readonly=on \
   -device uefi-vars-x64,jsonfile=/tmp/vars.json \
   -kernel images/<imagename>.efi.img
 ```
