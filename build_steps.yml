@@ -66,9 +66,9 @@
 
 - name: Fetch alpine-make-rootfs
   ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/alpinelinux/alpine-make-rootfs/refs/tags/v0.7.2/alpine-make-rootfs
+    url: https://raw.githubusercontent.com/alpinelinux/alpine-make-rootfs/refs/tags/v0.8.1/alpine-make-rootfs
     dest: '{{ playbook_dir }}/alpine-make-rootfs'
-    checksum: 'sha256:9641ccda385b307dbf28123e68969351f297f3d339aa30d530df7c7ad7df9a03'
+    checksum: 'sha256:b4cd8202fa04eae8b4abae22708638cf00ab5826d8b919bc86932fc0cb269f00'
     mode: '0750'
 
 # Fetch our patched version of sloci-image that doesn't use relative paths

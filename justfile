@@ -17,13 +17,24 @@ build:
     mkdir -p "$PWD"/images
     # Mounts a tmpfs in /tmp in the container as this is where
     # Ansible will do our build (ansible.builtin.tempfile)
+    #
+    # Note that we need to run Ansible with --forks=1 because of
+    # some edge-cases that appear due to the way stdio detachment
+    # works in Ansible when running shell scripts against localhost
+    # following the introduction of this commit:
+    #
+    # https://github.com/ansible/ansible/commit/8127abbc298cabf04aaa89a478fc5e5e3432a6fc
+    #
+    # It's not really a problem here though since we're only running
+    # single-threaded anyway rather than operating on multiple
+    # hosts.
     podman run --rm -it -v "$PWD":/mnt:z \
         --entrypoint /bin/sh \
         --workdir /mnt \
         --mount="type=tmpfs,tmpfs-size=512M,destination=/tmp" \
-        docker.io/library/alpine:latest \
+        docker.io/library/alpine:3.22 \
             -c 'apk --no-cache add ansible && \
-            ansible-playbook build.yml'
+            ansible-playbook --forks=1 build.yml'
 
 deploy:
     # Start local webserver to host the images we've built for Proxmox to grab

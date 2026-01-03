@@ -7,4 +7,4 @@ pinewall-build:
         --entrypoint /bin/sh
         --workdir /mnt
         --mount="type=tmpfs,tmpfs-size=512M,destination=/tmp"
-        docker.io/library/alpine:latest -c 'apk --no-cache add ansible && ansible-playbook build.yml'
+        docker.io/library/alpine:3.22 -c 'apk --no-cache add ansible && ansible-playbook build.yml'
