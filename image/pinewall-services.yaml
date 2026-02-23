@@ -1,0 +1,125 @@
+---
+include: pinewall-accounts.yaml  # we can only use one include so take note this is a chain of includes
+# This is where we configure which services that OpenRC will
+# start, and which runlevels they will be started at
+paths:
+  # Services: sysinit
+  - path: /etc/runlevels/sysinit/devfs
+    type: symlink
+    source: /etc/init.d/devfs
+    permissions: 0o755  # extremely important otherwise apko clobbers the permissions of the dest file
+  - path: /etc/runlevels/sysinit/dmesg
+    type: symlink
+    source: /etc/init.d/dmesg
+    permissions: 0o755
+  - path: /etc/runlevels/sysinit/mdev
+    type: symlink
+    source: /etc/init.d/mdev
+    permissions: 0o755
+  - path: /etc/runlevels/sysinit/hwdrivers
+    type: symlink
+    source: /etc/init.d/hwdrivers
+    permissions: 0o755
+  # Services: boot
+  - path: /etc/runlevels/boot/bootmisc
+    type: symlink
+    source: /etc/init.d/bootmisc
+    permissions: 0o755
+  - path: /etc/runlevels/boot/hostname
+    type: symlink
+    source: /etc/init.d/hostname
+    permissions: 0o755
+  - path: /etc/runlevels/boot/hwclock
+    type: symlink
+    source: /etc/init.d/hwclock
+    permissions: 0o755
+  - path: /etc/runlevels/boot/klogd
+    type: symlink
+    source: /etc/init.d/klogd
+    permissions: 0o755
+  - path: /etc/runlevels/boot/modules
+    type: symlink
+    source: /etc/init.d/modules
+    permissions: 0o755
+  - path: /etc/runlevels/boot/networking
+    type: symlink
+    source: /etc/init.d/networking
+    permissions: 0o755
+  - path: /etc/runlevels/boot/rngd
+    type: symlink
+    source: /etc/init.d/rngd
+    permissions: 0o755
+  - path: /etc/runlevels/boot/sysctl
+    type: symlink
+    source: /etc/init.d/sysctl
+    permissions: 0o755
+  - path: /etc/runlevels/boot/syslog
+    type: symlink
+    source: /etc/init.d/syslog
+    permissions: 0o755
+  - path: /etc/runlevels/boot/nftables
+    type: symlink
+    source: /etc/init.d/nftables
+    permissions: 0o755
+  - path: /etc/runlevels/boot/enforceperms
+    type: symlink
+    source: /etc/init.d/enforceperms
+    permissions: 0o755
+  # Services: shutdown
+  - path: /etc/runlevels/shutdown/killprocs
+    type: symlink
+    source: /etc/init.d/killprocs
+    permissions: 0o755
+  - path: /etc/runlevels/shutdown/mount-ro
+    type: symlink
+    source: /etc/init.d/mount-ro
+    permissions: 0o755
+  # Services: default
+  - path: /etc/runlevels/default/acpid
+    type: symlink
+    source: /etc/init.d/acpid
+    permissions: 0o755
+  - path: /etc/runlevels/default/chronyd
+    type: symlink
+    source: /etc/init.d/chronyd
+    permissions: 0o755
+  - path: /etc/runlevels/default/crond
+    type: symlink
+    source: /etc/init.d/crond
+    permissions: 0o755
+  - path: /etc/runlevels/default/local
+    type: symlink
+    source: /etc/init.d/local
+    permissions: 0o755
+  - path: /etc/runlevels/default/corerad
+    type: symlink
+    source: /etc/init.d/corerad
+    permissions: 0o755
+  - path: /etc/runlevels/default/dropbear
+    type: symlink
+    source: /etc/init.d/dropbear
+    permissions: 0o755
+  - path: /etc/runlevels/default/iperf3
+    type: symlink
+    source: /etc/init.d/iperf3
+    permissions: 0o755
+  - path: /etc/runlevels/default/kea-dhcp4
+    type: symlink
+    source: /etc/init.d/kea-dhcp4
+    permissions: 0o755
+  - path: /etc/runlevels/default/node-exporter
+    type: symlink
+    source: /etc/init.d/node-exporter
+    permissions: 0o755
+  - path: /etc/runlevels/default/ulogd
+    type: symlink
+    source: /etc/init.d/ulogd
+    permissions: 0o755
+  - path: /etc/runlevels/default/unbound
+    type: symlink
+    source: /etc/init.d/unbound
+    permissions: 0o755
+  - path: /etc/runlevels/default/unbound-exporter
+    type: symlink
+    source: /etc/init.d/unbound-exporter
+    permissions: 0o755

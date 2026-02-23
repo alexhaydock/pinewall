@@ -1,4 +1,0 @@
----
-ignore:
-  - package:
-      name: linux-kernel

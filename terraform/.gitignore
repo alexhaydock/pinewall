@@ -1,2 +1,19 @@
-*
-!.gitignore
+# Ignore non-templated Terraform
+*.tf
+
+# Ignore temporary Terraform files
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+.terraform/
+.terraformrc
+*_override.tf
+*_override.tf.json
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.*.log
+crash.log
+override.tf
+override.tf.json
+terraform.rc

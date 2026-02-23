@@ -1,6 +1,0 @@
----
-ignore:
-  - package:
-      type: go-module
-  - package:
-      name: linux-kernel

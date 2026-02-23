@@ -5,8 +5,8 @@ resource "proxmox_virtual_environment_download_file" "efi_image_{{ vm_hostname }
   # Specify node to deploy to
   node_name = "{{ prox_node_name }}"
 
-  file_name = "{{ pinewall_release_name }}.efi.img"
-  url       = "http://${var.deployment_host_ip}:8080/images/{{ pinewall_release_name }}.efi.img"
+  file_name = "{{ uki_filename }}"
+  url       = "http://${var.deployment_host_ip}:8080/images/{{ uki_filename }}"
 }
 
 resource "proxmox_virtual_environment_vm" "efi_vm_{{ vm_hostname }}" {
@@ -24,7 +24,7 @@ resource "proxmox_virtual_environment_vm" "efi_vm_{{ vm_hostname }}" {
   depends_on = [proxmox_virtual_environment_download_file.efi_image_{{ vm_hostname }}]
 
   # The magic that allows us to do direct EFI boot in Proxmox
-  kvm_arguments = "-kernel /var/lib/vz/template/iso/{{ pinewall_release_name }}.efi.img"
+  kvm_arguments = "-kernel /var/lib/vz/template/iso/{{ uki_filename }}"
 
   # Enables UEFI firmware (needed to boot an EFI binary)
   bios = "ovmf"
@@ -41,12 +41,12 @@ resource "proxmox_virtual_environment_vm" "efi_vm_{{ vm_hostname }}" {
 
   # WAN Interface
   network_device {
-    bridge = "vmbr3"
+    bridge = "{{ wan_if }}"
   }
 
   # LAN Interface
   network_device {
-    bridge = "vmbr5"
+    bridge = "{{ lan_if }}"
   }
 
   operating_system {
