@@ -3,7 +3,6 @@
 ::sysinit:/sbin/openrc sysinit
 ::sysinit:/sbin/openrc boot
 ::wait:/sbin/openrc default
-::shutdown:/sbin/openrc shutdown
 
 # Put a getty on the serial port for QEMU
 ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100

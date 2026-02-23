@@ -1,0 +1,21 @@
+#!/sbin/openrc-run
+# shellcheck shell=sh
+
+description="Enforcing permissions on first boot"
+
+depend() {
+    before kea-dhcp4
+}
+
+start() {
+    ebegin "Enforcing permissions on first boot"
+
+    # Ensure Kea directories are owned by `kea` user so it can start properly
+    # https://gitlab.alpinelinux.org/alpine/aports/-/blob/c5fdddb055e38d544915eb9ae25ecdf7b8c4218a/main/kea/APKBUILD#L135
+    chown -R kea:kea /var/lib/kea /var/log/kea
+    chmod 0750 /var/lib/kea /var/log/kea
+}
+
+stop() {
+    echo 'noop'
+}

@@ -2,7 +2,7 @@
 #   https://github.com/mdlayher/corerad/blob/main/internal/config/reference.toml
 
 [[interfaces]]
-names = ["eth1"]
+names = ["vlan190", "vlan191", "vlan193", "vlan194", "vlan195", "vlan201"]
 advertise = true
 
   # Advertise an on-link, autonomous prefix for all /64 addresses on eth0. This
@@ -30,4 +30,4 @@ advertise = true
   ## Send AAISP NAT64 prefix if we're on AAISP in the UK and want to use their upstream NAT64
   ## If we comment this out then much like Unbound does, Corerad will also just default to using
   ## the well-known NAT64 prefix of 64:ff9b::/96
-  #prefix = "2001:8b0:6464:0:66::/96"
+  prefix = "2001:8b0:6464:0:66::/96"

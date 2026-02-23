@@ -1,0 +1,34 @@
+---
+package:
+  name: pinewall-config
+  version: "1.0.0"
+  epoch: 0
+  description: pinewall router config
+  copyright:
+    - license: MIT
+  dependencies:
+    # Declare the packages that we conflict with (i.e. where we ship config
+    # files for packages that we want to use instead of the vendor defaults)
+    replaces:
+      - 'alpine-baselayout-data'              # /etc/hostname
+      - 'alpine-baselayout'                   # /etc/motd
+      - 'busybox-openrc'                      # /etc/conf.d/syslog
+      - 'chrony'                              # /etc/chrony/chrony.conf
+      - 'corerad'                             # /etc/corerad/config.toml
+      - 'dropbear-openrc'                     # /etc/conf.d/dropbear
+      - 'kea-dhcp4'                           # /etc/kea/kea-dhcp4.conf
+      - 'nftables'                            # /etc/nftables.nft
+      - 'prometheus-node-exporter-openrc'     # /etc/conf.d/node-exporter
+      - 'prometheus-unbound-exporter-openrc'  # /etc/conf.d/unbound-exporter
+      - 'ulogd'                               # /etc/ulogd.conf
+      - 'unbound'                             # /etc/unbound/unbound.conf
+environment:
+  contents:
+    repositories:
+      - http://dl-cdn.alpinelinux.org/alpine/v3.23/main
+    packages:
+      - busybox
+pipeline:
+  - runs: |
+      cp -a vendor/. "${{targets.destdir}}"/
+      find "${{targets.destdir}}" -type f -exec chmod 644 {} +

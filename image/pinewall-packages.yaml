@@ -1,0 +1,51 @@
+---
+include: pinewall-services.yaml  # we can only use one include so take note this is a chain of includes
+contents:
+  packages:
+    # ALPINE_BASE_PKGS from alpine-make-rootfs
+    # https://github.com/alpinelinux/alpine-make-rootfs/blob/7dd5376009d56bb617312b0b7eff49ec2526a3a7/alpine-make-rootfs#L98C28-L98C77
+    - alpine-baselayout
+    - busybox
+    - busybox-suid
+    - musl-utils
+    # Pinewall config package
+    - pinewall-config
+    # Pinewall main workload packages
+    - alpine-base
+    - ca-certificates
+    - chrony
+    - chrony-openrc
+    - conntrack-tools
+    - corerad
+    - corerad-openrc
+    - dbus
+    - dns-root-hints
+    - dropbear
+    - dropbear-openrc
+    - ethtool
+    - htop
+    - ifupdown-ng-wireguard
+    - iperf3
+    - kea
+    - linux-firmware-none
+    - linux-virt
+    - logrotate
+    - nano
+    - nftables
+    - nftables-openrc
+    - nload
+    - openssl
+    - prometheus-node-exporter
+    - prometheus-node-exporter-openrc
+    - prometheus-unbound-exporter
+    - prometheus-unbound-exporter-openrc
+    - rng-tools
+    - rng-tools-openrc
+    - tcpdump
+    - tzdata
+    - ulogd
+    - ulogd-openrc
+    - unbound
+    - unbound-openrc
+    - util-linux
+    - wireguard-tools-wg
