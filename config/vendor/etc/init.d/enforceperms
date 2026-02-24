@@ -3,12 +3,17 @@
 
 description="Enforcing permissions on first boot"
 
+# We symlink this into the boot runlevel so it ought to
+# come before most services anyway
 depend() {
-    before kea-dhcp4
 }
 
 start() {
     ebegin "Enforcing permissions on first boot"
+
+    # This is not the nicest way of doing things, but since we want to
+    # mask the `bird` service for most deployments, we can do this:
+    chmod -x /etc/init.d/bird
 
     # Ensure Kea directories are owned by `kea` user so it can start properly
     # https://gitlab.alpinelinux.org/alpine/aports/-/blob/c5fdddb055e38d544915eb9ae25ecdf7b8c4218a/main/kea/APKBUILD#L135
