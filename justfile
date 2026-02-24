@@ -5,8 +5,10 @@ set ignore-comments
 export PROXMOX_VE_USERNAME := "root@pam"
 export TF_VAR_deployment_host_ip := "192.168.200.160"
 
+# Update the pinewall-image submodule
+[working-directory: 'image']
 update:
-    git submodule update --recursive
+    git pull
 
 [working-directory: 'config']
 config:
