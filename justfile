@@ -65,7 +65,6 @@ image:
 deploy:
     # Start local webserver to host the images we've built for Proxmox to grab
     just start-webserver
-    trap 'podman stop apko-image-deploy' EXIT
 
     # Import Proxmox vars from local disk only for pinewall-private
     # (no TPM on X260 deployment host), then deploy
@@ -73,6 +72,8 @@ deploy:
     tofu init && \
     tofu fmt && \
     tofu apply
+
+    # Stop local webserver
 
 [working-directory: 'image']
 update-lockfile:
@@ -105,3 +106,6 @@ start-webserver:
     --name apko-image-deploy \
     -p 8080:80 \
     docker.io/library/nginx:alpine
+
+stop-webserver:
+    podman stop apko-image-deploy

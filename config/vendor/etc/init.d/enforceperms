@@ -3,11 +3,6 @@
 
 description="Enforcing permissions on first boot"
 
-# We symlink this into the boot runlevel so it ought to
-# come before most services anyway
-depend() {
-}
-
 start() {
     ebegin "Enforcing permissions on first boot"
 
