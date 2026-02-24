@@ -56,7 +56,7 @@ image:
     ukify build \
     --output "images/${UKIFILENAME}" \
     --cmdline "rdinit=/sbin/init console=ttyS0 psi=1" \
-    --linux "${rebuild_tmp}/boot/vmlinuz-virt" \
+    --linux "${rebuild_tmp}/boot/vmlinuz-lts" \
     --initrd "${build_tmp}/initramfs"
     # Update corresponding Terraform deployment files
     just update-tf
