@@ -1,0 +1,3 @@
+[submodule "image"]
+	path = image
+	url = git@github.com:alexhaydock/pinewall-image.git

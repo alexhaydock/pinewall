@@ -1,7 +1,12 @@
 set ignore-comments
 
+# TODO: This is probably too hard-coded to my own deployment
+#       infra, but people can update this if they need to
 export PROXMOX_VE_USERNAME := "root@pam"
 export TF_VAR_deployment_host_ip := "192.168.200.160"
+
+update:
+    git submodule update --recursive
 
 [working-directory: 'config']
 config:
