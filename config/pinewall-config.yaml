@@ -12,6 +12,7 @@ package:
     replaces:
       - 'alpine-baselayout-data'              # /etc/hostname
       - 'alpine-baselayout'                   # /etc/motd
+      - 'bird'                                # /etc/bird.conf
       - 'busybox-openrc'                      # /etc/conf.d/syslog
       - 'chrony'                              # /etc/chrony/chrony.conf
       - 'corerad'                             # /etc/corerad/config.toml
