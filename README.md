@@ -57,16 +57,21 @@ This will build a Pinewall image based on the `apko` recipes in the [image/](./i
 ### Testing the image locally
 It's easy to test the newly built image locally with QEMU. This example is based on paths that assume a Fedora host:
 ```sh
+# Copy a blank EFI variable store to a temp directory
+cp -fv /usr/share/edk2/ovmf/OVMF_VARS_4M.qcow2 /tmp/OVMF_VARS_4M.qcow2
+
+# Boot Pinewall in QEMU for testing
 qemu-system-x86_64 \
   -name pinewall \
+  -m 1G \
   -machine q35,smm=on,vmport=off,accel=kvm \
-  -m 2G \
-  -nographic \
-  -drive if=pflash,format=qcow2,unit=0,file=/usr/share/edk2/ovmf/OVMF_CODE_4M.qcow2,readonly=on \
-  -kernel image/images/pinewall_1.0.4.efi.img
+  -drive if=pflash,format=qcow2,unit=0,file=./OVMF_CODE_4M.qcow2,readonly=on \
+  -drive if=pflash,format=qcow2,unit=1,file=/tmp/OVMF_VARS_4M.qcow2 \
+  -kernel image/images/pinewall_1.0.0.efi.img \
+  -nographic
 ```
 
-_Note:_ If you are not running Fedora, your distribution may put the UEFI OVMF image in a different location. You may need to update this before the command will work.
+**Note:** If you are not running Fedora, your distribution will most likely keep the OVMF_CODE and OVMF_VARS in a different location. You will need to find the right paths for them, as you do specifically need to use UEFI firmware to boot a Unified Kernel Image directly.
 
 ### Production deployment (Terraform + Proxmox)
 If you want a more robust production deployment (which is essentially a more automated version of the test process above) you can use Terraform:

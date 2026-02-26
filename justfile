@@ -23,57 +23,43 @@ image:
     UKIFILENAME="${IMAGENAME}_${IMAGEVERSION}.efi.img"
     # Create build and rebuild tempdirs
     build_tmp="$(mktemp -d)"
-    rebuild_tmp="$(mktemp -d)"
     # Ensure cleanup if the process exits
-    trap 'rm -rf "${build_tmp}" ; rm -rf "${rebuild_tmp}"' EXIT
+    trap 'rm -rf "${build_tmp}"' EXIT
     # DEBUG: echo status
     echo "Build dir: ${build_tmp}"
-    echo "Repacking dir: ${rebuild_tmp}"
-    # Build minirootfs tar file
-    apko build-minirootfs pinewall.yaml ${build_tmp}/pinewall.tar
-    # Extract tar file
-    tar \
-    --exclude=dev \
-    --exclude=media/cdrom \
-    --exclude=media/floppy \
-    --exclude=media/usb \
-    --exclude=mnt \
-    --exclude=srv \
-    --exclude=sys \
-    -xf ${build_tmp}/pinewall.tar -C ${rebuild_tmp}
-    # Process tar file deterministically into initramfs
-    # We need root mostly so we can write /bin/bbsuid
-    # which is the SUID wrapper for BusyBox functions
-    # like `mount`, `umount` etc. We can't remove it
-    # since it's a dependency of alpine-base.
-    sudo sh -c "cd ${rebuild_tmp} && \
-    chmod 755 ${rebuild_tmp} && \
-    find . -exec touch -h -t 197001010000 {} + && \
-    find . -path './boot' -prune -o -print | \
-    cpio -o -H newc --owner=0:0 | \
-    gzip -n > ${build_tmp}/initramfs"
+    # Build cpio file
+    #
+    # I previously used build-minirootfs here to build a tar-based
+    # minirootfs and then unpacked-and-repacked it for the final
+    # image, but there's an undocumented `build-cpio` command in
+    # apko that we can use to do this more robustly:
+    # https://github.com/chainguard-dev/apko/pull/1177
+    apko build-cpio pinewall.yaml ${build_tmp}/initramfs
+    # Extract just the kernel from image so we can build it into UKI
+    cpio -D ${build_tmp} -id "boot/vmlinuz-lts" < ${build_tmp}/initramfs
     # Build initramfs and kernel into UKI
     ukify build \
     --output "images/${UKIFILENAME}" \
     --cmdline "rdinit=/sbin/init console=ttyS0 psi=1" \
-    --linux "${rebuild_tmp}/boot/vmlinuz-lts" \
+    --linux "${build_tmp}/boot/vmlinuz-lts" \
     --initrd "${build_tmp}/initramfs"
     # Update corresponding Terraform deployment files
     just update-tf
 
 [working-directory: 'terraform']
 deploy:
+    #!/usr/bin/env bash
+    set -euo pipefail
     # Start local webserver to host the images we've built for Proxmox to grab
     just start-webserver
-
+    # Ensure cleanup if the process exits
+    trap 'podman stop apko-image-deploy' EXIT
     # Import Proxmox vars from local disk only for pinewall-private
     # (no TPM on X260 deployment host), then deploy
     . ~/.ssh/pve_cursedrouter.sh && \
     tofu init && \
     tofu fmt && \
     tofu apply
-
-    # Stop local webserver
 
 [working-directory: 'image']
 update-lockfile:
@@ -106,6 +92,3 @@ start-webserver:
     --name apko-image-deploy \
     -p 8080:80 \
     docker.io/library/nginx:alpine
-
-stop-webserver:
-    podman stop apko-image-deploy
