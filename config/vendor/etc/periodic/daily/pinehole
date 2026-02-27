@@ -1,32 +1,33 @@
-#!/usr/bin/env sh
-set -eu
+#!/usr/bin/env ash
+set -eufo pipefail
 
 # /etc/periodic/daily/pinehole
 
-# This script run daily at 2AM based on the Alpine Linux defaults
+# This script runs daily at 2AM based on the Alpine Linux defaults
 # See the /etc/periodic/daily entry in `crontab -l` for specifics
 
-# Fail if we're not running as root
-# (if we're not, we won't be able to restart Unbound)
-if [ "$(id -u)" -ne 0 ]; then
-    echo 'This script must be run by root in order to restart Unbound.' >&2
-    exit 1
-fi
+# Create tempfile and trap to remove it on exit
+TMP_FILE="$(mktemp)"
+trap 'rm -f "$TMP_FILE"' EXIT
 
-# Remove previous adblock list
-rm -f /tmp/adblock.list
+# Download StevenBlack hosts file and process it into Unbound format
+#
+# We use NXDOMAIN here so that we sinkhole any domains underneath an
+# ad domain that's on the list, rather than just serving 0.0.0.0 as an
+# A record which might not be quite so robust
+curl -fsSL https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts | \
+  awk '$1=="0.0.0.0" { print "local-zone: \"" $2 "\" always_nxdomain" }' > "$TMP_FILE"
 
-# Download fresh adblock list
-wget https://gitlab.com/alexhaydock/pinehole/-/raw/main/adblock.list -O /tmp/adblock.list
-
-# If the adblock list has >100,000 entries, assume the download
-# has completed and move it into place, reloading Unbound
-if [ "$(wc -l /tmp/adblock.list | cut -d " " -f1)" -gt "100000" ]; then
-    # List count is >100,000. Assuming our download has completed successfully.
-    # Reloading with reload_keep_cache to preserve existing Unbound cache.
-    mv -f /tmp/adblock.list /etc/unbound/adblock.list
+# Check to ensure that the file has more than 10,000 entries
+# and copy it into place if it does
+if [ "$(wc -l ${TMP_FILE} | cut -d " " -f1)" -gt "10000" ]; then
+    # Ensure file is readable by unprivileged Unbound process
+    chmod 0644 "$TMP_FILE"
+    # Move file into place over the top of the existing one
+    mv -f "$TMP_FILE" /etc/unbound/adblock.list
+    # Reload Unbound while keeping the cache
     unbound-control reload_keep_cache
 else
-    echo "List count is <100,000. Maybe something is broken with the download?"
+    echo "List count is <10,000. Maybe something is broken with the download?"
     echo "Not loading adblock list into Unbound, just in case."
 fi
