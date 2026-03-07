@@ -1,7 +1,0 @@
-# Ignore apko.lock
-#
-# There's no sense in locking it upstream to produce a "definitive
-# build" for Pinewall as the lockfile includes the configuration
-# package. So it makes more sense for people to handle locking in
-# their own downstream fork or clone of the repo
-apko.lock
