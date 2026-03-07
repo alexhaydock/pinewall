@@ -5,6 +5,7 @@ set ignore-comments
 export PROXMOX_VE_USERNAME := "root@pam"
 export TF_VAR_deployment_host_ip := "192.168.200.160"
 
+[working-directory: '.']
 build:
     just config
     just lock
@@ -13,10 +14,29 @@ build:
 [working-directory: 'config']
 config:
     test -f melange.rsa || melange keygen
-    melange build --signing-key melange.rsa --arch amd64 pinewall-config.yaml
+    # Build config package
+    #
+    # Here we override some git variables that melange would
+    # otherwise autodiscover from our local .git directory
+    # and which might change without our actual config changing
+    #
+    # We do this because these values end up in the SPDX file
+    # embedded in the APK package and change any time HEAD's
+    # hash changes, even if the package contents stay the same,
+    # which breaks reproducibility
+    # 
+    # We override these to the values the upstream apko code
+    # defaults to using when run in a directory that isn't
+    # a git repo
+    melange build \
+    --signing-key melange.rsa \
+    --git-commit "unknown" \
+    --git-repo-url "https://unknown/unknown/unknown" \
+    --arch amd64 pinewall-config.yaml
 
 [working-directory: 'image']
 lock:
+    # Create lockfile based on image config
     apko lock --output ../apko.lock pinewall.yaml
 
 [working-directory: 'image']
@@ -26,8 +46,8 @@ image:
     # Check if git tree is dirty (since we are using the commit ID
     # for versioning)
     just checkgit
-    # Calculate UKI filename based on settings and current commit
-    UKIFILENAME="${IMAGENAME}_$(git rev-parse --short HEAD).efi.img"
+    # Calculate UKI filename based truncated hash of the lockfile
+    UKIFILENAME="${IMAGENAME}_$(sha256sum ../apko.lock | cut -c1-7).efi.img"
     # Create build and rebuild tempdirs
     build_tmp="$(mktemp -d)"
     # Ensure cleanup if the process exits
@@ -75,8 +95,8 @@ update-tf:
     # Check if git tree is dirty (since we are using the commit ID
     # for versioning)
     just checkgit
-    # Calculate UKI filename based on env vars in shell
-    UKIFILENAME="${IMAGENAME}_$(git rev-parse --short HEAD).efi.img"
+    # Calculate UKI filename based truncated hash of the lockfile
+    UKIFILENAME="${IMAGENAME}_$(sha256sum ../apko.lock | cut -c1-7).efi.img"
     jinja2 templates/terraform-base.tf.j2 \
     -D prox_url="${PROXURL}" \
     -D prox_selfsigned="${PROXSELFSIGNED}" > terraform-base.tf
@@ -88,6 +108,7 @@ update-tf:
     -D lan_if="${PROXLAN}" \
     -D prox_vmid="${PROXVMID}" > terraform-vm.tf
 
+[working-directory: '.']
 start-webserver:
     # Start local webserver to host the images we've built for Proxmox to grab
     podman stop apko-image-deploy 2>/dev/null || true
@@ -97,10 +118,11 @@ start-webserver:
     -p 8080:80 \
     docker.io/library/nginx:alpine
 
+[working-directory: '.']
 checkgit:
     #!/usr/bin/env bash
     set -euo pipefail
-    if ! git diff-index --quiet HEAD --; then
+    if ! git diff-index --quiet HEAD -- && git diff --quiet HEAD --; then
     echo "Error: Working tree has uncommitted changes."
     echo "Please commit or stash them before continuing."
     exit 1
