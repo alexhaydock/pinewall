@@ -7,6 +7,7 @@ package:
   copyright:
     - license: MIT
   dependencies:
+    runtime:
     # Declare the packages that we conflict with (i.e. where we ship config
     # files for packages that we want to use instead of the vendor defaults)
     replaces:
@@ -29,7 +30,20 @@ environment:
       - http://dl-cdn.alpinelinux.org/alpine/v3.23/main
     packages:
       - busybox
+  accounts:
+    groups:
+      - groupname: nonroot
+        gid: 10000
+    users:
+      - username: nonroot
+        uid: 10000
 pipeline:
   - runs: |
       cp -a vendor/. "${{targets.destdir}}"/
+
+      # Normalize permissions
       find "${{targets.destdir}}" -type f -exec chmod 644 {} +
+      find "${{targets.destdir}}" -type d -exec chmod 755 {} +
+
+      # Normalize timestamps
+      find "${{targets.destdir}}" -exec touch -h -d "@0" {} +

@@ -2232,18 +2232,18 @@
         "version": "1.0.0-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-654",
-          "checksum": "sha1-lXwnXMCqGroQPvS6FJNx+qTeJXk="
+          "range": "bytes=0-651",
+          "checksum": "sha1-XaiabejHU8umKOU/ngT8m9iPKBU="
         },
         "control": {
-          "range": "bytes=655-1643",
-          "checksum": "sha1-fSePsYO7DjAGXt5w6GY2y/jsnmg="
+          "range": "bytes=652-1704",
+          "checksum": "sha1-i+ZcHDtfvLuScEITv6R9bdy6Gbs="
         },
         "data": {
-          "range": "bytes=1644-18133",
-          "checksum": "sha256-FbWRCjGbCksOmk2Ky6ekSuFNsyDR/phMeWZXb1EndDQ="
+          "range": "bytes=1705-18195",
+          "checksum": "sha256-hL6neekCUBCczy8hMUQHX0Yfe1uz72Hb3+TDkQXVP8s="
         },
-        "checksum": "Q1fSePsYO7DjAGXt5w6GY2y/jsnmg="
+        "checksum": "Q1i+ZcHDtfvLuScEITv6R9bdy6Gbs="
       },
       {
         "name": "ppp-pppoe",
