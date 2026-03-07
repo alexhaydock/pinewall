@@ -54,6 +54,8 @@ just lock
 
 We need to do this _after_ building or updating the config package above, since the config package is one of the packages that will get included in the lockfile.
 
+At the moment, this lockfile support relies on the as-yet-unmerged lockfile support I have opened as a PR to upstream apko: chainguard-dev/apko#2101. The `nix develop` environment pulls in a pre-built binary from my forked repo to make use of this feature.
+
 ### Building a new image
 Once the config package has been built, you can build a new image with:
 ```sh
@@ -73,7 +75,7 @@ qemu-system-x86_64 \
   -name pinewall \
   -m 1G \
   -machine q35,smm=on,vmport=off,accel=kvm \
-  -drive if=pflash,format=qcow2,unit=0,file=./OVMF_CODE_4M.qcow2,readonly=on \
+  -drive if=pflash,format=qcow2,unit=0,file=/usr/share/edk2/ovmf/OVMF_CODE_4M.qcow2,readonly=on \
   -drive if=pflash,format=qcow2,unit=1,file=/tmp/OVMF_VARS_4M.qcow2 \
   -kernel image/images/pinewall_1.0.0.efi.img \
   -nographic
@@ -101,9 +103,7 @@ You should probably be connected directly to the Proxmox management interface if
 
 A core goal of Pinewall is to provide the ability to produce byte-for-byte reproducible images. Many of the architectural choices of the project are built around this goal.
 
-Currently, Pinewall builds _should_ be byte-for-byte reproducible across short windows of time. However, once Alpine packages update upstream, new builds are likely to carry new package versions and their hashes will change.
-
-I am considering building lockfile support for `apko`'s minirootfs build capability - an effort which would be tracked upstream as chainguard-dev/apko#2085.
+Currently, Pinewall builds _should_ be byte-for-byte reproducible, especially since I'm now making use of the extended lockfile support in my downstream `apko` fork, but there might still be some rough edges especially around the config package overlay. If you're trying to work on reproducible builds based on the code here and hitting some issues please do open a GitHub issue and let me know.
 
 ### SBOM & vulnerability management
 > [!IMPORTANT]  
