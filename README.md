@@ -46,6 +46,14 @@ just config
 
 The built config package will be outputted as an Alpine package repository complete with APKINDEX file in [config/packages/](./config/packages/).
 
+### Populating the lockfile
+Once the config package has been built, we need to populate a lockfile for the image build process to consume. This can be done using `apko`'s locking support using:
+```sh
+just lock
+```
+
+We need to do this _after_ building or updating the config package above, since the config package is one of the packages that will get included in the lockfile.
+
 ### Building a new image
 Once the config package has been built, you can build a new image with:
 ```sh

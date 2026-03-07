@@ -5,15 +5,19 @@ set ignore-comments
 export PROXMOX_VE_USERNAME := "root@pam"
 export TF_VAR_deployment_host_ip := "192.168.200.160"
 
-# Update the pinewall-image submodule
-[working-directory: 'image']
-update:
-    git pull
+build:
+    just config
+    just lock
+    just image
 
 [working-directory: 'config']
 config:
     test -f melange.rsa || melange keygen
     melange build --signing-key melange.rsa --arch amd64 pinewall-config.yaml
+
+[working-directory: 'image']
+lock:
+    apko lock --output ../apko.lock pinewall.yaml
 
 [working-directory: 'image']
 image:
@@ -37,7 +41,7 @@ image:
     # image, but there's an undocumented `build-cpio` command in
     # apko that we can use to do this more robustly:
     # https://github.com/chainguard-dev/apko/pull/1177
-    apko build-cpio pinewall.yaml ${build_tmp}/initramfs
+    apko build-cpio --lockfile ../apko.lock pinewall.yaml ${build_tmp}/initramfs
     # Extract just the kernel from image so we can build it into UKI
     cpio -D ${build_tmp} -id "boot/vmlinuz-lts" < ${build_tmp}/initramfs
     # Build initramfs and kernel into UKI
@@ -63,12 +67,6 @@ deploy:
     tofu init && \
     tofu fmt && \
     tofu apply
-
-[working-directory: 'image']
-update-lockfile:
-    # Update apko lockfile
-    # Sadly does not work for apko build-minirootfs, only for apko build
-    #apko lock --ignore-signatures pinewall.yaml
 
 [working-directory: 'terraform']
 update-tf:
