@@ -37,7 +37,6 @@
 
           env = {
             # Configure Pinewall version here
-            IMAGEVERSION = "1.0.0";
             IMAGENAME = "pinewall";
             # Configure Proxmox variables here
             PROXNODE = "proxnet";

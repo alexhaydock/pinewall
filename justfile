@@ -19,8 +19,11 @@ config:
 image:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Calculate UKI filename based on env vars in shell
-    UKIFILENAME="${IMAGENAME}_${IMAGEVERSION}.efi.img"
+    # Check if git tree is dirty (since we are using the commit ID
+    # for versioning)
+    just checkgit
+    # Calculate UKI filename based on settings and current commit
+    UKIFILENAME="${IMAGENAME}_$(git rev-parse --short HEAD).efi.img"
     # Create build and rebuild tempdirs
     build_tmp="$(mktemp -d)"
     # Ensure cleanup if the process exits
@@ -71,8 +74,11 @@ update-lockfile:
 update-tf:
     #!/usr/bin/env bash
     set -euo pipefail
+    # Check if git tree is dirty (since we are using the commit ID
+    # for versioning)
+    just checkgit
     # Calculate UKI filename based on env vars in shell
-    UKIFILENAME="${IMAGENAME}_${IMAGEVERSION}.efi.img"
+    UKIFILENAME="${IMAGENAME}_$(git rev-parse --short HEAD).efi.img"
     jinja2 templates/terraform-base.tf.j2 \
     -D prox_url="${PROXURL}" \
     -D prox_selfsigned="${PROXSELFSIGNED}" > terraform-base.tf
@@ -92,3 +98,12 @@ start-webserver:
     --name apko-image-deploy \
     -p 8080:80 \
     docker.io/library/nginx:alpine
+
+checkgit:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! git diff-index --quiet HEAD --; then
+    echo "Error: Working tree has uncommitted changes."
+    echo "Please commit or stash them before continuing."
+    exit 1
+    fi
