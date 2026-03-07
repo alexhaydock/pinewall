@@ -2233,17 +2233,17 @@
         "architecture": "x86_64",
         "signature": {
           "range": "bytes=0-651",
-          "checksum": "sha1-KjqR9PrR+EeSTeno/Q8Og2HXto0="
+          "checksum": "sha1-4ncXBjBq0q/oh0rUAl4li0IGmwU="
         },
         "control": {
-          "range": "bytes=652-1690",
-          "checksum": "sha1-JMsZuuKGTG6PEtUDmTqK0TY9aw0="
+          "range": "bytes=652-1673",
+          "checksum": "sha1-4ZzVI5vF0842hfjIww867+0LxKs="
         },
         "data": {
-          "range": "bytes=1691-18141",
+          "range": "bytes=1674-18124",
           "checksum": "sha256-EtRW+ExpE+Ttda6C/vziQlVP8xFr7uD/uort3uDQlbc="
         },
-        "checksum": "Q1JMsZuuKGTG6PEtUDmTqK0TY9aw0="
+        "checksum": "Q14ZzVI5vF0842hfjIww867+0LxKs="
       },
       {
         "name": "ppp-pppoe",

@@ -122,7 +122,7 @@ start-webserver:
 checkgit:
     #!/usr/bin/env bash
     set -euo pipefail
-    if ! git diff-index --quiet HEAD -- && git diff --quiet HEAD --; then
+    if ! git diff --quiet HEAD --; then
     echo "Error: Working tree has uncommitted changes."
     echo "Please commit or stash them before continuing."
     exit 1
