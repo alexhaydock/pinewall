@@ -1069,41 +1069,41 @@
       },
       {
         "name": "corerad",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/community/x86_64/corerad-1.3.1-r12.apk",
-        "version": "1.3.1-r12",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/community/x86_64/corerad-1.3.1-r13.apk",
+        "version": "1.3.1-r13",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-723",
-          "checksum": "sha1-GsN/cqWfUT7+Pv+QJq9btQLo5l8="
+          "range": "bytes=0-720",
+          "checksum": "sha1-tIjBiP434amvo47CFMbG9M6NWpA="
         },
         "control": {
-          "range": "bytes=724-1421",
-          "checksum": "sha1-YM4hb6SKcNK9tNcC0adX6FdcD4k="
+          "range": "bytes=721-1422",
+          "checksum": "sha1-8tU4e9JMkU+nGV40XeYWQusHs2s="
         },
         "data": {
-          "range": "bytes=1422-4095926",
-          "checksum": "sha256-BQHMK9avzsdsNSKP3s0f+W0H2X1EwbJHOaBNA22iFAo="
+          "range": "bytes=1423-4097537",
+          "checksum": "sha256-vHFgvalX8N30eOJclMRAhIheMMAZssP5RSV1aRQkuno="
         },
-        "checksum": "Q1YM4hb6SKcNK9tNcC0adX6FdcD4k="
+        "checksum": "Q18tU4e9JMkU+nGV40XeYWQusHs2s="
       },
       {
         "name": "corerad-openrc",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/community/x86_64/corerad-openrc-1.3.1-r12.apk",
-        "version": "1.3.1-r12",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/community/x86_64/corerad-openrc-1.3.1-r13.apk",
+        "version": "1.3.1-r13",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-721",
-          "checksum": "sha1-zsFNkM9sWUuYbJupweYkYqDktJ8="
+          "range": "bytes=0-723",
+          "checksum": "sha1-SR0YzJUz/tILsenQI9Z2soDmTAE="
         },
         "control": {
-          "range": "bytes=722-1296",
-          "checksum": "sha1-clSfN8F60+eiNlOPJTuwjmguLLo="
+          "range": "bytes=724-1297",
+          "checksum": "sha1-nalo0d/ymp5qale6N/lp9PsNBw8="
         },
         "data": {
-          "range": "bytes=1297-1843",
-          "checksum": "sha256-gXlXxbd55M1BFLBMT26nf3DgDETGT7GbaeyYuz4q2Nw="
+          "range": "bytes=1298-1845",
+          "checksum": "sha256-ou71gp3E6h9RFHLx4K/wXrSvKuZoc6G7JkawYhXwdgI="
         },
-        "checksum": "Q1clSfN8F60+eiNlOPJTuwjmguLLo="
+        "checksum": "Q1nalo0d/ymp5qale6N/lp9PsNBw8="
       },
       {
         "name": "dbus-libs",
