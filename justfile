@@ -43,9 +43,6 @@ lock:
 image:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Check if git tree is dirty (since we are using the commit ID
-    # for versioning)
-    just checkgit
     # Calculate UKI filename based truncated hash of the lockfile
     UKIFILENAME="${IMAGENAME}_$(sha256sum ../apko.lock | cut -c1-7).efi.img"
     # Create build and rebuild tempdirs
@@ -64,12 +61,16 @@ image:
     apko build-cpio --lockfile ../apko.lock pinewall.yaml ${build_tmp}/initramfs
     # Extract just the kernel from image so we can build it into UKI
     cpio -D ${build_tmp} -id "boot/vmlinuz-lts" < ${build_tmp}/initramfs
+    # Compress initramfs with zstd
+    # (Without doing this we seemingly can't boot the UKI in QEMU using
+    # the -kernel argument)
+    zstd -19 "${build_tmp}/initramfs" -o "${build_tmp}/initramfs.zst"
     # Build initramfs and kernel into UKI
     ukify build \
     --output "images/${UKIFILENAME}" \
     --cmdline "rdinit=/sbin/init console=ttyS0 psi=1" \
     --linux "${build_tmp}/boot/vmlinuz-lts" \
-    --initrd "${build_tmp}/initramfs"
+    --initrd "${build_tmp}/initramfs.zst"
     # Update corresponding Terraform deployment files
     just update-tf
 
@@ -92,9 +93,6 @@ deploy:
 update-tf:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Check if git tree is dirty (since we are using the commit ID
-    # for versioning)
-    just checkgit
     # Calculate UKI filename based truncated hash of the lockfile
     UKIFILENAME="${IMAGENAME}_$(sha256sum ../apko.lock | cut -c1-7).efi.img"
     jinja2 templates/terraform-base.tf.j2 \
@@ -117,13 +115,3 @@ start-webserver:
     --name apko-image-deploy \
     -p 8080:80 \
     docker.io/library/nginx:alpine
-
-[working-directory: '.']
-checkgit:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if ! git diff --quiet HEAD --; then
-    echo "Error: Working tree has uncommitted changes."
-    echo "Please commit or stash them before continuing."
-    exit 1
-    fi
