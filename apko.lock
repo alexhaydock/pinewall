@@ -1126,22 +1126,22 @@
       },
       {
         "name": "libexpat",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/libexpat-2.7.4-r0.apk",
-        "version": "2.7.4-r0",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/libexpat-2.7.5-r0.apk",
+        "version": "2.7.5-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-721",
-          "checksum": "sha1-cVhJoUP9L/ijuVdcK2KmUTyE3og="
+          "range": "bytes=0-722",
+          "checksum": "sha1-UxYM51vLMMbcmbT7+ZJ25+Ao0bw="
         },
         "control": {
-          "range": "bytes=722-1273",
-          "checksum": "sha1-SNgLRmIXUT1TFtLcmO4Hkka3XSM="
+          "range": "bytes=723-1273",
+          "checksum": "sha1-V2DVPd18yop0LGcuTgCkdXGOrKo="
         },
         "data": {
-          "range": "bytes=1274-59968",
-          "checksum": "sha256-3Gp55cZljurTvScMWLAzZ+jGQIwVt0QFCSSBtzmh4/M="
+          "range": "bytes=1274-60116",
+          "checksum": "sha256-4JsT43VVD7ocMYMztkWWAc63lYnPuc4EXQI1A+xxBWo="
         },
-        "checksum": "Q1SNgLRmIXUT1TFtLcmO4Hkka3XSM="
+        "checksum": "Q1V2DVPd18yop0LGcuTgCkdXGOrKo="
       },
       {
         "name": "dbus",
@@ -2000,22 +2000,22 @@
       },
       {
         "name": "linux-lts",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/linux-lts-6.18.16-r0.apk",
-        "version": "6.18.16-r0",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/linux-lts-6.18.18-r0.apk",
+        "version": "6.18.18-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-718",
-          "checksum": "sha1-FWy5IN+wMaZdQ+3cnM/BYx+benU="
+          "range": "bytes=0-721",
+          "checksum": "sha1-K7qfA4YiY5FbVgQCC/9jrvy97Ok="
         },
         "control": {
-          "range": "bytes=719-1240",
-          "checksum": "sha1-6odJ7JnaUJCClRvPQ/oI/87BOeQ="
+          "range": "bytes=722-1245",
+          "checksum": "sha1-IcKJgUSfpkHuXGRbOE8wNrWIqCc="
         },
         "data": {
-          "range": "bytes=1241-136532192",
-          "checksum": "sha256-hkT1HKxXGacPAwK9HADpU7o8fgktsN1j7Ks0WyrNbRw="
+          "range": "bytes=1246-136542018",
+          "checksum": "sha256-eurPY2nP0DdjZgUKq8NG8sCS+nsbideaZ84kBirpz5E="
         },
-        "checksum": "Q16odJ7JnaUJCClRvPQ/oI/87BOeQ="
+        "checksum": "Q1IcKJgUSfpkHuXGRbOE8wNrWIqCc="
       },
       {
         "name": "acl-libs",
