@@ -2,7 +2,7 @@
   "version": "v1",
   "config": {
     "name": "pinewall.yaml",
-    "checksum": "sha256-yR3v4z42Cz5RfWNxlWKXRIL0r1S2S9Uhg4VNCgadi84="
+    "checksum": "sha256-SQywlR8ZZZyPLq0wJR2UdG3ZrFmbqZqEd6pb1l/91q4="
   },
   "contents": {
     "keyring": [
