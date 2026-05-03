@@ -2232,15 +2232,15 @@
         "version": "1.0.0-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-646",
-          "checksum": "sha1-NKiGYUcDCpUZ6kCbvjWniovRwCY="
+          "range": "bytes=0-647",
+          "checksum": "sha1-M1nYD7Bstjp5Gbb9T8Oa2XHvGaU="
         },
         "control": {
-          "range": "bytes=647-1648",
+          "range": "bytes=648-1649",
           "checksum": "sha1-690K6zK4wVNv+E3jlR1mwJEs87c="
         },
         "data": {
-          "range": "bytes=1649-18118",
+          "range": "bytes=1650-18119",
           "checksum": "sha256-TALQHY8GSkRcfE+6BOvaOiiYc4E0AeLNPhJ98tJhL7E="
         },
         "checksum": "Q1690K6zK4wVNv+E3jlR1mwJEs87c="
