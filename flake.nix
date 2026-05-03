@@ -53,6 +53,7 @@
             just
             melange
             opentofu
+            sops
             systemdUkify
           ];
 

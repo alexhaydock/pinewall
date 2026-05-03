@@ -33,6 +33,15 @@ jobs:
           sudo mv -v melange*/melange /usr/local/bin/
           sudo chmod +x /usr/local/bin/melange
 
+      - name: Fetch sops
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/getsops/sops/releases/latest \
+            | grep tag_name \
+            | cut -d '"' -f 4)
+          curl -sL "https://github.com/getsops/sops/releases/download/${VERSION}/sops-${VERSION}.linux.amd64" -o sops
+          sudo mv -v sops /usr/local/bin/sops
+          sudo chmod +x /usr/local/bin/sops
+
       - name: Generate config package with melange so we can include it in the lockfile
         working-directory: config
         # We use the Docker runner here since Bubblewrap is a bit of a pain inside Actions runners
