@@ -37,13 +37,15 @@ jobs:
         working-directory: config
         # We use the Docker runner here since Bubblewrap is a bit of a pain inside Actions runners
         run: |
-          melange keygen
+          sops -d melange.rsa.age > /tmp/melange.rsa
           melange build \
             --runner docker \
-            --signing-key melange.rsa \
+            --signing-key /tmp/melange.rsa \
             --git-commit "unknown" \
             --git-repo-url "https://unknown/unknown/unknown" \
             --arch amd64 pinewall-config.yaml
+        env:
+          SOPS_AGE_KEY: ${{ vars.SOPS_AGE_KEY }}  # Import age key so we can sign the package
 
       - name: Fetch my custom patched apko with lockfile support
         run: |

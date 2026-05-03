@@ -13,7 +13,8 @@ build:
 
 [working-directory: 'config']
 config:
-    test -f melange.rsa || melange keygen
+    # Decrypt the SOPS/age encrypted config package signing key
+    sops -d melange.rsa.age > /tmp/melange.rsa
     # Build config package
     #
     # Here we override some git variables that melange would
@@ -29,7 +30,7 @@ config:
     # defaults to using when run in a directory that isn't
     # a git repo
     melange build \
-    --signing-key melange.rsa \
+    --signing-key /tmp/melange.rsa \
     --git-commit "unknown" \
     --git-repo-url "https://unknown/unknown/unknown" \
     --arch amd64 pinewall-config.yaml

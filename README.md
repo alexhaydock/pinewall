@@ -83,6 +83,28 @@ qemu-system-x86_64 \
 
 **Note:** If you are not running Fedora, your distribution will most likely keep the OVMF_CODE and OVMF_VARS in a different location. You will need to find the right paths for them, as you do specifically need to use UEFI firmware to boot a Unified Kernel Image directly.
 
+### Config package signing keys
+Since `apko` does not support ignoring package signatures on a per-repository or per-package level, we need to ensure that our `pinewall-config` package is signed when it gets built, so that we don't have to ignore all package signing.
+
+Because `melange` doesn't support passing in keys directly in CI, we can use `age` and `sops` to decrypt the `melange` key during CI runs.
+
+To do this, you can generate `melange` keys by running this in the `config/` directory:
+```sh
+melange keygen
+```
+
+Now we can generate an `age` key:
+```sh
+age-keygen -o ~/pinewall_age.key
+```
+
+Now, we can use the `age` key to encrypt the `melange` private key:
+```sh
+sops -e --age <your-public-age-key> melange.rsa > melange.rsa.age
+```
+
+Now, the full `AGE-SECRET-KEY-[...]` string from the generated `age` key needs to go in a protected `SOPS_AGE_KEY` variable in your CI pipeline, and `sops` will automatically find the key and use it as part of the build process defined for the `just config` step in the justfile.
+
 ### Production deployment (Terraform + Proxmox)
 If you want a more robust production deployment (which is essentially a more automated version of the test process above) you can use Terraform:
 ```sh
