@@ -1,4 +1,5 @@
 #!/sbin/openrc-run
+# shellcheck shell=sh
 
 supervisor=supervise-daemon
 
