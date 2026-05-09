@@ -2,7 +2,7 @@
   "version": "v1",
   "config": {
     "name": "pinewall.yaml",
-    "checksum": "sha256-SQywlR8ZZZyPLq0wJR2UdG3ZrFmbqZqEd6pb1l/91q4="
+    "checksum": "sha256-yZcspeb6i2hsjg0hpcNJxo05etyJicF/wdoarBcqt6w="
   },
   "contents": {
     "keyring": [
@@ -2000,22 +2000,22 @@
       },
       {
         "name": "linux-lts",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/linux-lts-6.18.26-r0.apk",
-        "version": "6.18.26-r0",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/linux-lts-6.18.28-r0.apk",
+        "version": "6.18.28-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-724",
-          "checksum": "sha1-VO6WoJbYyt1tyOqzkOhglo5IxcM="
+          "range": "bytes=0-721",
+          "checksum": "sha1-9QHVlgC+CnIVRCpO4ghOt0WexL8="
         },
         "control": {
-          "range": "bytes=725-1250",
-          "checksum": "sha1-/mClFoZKPbV25SGWryRCf0x+QtY="
+          "range": "bytes=722-1247",
+          "checksum": "sha1-i0ztiHAX5IzMk+k4qcMc6DCt6dY="
         },
         "data": {
-          "range": "bytes=1251-136769071",
-          "checksum": "sha256-4GNI5GPaC2rxlBzwwIj4L2TluaQqOP24C7A2RduxVM4="
+          "range": "bytes=1248-136774840",
+          "checksum": "sha256-JwiXVuU82mQYYZxNQAfY1mrV/pE1AbPKALI2OCGCcwQ="
         },
-        "checksum": "Q1/mClFoZKPbV25SGWryRCf0x+QtY="
+        "checksum": "Q1i0ztiHAX5IzMk+k4qcMc6DCt6dY="
       },
       {
         "name": "acl-libs",
@@ -2232,18 +2232,18 @@
         "version": "1.0.0-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-643",
-          "checksum": "sha1-a01BRXgA0pdg2gQwjJMPOAH3LZ8="
+          "range": "bytes=0-646",
+          "checksum": "sha1-eJqPGvX1OhQ5MxixdHszA/THpQ8="
         },
         "control": {
-          "range": "bytes=644-1650",
-          "checksum": "sha1-jt5SCwGZywrv6PwXx9quTm5GHng="
+          "range": "bytes=647-1650",
+          "checksum": "sha1-SbtJ7T8x4FOByxMTLQ82P3vsVIg="
         },
         "data": {
-          "range": "bytes=1651-18119",
-          "checksum": "sha256-0xIZvtULhpkSaEZoZwn1i9dJshXAguc1+/6Ce1pU+KE="
+          "range": "bytes=1651-18336",
+          "checksum": "sha256-paZ8ezfrDLHJXAg7248DZzaeskDcDOU6AITnz6nnOoM="
         },
-        "checksum": "Q1jt5SCwGZywrv6PwXx9quTm5GHng="
+        "checksum": "Q1SbtJ7T8x4FOByxMTLQ82P3vsVIg="
       },
       {
         "name": "ppp-pppoe",
