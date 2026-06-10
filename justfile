@@ -7,14 +7,18 @@ export TF_VAR_deployment_host_ip := "192.168.200.160"
 
 [working-directory: '.']
 build:
-    just config
     just lock
     just image
 
 [working-directory: 'config']
 config:
+    # TODO: Section has been deprecated while I smooth out
+    #       the build process. In my prod example, this has
+    #       been moved to the pinewall-config repo:
+    #       https://github.com/alexhaydock/pinewall-config
+    #
     # Decrypt the SOPS/age encrypted config package signing key
-    sops -d melange.rsa.age > /tmp/melange.rsa
+    ##sops -d melange.rsa.age > /tmp/melange.rsa
     # Build config package
     #
     # Here we override some git variables that melange would
@@ -29,11 +33,11 @@ config:
     # We override these to the values the upstream apko code
     # defaults to using when run in a directory that isn't
     # a git repo
-    melange build \
-    --signing-key /tmp/melange.rsa \
-    --git-commit "unknown" \
-    --git-repo-url "https://unknown/unknown/unknown" \
-    --arch amd64 pinewall-config.yaml
+    ##melange build \
+    ##--signing-key /tmp/melange.rsa \
+    ##--git-commit "unknown" \
+    ##--git-repo-url "https://unknown/unknown/unknown" \
+    ##--arch amd64 pinewall-config.yaml
 
 [working-directory: 'image']
 lock:

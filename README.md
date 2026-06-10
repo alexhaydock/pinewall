@@ -16,13 +16,13 @@ But with that in mind, I've tried to document things as well as I can in this pu
 
 ## Usage
 ### Adding custom config
-The config presented in this repo is adapted from a fully-working config I use for one of my network deployments. With the exception of the use of RFC 5737 and RFC 3849 documentation IPs in place of my own public static addresses, this ought to boot and work just fine.
+The config presented in this repo and the related `pinewall-config` and `pinewall-image` repos is adapted from a fully-working config I use for one of my network deployments.
 
-* Configs go in [config/vendor/](./config/vendor/)
-* Packages are declared in in [image/pinewall-packages.yaml](./image/pinewall-packages.yaml)
-* Accounts are defined in in [image/pinewall-accounts.yaml](./image/pinewall-accounts.yaml)
-* Services are managed through symlinks created by [image/pinewall-services.yaml](./image/pinewall-services.yaml)
-* If you need to configure permissions or other things during early system boot, [enforceperms](./config/vendor/etc/init.d/enforceperms) will probably help.
+* Configs are built into the `pinewall-config` package as part of the [pinewall-config](https://github.com/alexhaydock/pinewall-config) repo
+* Packages are declared in in [image/pinewall-packages.yaml](https://github.com/alexhaydock/pinewall-image/blob/main/pinewall-packages.yaml)
+* Accounts are defined in in [image/pinewall-accounts.yaml](https://github.com/alexhaydock/pinewall-image/blob/main/pinewall-accounts.yaml)
+* Services are managed through symlinks created by [image/pinewall-services.yaml](https://github.com/alexhaydock/pinewall-image/blob/main/pinewall-services.yaml)
+* If you need to configure permissions or other things during early system boot, the [enforceperms](https://github.com/alexhaydock/pinewall-config/blob/main/config/etc/init.d/enforceperms) script will probably help
 
 ### Entering a Nix development shell
 Pinewall builds and development expect a Nix environment to be available. This is to ensure a declarative environment for package builds and deployment.
@@ -37,17 +37,10 @@ nix develop
 ### Building the config package
 Pinewall layers all configs into the resulting Alpine image using a configuration package that gets built by `melange`.
 
-The sources for this package are in the [config/](./config/) directory.
-
-You can build this config package with:
-```sh
-just config
-```
-
-The built config package will be outputted as an Alpine package repository complete with APKINDEX file in [config/packages/](./config/packages/).
+The sources for this package are in the [pinewall-config](https://github.com/alexhaydock/pinewall-config) repo.
 
 ### Populating the lockfile
-Once the config package has been built, we need to populate a lockfile for the image build process to consume. This can be done using `apko`'s locking support using:
+Once the config package has been built and published, we need to populate a lockfile for the image build process to consume. This can be done using `apko`'s locking support using:
 ```sh
 just lock
 ```

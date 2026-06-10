@@ -23,39 +23,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Fetch melange
-        run: |
-          VERSION=$(curl -s https://api.github.com/repos/chainguard-dev/melange/releases/latest \
-            | grep tag_name \
-            | cut -d '"' -f 4)
-          curl -sL "https://github.com/chainguard-dev/melange/releases/download/${VERSION}/melange_${VERSION#v}_linux_amd64.tar.gz" -o melange.tar.gz
-          tar -xzf melange.tar.gz
-          sudo mv -v melange*/melange /usr/local/bin/
-          sudo chmod +x /usr/local/bin/melange
-
-      - name: Fetch sops
-        run: |
-          VERSION=$(curl -s https://api.github.com/repos/getsops/sops/releases/latest \
-            | grep tag_name \
-            | cut -d '"' -f 4)
-          curl -sL "https://github.com/getsops/sops/releases/download/${VERSION}/sops-${VERSION}.linux.amd64" -o sops
-          sudo mv -v sops /usr/local/bin/sops
-          sudo chmod +x /usr/local/bin/sops
-
-      - name: Generate config package with melange so we can include it in the lockfile
-        working-directory: config
-        # We use the Docker runner here since Bubblewrap is a bit of a pain inside Actions runners
-        run: |
-          sops -d melange.rsa.age > /tmp/melange.rsa
-          melange build \
-            --runner docker \
-            --signing-key /tmp/melange.rsa \
-            --git-commit "unknown" \
-            --git-repo-url "https://unknown/unknown/unknown" \
-            --arch amd64 pinewall-config.yaml
-        env:
-          SOPS_AGE_KEY: ${{ vars.SOPS_AGE_KEY }}  # Import age key so we can sign the package
-
       - name: Fetch my custom patched apko with lockfile support
         run: |
           curl -sL https://github.com/alexhaydock/apko/releases/download/b87f3ba-with-lockfile/apko -o apko
