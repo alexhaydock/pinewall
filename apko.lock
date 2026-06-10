@@ -2,26 +2,20 @@
   "version": "v1",
   "config": {
     "name": "pinewall.yaml",
-    "checksum": "sha256-FrylrgjpvvXEvH/Z3KAsdG11hygK7bUlHduo+m2pwxE="
+    "checksum": "sha256-qKG1IlZ2jlU7RT1NjDdPeaWw0USbmIvFXaZFKqGojBU="
   },
   "contents": {
     "keyring": [
       {
-        "name": "../config/melange.rsa.pub",
-        "url": "../config/melange.rsa.pub"
-      },
-      {
         "name": "alpinelinux.org/keys/alpine-devel%40lists.alpinelinux.org-6165ee59.rsa.pub",
         "url": "https://alpinelinux.org/keys/alpine-devel%40lists.alpinelinux.org-6165ee59.rsa.pub"
-      }
-    ],
-    "build_repositories": [
+      },
       {
-        "name": "../config/packages/x86_64",
-        "url": "../config/packages/x86_64/APKINDEX.tar.gz",
-        "architecture": "x86_64"
+        "name": "raw.githubusercontent.com/alexhaydock/pinewall-config/refs/heads/main/melange.rsa.pub",
+        "url": "https://raw.githubusercontent.com/alexhaydock/pinewall-config/refs/heads/main/melange.rsa.pub"
       }
     ],
+    "build_repositories": [],
     "runtime_repositories": [],
     "repositories": [
       {
@@ -37,6 +31,11 @@
       {
         "name": "dl-cdn.alpinelinux.org/alpine/edge/testing/x86_64",
         "url": "http://dl-cdn.alpinelinux.org/alpine/edge/testing/x86_64/APKINDEX.tar.gz",
+        "architecture": "x86_64"
+      },
+      {
+        "name": "alexhaydock.github.io/pinewall-config/packages/x86_64",
+        "url": "https://alexhaydock.github.io/pinewall-config/packages/x86_64/APKINDEX.tar.gz",
         "architecture": "x86_64"
       }
     ],
@@ -2152,22 +2151,22 @@
       },
       {
         "name": "pinewall-config",
-        "url": "../config/packages/x86_64/pinewall-config-1.0.0-r0.apk",
+        "url": "https://alexhaydock.github.io/pinewall-config/packages/x86_64/pinewall-config-1.0.0-r0.apk",
         "version": "1.0.0-r0",
         "architecture": "x86_64",
         "signature": {
           "range": "bytes=0-644",
-          "checksum": "sha1-DRQB+eIfOEz+s5tz8HHbbrulEpU="
+          "checksum": "sha1-3/imwQOYGk/r/Wpqq5dYQrOeV8c="
         },
         "control": {
           "range": "bytes=645-1650",
-          "checksum": "sha1-trf5V/ZlTZAqWaNND2HmLbIpnks="
+          "checksum": "sha1-bSvJfmkz6aj1P8M6/0jfwbBlQmg="
         },
         "data": {
           "range": "bytes=1651-18337",
           "checksum": "sha256-SYPAv8mwTfPXPgXLu3fxWw+amKW70DVGaF/sMJfGKpQ="
         },
-        "checksum": "Q1trf5V/ZlTZAqWaNND2HmLbIpnks="
+        "checksum": "Q1bSvJfmkz6aj1P8M6/0jfwbBlQmg="
       },
       {
         "name": "ppp-pppoe",
