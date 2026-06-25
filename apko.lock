@@ -1904,22 +1904,22 @@
       },
       {
         "name": "linux-lts",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/linux-lts-6.18.35-r0.apk",
-        "version": "6.18.35-r0",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/linux-lts-6.18.36-r0.apk",
+        "version": "6.18.36-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-720",
-          "checksum": "sha1-A06pGjtzHTVBA2nTCXkrzxhfwdw="
+          "range": "bytes=0-721",
+          "checksum": "sha1-vCkw8rJSlR5m8McUvTjEr2PIojw="
         },
         "control": {
-          "range": "bytes=721-1244",
-          "checksum": "sha1-rN/MJ9akoTtBA4iwDVi8nCR2GBE="
+          "range": "bytes=722-1245",
+          "checksum": "sha1-7eCuGeMx90Hyqkt7LDgpVnOax/o="
         },
         "data": {
-          "range": "bytes=1245-145679051",
-          "checksum": "sha256-ZXMeEpxdyIUKEEtZZgi/DnlS4bCNE0+07XL9Vn0yMOk="
+          "range": "bytes=1246-145677887",
+          "checksum": "sha256-XTxl+6BhOFBoSjDmeY5pWgVaTxguSFxthw660ufkGzE="
         },
-        "checksum": "Q1rN/MJ9akoTtBA4iwDVi8nCR2GBE="
+        "checksum": "Q17eCuGeMx90Hyqkt7LDgpVnOax/o="
       },
       {
         "name": "acl-libs",
