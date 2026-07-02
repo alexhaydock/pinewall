@@ -954,22 +954,22 @@
       },
       {
         "name": "libexpat",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/libexpat-2.8.1-r0.apk",
-        "version": "2.8.1-r0",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/libexpat-2.8.2-r0.apk",
+        "version": "2.8.2-r0",
         "architecture": "x86_64",
         "signature": {
           "range": "bytes=0-721",
-          "checksum": "sha1-KeWVBcDHKDvfYrhfQWEZPyhhkrc="
+          "checksum": "sha1-BHXQV/rQOeLdy2Z/2sW9J3bAbXc="
         },
         "control": {
-          "range": "bytes=722-1275",
-          "checksum": "sha1-Eu+sUfS0I3utcK/bTADvtr1Kle0="
+          "range": "bytes=722-1270",
+          "checksum": "sha1-fJ9fTDo7NcBU5m0RDvpCfWHXdOs="
         },
         "data": {
-          "range": "bytes=1276-60704",
-          "checksum": "sha256-y1QPDCKhGI8Z3EUi+3oN76KH1pzzlAvh0nLsPEhu9C8="
+          "range": "bytes=1271-60876",
+          "checksum": "sha256-YWqqCdmKEY3+G9cQrmRr2VNKoQYNvfwx9vzs+O8bwe0="
         },
-        "checksum": "Q1Eu+sUfS0I3utcK/bTADvtr1Kle0="
+        "checksum": "Q1fJ9fTDo7NcBU5m0RDvpCfWHXdOs="
       },
       {
         "name": "dbus",
@@ -1125,41 +1125,41 @@
       },
       {
         "name": "libcurl",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/libcurl-8.20.0-r1.apk",
-        "version": "8.20.0-r1",
-        "architecture": "x86_64",
-        "signature": {
-          "range": "bytes=0-720",
-          "checksum": "sha1-F2nUCBW6u7Yc8Cqmv4BeWrpRL1c="
-        },
-        "control": {
-          "range": "bytes=721-1344",
-          "checksum": "sha1-Q5wNeS52eZzJqUp4WYfH3Iiu+wA="
-        },
-        "data": {
-          "range": "bytes=1345-339409",
-          "checksum": "sha256-dx9mgnnDJpVtztzqFCZhy7Q6lFADNQPPOpVwRbI+iHI="
-        },
-        "checksum": "Q1Q5wNeS52eZzJqUp4WYfH3Iiu+wA="
-      },
-      {
-        "name": "curl",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/curl-8.20.0-r1.apk",
-        "version": "8.20.0-r1",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/libcurl-8.21.0-r0.apk",
+        "version": "8.21.0-r0",
         "architecture": "x86_64",
         "signature": {
           "range": "bytes=0-722",
-          "checksum": "sha1-sSDgtjIXvpvMjI3Zs3Ru1cwwkQY="
+          "checksum": "sha1-ny8XqQ3+bXd/wRGu9Xaw1lXCS+A="
         },
         "control": {
-          "range": "bytes=723-1288",
-          "checksum": "sha1-DbpDxVXqDcdUMHNwbxliiKZ0T5E="
+          "range": "bytes=723-1343",
+          "checksum": "sha1-xZEzZzvboPzJLIl9neaCwjAbXX8="
         },
         "data": {
-          "range": "bytes=1289-175054",
-          "checksum": "sha256-PSEmlda2yzaAQLPXX3Uu+vp8Yfdf/fTqyK5aP5zBZ4o="
+          "range": "bytes=1344-348624",
+          "checksum": "sha256-HMSyWpUiXY6E5Sh+ZUOoj30FBb+c1WA5WctIQxbYrZE="
         },
-        "checksum": "Q1DbpDxVXqDcdUMHNwbxliiKZ0T5E="
+        "checksum": "Q1xZEzZzvboPzJLIl9neaCwjAbXX8="
+      },
+      {
+        "name": "curl",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/curl-8.21.0-r0.apk",
+        "version": "8.21.0-r0",
+        "architecture": "x86_64",
+        "signature": {
+          "range": "bytes=0-724",
+          "checksum": "sha1-54jP9taiCgdKJOkKEIiWuTo6kDI="
+        },
+        "control": {
+          "range": "bytes=725-1286",
+          "checksum": "sha1-Opk/zzFiQfVst9ubrkkUvMJ9G2A="
+        },
+        "data": {
+          "range": "bytes=1287-177183",
+          "checksum": "sha256-kNFlXB3DGjfK609gxKYDFmOiZKYoYiooUfINzyk9/7M="
+        },
+        "checksum": "Q1Opk/zzFiQfVst9ubrkkUvMJ9G2A="
       },
       {
         "name": "libgpg-error",
@@ -1904,22 +1904,22 @@
       },
       {
         "name": "linux-lts",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/linux-lts-6.18.36-r0.apk",
-        "version": "6.18.36-r0",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/linux-lts-6.18.37-r0.apk",
+        "version": "6.18.37-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-721",
-          "checksum": "sha1-vCkw8rJSlR5m8McUvTjEr2PIojw="
+          "range": "bytes=0-722",
+          "checksum": "sha1-OA9vnjQTRqLT32TAZv5zCDVDZL8="
         },
         "control": {
-          "range": "bytes=722-1245",
-          "checksum": "sha1-7eCuGeMx90Hyqkt7LDgpVnOax/o="
+          "range": "bytes=723-1245",
+          "checksum": "sha1-bz20tFfSONNDmWLsTlcTygrC2j8="
         },
         "data": {
-          "range": "bytes=1246-145677887",
-          "checksum": "sha256-XTxl+6BhOFBoSjDmeY5pWgVaTxguSFxthw660ufkGzE="
+          "range": "bytes=1246-145664852",
+          "checksum": "sha256-vSWIM8TdZROLGhmNzqfwjxVI034K84ooiEZ8JvzGxzQ="
         },
-        "checksum": "Q17eCuGeMx90Hyqkt7LDgpVnOax/o="
+        "checksum": "Q1bz20tFfSONNDmWLsTlcTygrC2j8="
       },
       {
         "name": "acl-libs",
@@ -1980,22 +1980,22 @@
       },
       {
         "name": "nano",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/nano-9.0-r0.apk",
-        "version": "9.0-r0",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/nano-9.1-r0.apk",
+        "version": "9.1-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-720",
-          "checksum": "sha1-RUvQgeR3Edtj8Zhw4NRggPsz0WU="
+          "range": "bytes=0-719",
+          "checksum": "sha1-Ku80psI6rfOmIh/cAmkI34fsyDs="
         },
         "control": {
-          "range": "bytes=721-1284",
-          "checksum": "sha1-1sd6WLJQ6gTDsp0iiK20hBcT/+8="
+          "range": "bytes=720-1280",
+          "checksum": "sha1-XzVNgu0Fra1nNMdoAnidO1EjfkY="
         },
         "data": {
-          "range": "bytes=1285-163987",
-          "checksum": "sha256-QmjTyytJ01xeuPQ+Fr4pA/CcrNaKj9iae230osVFOkI="
+          "range": "bytes=1281-164143",
+          "checksum": "sha256-Dx9c83V4uj0xTq2iA9udzQ9DFVSNwuQFQO6FUWmDtrs="
         },
-        "checksum": "Q11sd6WLJQ6gTDsp0iiK20hBcT/+8="
+        "checksum": "Q1XzVNgu0Fra1nNMdoAnidO1EjfkY="
       },
       {
         "name": "gmp",
