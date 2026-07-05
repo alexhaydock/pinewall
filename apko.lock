@@ -1790,22 +1790,22 @@
       },
       {
         "name": "device-mapper-libs",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/device-mapper-libs-2.03.35-r2.apk",
-        "version": "2.03.35-r2",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/device-mapper-libs-2.03.35-r3.apk",
+        "version": "2.03.35-r3",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-721",
-          "checksum": "sha1-Urao3GsRVqCw3Ga5hnPjQgCjQRI="
+          "range": "bytes=0-722",
+          "checksum": "sha1-9uz+/cYRUkdSwAbHYDzQHazrj8Q="
         },
         "control": {
-          "range": "bytes=722-1288",
-          "checksum": "sha1-6Dd62D8hcrZC5W1wBNvu6LMvd/c="
+          "range": "bytes=723-1286",
+          "checksum": "sha1-GxP2dFUjS4Fg/n9PGSdz3DBOGEs="
         },
         "data": {
-          "range": "bytes=1289-138222",
-          "checksum": "sha256-X3uL8dWOZl1b25KJ7eoNSjPE3D7w7YM05uB8UxRVSRo="
+          "range": "bytes=1287-138219",
+          "checksum": "sha256-J0KJK9j60GVxVw1TtonPetCenR6C360Vrvdn6E3aRnY="
         },
-        "checksum": "Q16Dd62D8hcrZC5W1wBNvu6LMvd/c="
+        "checksum": "Q1GxP2dFUjS4Fg/n9PGSdz3DBOGEs="
       },
       {
         "name": "json-c",
@@ -2455,22 +2455,22 @@
       },
       {
         "name": "libevent",
-        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/libevent-2.1.12-r9.apk",
-        "version": "2.1.12-r9",
+        "url": "http://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/libevent-2.1.13-r0.apk",
+        "version": "2.1.13-r0",
         "architecture": "x86_64",
         "signature": {
-          "range": "bytes=0-723",
-          "checksum": "sha1-Ih85E11FARgkaCH7jE8v3CSpwzI="
+          "range": "bytes=0-722",
+          "checksum": "sha1-GzyfOJ9EgBDhLv85OleXzsvOw2k="
         },
         "control": {
-          "range": "bytes=724-1304",
-          "checksum": "sha1-qxv3xXTSa06+r1HVkhQXWPrCW+k="
+          "range": "bytes=723-1303",
+          "checksum": "sha1-TIJbQnE9pRM1Q0RaHlY1RiARvBw="
         },
         "data": {
-          "range": "bytes=1305-281330",
-          "checksum": "sha256-z2SwI7o6ZtwO60zGP3z/Zg8OBbiYaaW1hjmKtsXYEaQ="
+          "range": "bytes=1304-281728",
+          "checksum": "sha256-Hdo2HMOalaV14WfPCN2fik3w2p1ehqP/7PUE0BrAROY="
         },
-        "checksum": "Q1qxv3xXTSa06+r1HVkhQXWPrCW+k="
+        "checksum": "Q1TIJbQnE9pRM1Q0RaHlY1RiARvBw="
       },
       {
         "name": "hiredis",
