@@ -3,9 +3,7 @@
 # Pinewall
 My minimal Al**pine** Linux home fire**wall** / router. Optimised for running from RAM as a QEMU VM and for easy deployment of updates via Terraform.
 
-Pinewall is built with the goal of running entirely from RAM, immutably. It uses `apko` and `ukify` to build a single packed EFI binary which can be run directly with QEMU or, in theory, booted on physical UEFI-based hardware.
-
-I deploy this in production to Proxmox using Terraform.
+Pinewall is built with the goal of running entirely from RAM, immutably. It uses `apko` and `ukify` to build a single packed EFI binary which can be run directly with QEMU. Custom config is injected at runtime by passing EFI variables to the VM.
 
 ## Who is this for?
 Me. (But feel free to use it!)
@@ -15,124 +13,31 @@ The core goals of this project are simplicity and minimalism. I want it to be my
 But with that in mind, I've tried to document things as well as I can in this public repo and you're very welcome to fork the project and use it for your own needs.
 
 ## Usage
-### Adding custom config
-The config presented in this repo and the related `pinewall-config` and `pinewall-image` repos is adapted from a fully-working config I use for one of my network deployments.
+### The image
+Pinewall is built as a distribution of Alpine, with a set of router-optimised packages. It is built and published in my [pinewall-image](https://github.com/alexhaydock/pinewall-image) repo.
 
-* Configs are built into the `pinewall-config` package as part of the [pinewall-config](https://github.com/alexhaydock/pinewall-config) repo
-* Packages are declared in in [image/pinewall-packages.yaml](https://github.com/alexhaydock/pinewall-image/blob/main/pinewall-packages.yaml)
-* Accounts are defined in in [image/pinewall-accounts.yaml](https://github.com/alexhaydock/pinewall-image/blob/main/pinewall-accounts.yaml)
-* Services are managed through symlinks created by [image/pinewall-services.yaml](https://github.com/alexhaydock/pinewall-image/blob/main/pinewall-services.yaml)
-* If you need to configure permissions or other things during early system boot, the [enforceperms](https://github.com/alexhaydock/pinewall-config/blob/main/config/etc/init.d/enforceperms) script will probably help
+The image is signed for Secure Boot using Pinewall keys as part of the GitHub Actions build process. The `*_vars.json` file published alongside Pinewall releases contains the Secure Boot signing keychain.
 
-### Entering a Nix development shell
-Pinewall builds and development expect a Nix environment to be available. This is to ensure a declarative environment for package builds and deployment.
+### Custom config
+Custom config is applied to Pinewall at runtime by injecting it into the QEMU VM using paravirtualised EFI variables.
 
-The Nix development environment is declared in [flake.nix](./flake.nix).
-
-Enter a Nix shell with:
+Config can be added to the `overlay/` directory in this repo, and built into the JSON-based EFI variable store with:
 ```sh
-nix develop
+just efivars
 ```
 
-### Building the config package
-Pinewall layers all configs into the resulting Alpine image using a configuration package that gets built by `melange`.
+Services can be enabled in Pinewall by adding them to the comma-separated list in the `SERVICES` environment variable in `scripts/efivars.sh`. Services can be disabled by removing them from the list.
 
-The sources for this package are in the [pinewall-config](https://github.com/alexhaydock/pinewall-config) repo.
-
-### Populating the lockfile
-Once the config package has been built and published, we need to populate a lockfile for the image build process to consume. This can be done using `apko`'s locking support using:
+### Running
+Pinewall can be run with QEMU as follows:
 ```sh
-just lock
+just qemu
 ```
 
-We need to do this _after_ building or updating the config package above, since the config package is one of the packages that will get included in the lockfile.
-
-At the moment, this lockfile support relies on the as-yet-unmerged lockfile support I have opened as a PR to upstream apko: chainguard-dev/apko#2101. The `nix develop` environment pulls in a pre-built binary from my forked repo to make use of this feature.
-
-### Building a new image
-Once the config package has been built, you can build a new image with:
-```sh
-just image
-```
-
-This will build a Pinewall image based on the `apko` recipes in the [image/](./image/) directory. The output from this command will be a single Unified Kernel Image that will appear in the [image/images/](./image/images/) directory.
-
-### Testing the image locally
-It's easy to test the newly built image locally with QEMU. This example is based on paths that assume a Fedora host:
-```sh
-# Copy a blank EFI variable store to a temp directory
-cp -fv /usr/share/edk2/ovmf/OVMF_VARS_4M.qcow2 /tmp/OVMF_VARS_4M.qcow2
-
-# Boot Pinewall in QEMU for testing
-qemu-system-x86_64 \
-  -name pinewall \
-  -m 1G \
-  -machine q35,smm=on,vmport=off,accel=kvm \
-  -drive if=pflash,format=qcow2,unit=0,file=/usr/share/edk2/ovmf/OVMF_CODE_4M.qcow2,readonly=on \
-  -drive if=pflash,format=qcow2,unit=1,file=/tmp/OVMF_VARS_4M.qcow2 \
-  -kernel image/images/pinewall_1.0.0.efi.img \
-  -nographic
-```
-
-**Note:** If you are not running Fedora, your distribution will most likely keep the OVMF_CODE and OVMF_VARS in a different location. You will need to find the right paths for them, as you do specifically need to use UEFI firmware to boot a Unified Kernel Image directly.
-
-### Config package signing keys
-Since `apko` does not support ignoring package signatures on a per-repository or per-package level, we need to ensure that our `pinewall-config` package is signed when it gets built, so that we don't have to ignore all package signing.
-
-Because `melange` doesn't support passing in keys directly in CI, we can use `age` and `sops` to decrypt the `melange` key during CI runs.
-
-To do this, you can generate `melange` keys by running this in the `config/` directory:
-```sh
-melange keygen
-```
-
-Now we can generate an `age` key:
-```sh
-age-keygen -o ~/pinewall_age.key
-```
-
-Now, we can use the `age` key to encrypt the `melange` private key:
-```sh
-sops -e --age <your-public-age-key> melange.rsa > melange.rsa.age
-```
-
-Now, the full `AGE-SECRET-KEY-[...]` string from the generated `age` key needs to go in a protected `SOPS_AGE_KEY` variable in your CI pipeline, and `sops` will automatically find the key and use it as part of the build process defined for the `just config` step in the justfile.
-
-### Production deployment (Terraform + Proxmox)
-If you want a more robust production deployment (which is essentially a more automated version of the test process above) you can use Terraform:
-```sh
-just deploy
-```
-
-You will want to edit the Terraform VM template in `terraform/templates/` before running `just build` to fit this to your own environment, but it ought to be fairly easy to understand.
-
-The code:
-* Uses `proxmox_virtual_environment_download_file` to instruct Proxmox to download the compiled EFI image from this host using a temporary webserver.
-* Uses `proxmox_virtual_environment_vm` to configure a VM with our specific requirements.
-
-You should probably be connected directly to the Proxmox management interface if you try this deployment methodology. It probably won't go particularly well if you're accessing Proxmox _through_ the gateway VM you deploy with this, as subsequent deployments will destroy the existing VM _first_, before trying to copy the new image. Ask me how I know.
-
-### Reproducibility
-> [!IMPORTANT]  
-> Reproducible builds are under heavy development.
-
-A core goal of Pinewall is to provide the ability to produce byte-for-byte reproducible images. Many of the architectural choices of the project are built around this goal.
-
-Currently, Pinewall builds _should_ be byte-for-byte reproducible, especially since I'm now making use of the extended lockfile support in my downstream `apko` fork, but there might still be some rough edges especially around the config package overlay. If you're trying to work on reproducible builds based on the code here and hitting some issues please do open a GitHub issue and let me know.
-
-### SBOM & vulnerability management
-> [!IMPORTANT]  
-> SBOM support is currently on-hold until chainguard-dev/apko#2084 is resolved in the upstream `apko` project being used to build Pinewall images.
-
-See: [SBOM.md](./SBOM.md)
-
-### Secure Boot / Measured Boot support
-> [!IMPORTANT]  
-> Secure Boot (and especially Measured Boot) support is under heavy development and review. I am aiming to streamline the method of signing and validating Pinewall images over time.
-
-See: [SECURE-BOOT.md](./SECURE-BOOT.md)
+You will probably want to update `scripts/qemu.sh` to bind to the appropriate bridge interfaces or pass the relevant NICs through for your setup if this is a production deployment.
 
 ### Inspiration and thanks
 * [alpine-make-rootfs](https://github.com/alpinelinux/alpine-make-rootfs)
 * Filippo Valsorda's [frood](https://words.filippo.io/dispatches/frood/) "immutable NAS" project
 * Vasil Zlatanov's [pinewall-config](https://github.com/vaskozl/pinewall-config) project which took my original `alpine-make-rootfs` code and uplifted it to use `apko`, which I promptly stole back to reintegrate into this repo
+* [cloud-init](https://cloud-init.io/), which inspired the "inject config to VM at runtime" approach I eventually settled on
