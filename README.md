@@ -19,7 +19,7 @@ Pinewall is built as a distribution of Alpine, with a set of router-optimised pa
 The image is signed for Secure Boot using Pinewall keys as part of the GitHub Actions build process. The `*_vars.json` file published alongside Pinewall releases contains the Secure Boot signing keychain.
 
 ### Custom config
-Custom config is applied to Pinewall at runtime by injecting it into the QEMU VM using paravirtualised EFI variables.
+Custom config is applied to Pinewall at runtime by injecting it into the QEMU VM using paravirtualised EFI variables. This gets picked up by [pinewall-init](https://github.com/alexhaydock/pinewall-init), my terrible custom approximation of `cloud-init`.
 
 Config can be added to the `overlay/` directory in this repo, and built into the JSON-based EFI variable store with:
 ```sh
