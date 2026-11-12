@@ -1,0 +1,22 @@
+#!/sbin/openrc-run
+# shellcheck shell=sh
+
+description="Locking kernel modules after first boot"
+
+start() {
+    ebegin "Locking kernel modules after first boot"
+
+    # We set this here as a service with the `default` runlevel so
+    # that all other system services have a chance to start and load
+    # any relevant kernel modules they depend on. Then we lock the
+    # kernel so that no more modules can be loaded.
+    #
+    # This helps reduce the attack surface against attacks like CopyFail
+    # and DirtyFrag.
+    sleep 10 # Lazy, but it makes sure other services have definitely started
+    echo 1 > /proc/sys/kernel/modules_disabled
+}
+
+stop() {
+    echo 'noop'
+}

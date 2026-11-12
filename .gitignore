@@ -1,0 +1,2 @@
+*.efi
+OVMF_VARS.json

@@ -1,0 +1,31 @@
+# Loopback
+auto lo
+iface lo inet loopback
+
+# [VLAN 0 on eth0] WAN
+# The only real thing that defines this as our upstream interface
+# is the fact that the inet and inet6 definitions here each have
+# a gateway configured
+auto eth0
+iface eth0 inet static
+	address 203.0.113.171
+	netmask 255.255.255.248
+	gateway 203.0.113.169
+iface eth0 inet6 static
+	address 2001:db8:dead:beef::3/64
+	gateway fe80::1
+	autoconf 0
+	accept_ra 0
+	privext 0
+
+# [VLAN 0 on eth1] Primary LAN
+auto eth1
+iface eth1 inet static
+	address 192.168.192.1
+	netmask 255.255.255.0
+iface eth1 inet6 static
+	address fe80::192/64
+	address 2001:db8:beef:cafe::1/64
+	autoconf 0
+	accept_ra 0
+	privext 0
