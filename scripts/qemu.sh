@@ -19,7 +19,7 @@ test -f ${EFI_FILE} || curl -o "${EFI_FILE}" -L "${EFI_URL}"
 qemu-system-x86_64 \
     -name pinewall \
     -m 1G \
-    -machine q35,smm=on,vmport=off,accel=kvm \
+    -machine q35,smm=off,vmport=off,accel=kvm \
     -drive if=pflash,format=raw,unit=0,file=/usr/share/edk2/ovmf/OVMF.qemuvars.fd,readonly=on \
     -device uefi-vars-x64,jsonfile="${VARS_TMP}" \
     -object rng-random,filename=/dev/urandom,id=rng0 \
