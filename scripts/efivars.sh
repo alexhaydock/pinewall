@@ -7,9 +7,7 @@ command -v jq >/dev/null || exit 10
 VARS_TMP_A="$(mktemp)"
 VARS_TMP_B="$(mktemp)"
 OVERLAY_TMP="$(mktemp)"
-trap 'rm -f "$VARS_TMP_A"' EXIT
-trap 'rm -f "$VARS_TMP_B"' EXIT
-trap 'rm -f "$OVERLAY_TMP"' EXIT
+trap 'rm -f "$VARS_TMP_A" "$VARS_TMP_B" "$OVERLAY_TMP"' EXIT
 
 # Download JSON EFI vars store with Pinewall Secure Boot keys baked in
 VARS_URL=$(curl -sL \
