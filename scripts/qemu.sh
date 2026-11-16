@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Set variables
+OVMF="/usr/share/edk2/ovmf/OVMF.qemuvars.fd"
+VMNAME="pinewall-wfh"
+
 # Copy vars to temp dir
 VARS_TMP="$(mktemp)"
 trap 'rm -f "$VARS_TMP"' EXIT
@@ -17,10 +21,10 @@ test -f ${EFI_FILE} || curl -o "${EFI_FILE}" -L "${EFI_URL}"
 
 # Test in QEMU with UEFI firmware that supports PV vars
 qemu-system-x86_64 \
-    -name pinewall \
+    -name "${VMNAME}" \
     -m 1G \
     -machine q35,smm=off,vmport=off,accel=kvm \
-    -drive if=pflash,format=raw,unit=0,file=/usr/share/edk2/ovmf/OVMF.qemuvars.fd,readonly=on \
+    -drive if=pflash,format=raw,unit=0,file="${OVMF}",readonly=on \
     -device uefi-vars-x64,jsonfile="${VARS_TMP}" \
     -object rng-random,filename=/dev/urandom,id=rng0 \
     -device virtio-rng-pci,rng=rng0 \

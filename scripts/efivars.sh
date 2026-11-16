@@ -2,6 +2,7 @@
 set -euo pipefail
 
 command -v jq >/dev/null || exit 10
+command -v xxd >/dev/null || exit 10
 
 # Create tempfiles
 VARS_TMP_A="$(mktemp)"
