@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Set variables
 OVMF="/usr/share/edk2/ovmf/OVMF.qemuvars.fd"
-VMNAME="pinewall-wfh"
+VMNAME="pinewall"
 
 # Copy vars to temp dir
 VARS_TMP="$(mktemp)"
