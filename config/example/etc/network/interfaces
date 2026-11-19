@@ -24,7 +24,7 @@ iface eth1 inet static
 	address 192.168.192.1
 	netmask 255.255.255.0
 iface eth1 inet6 static
-	address fe80::192/64
+	address fe80::1/64
 	address 2001:db8:beef:cafe::1/64
 	autoconf 0
 	accept_ra 0

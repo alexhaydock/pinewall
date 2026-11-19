@@ -1,2 +1,3 @@
 *.efi
-OVMF_VARS.json
+pinewall-*_config.json
+pinewall-*_vars.json

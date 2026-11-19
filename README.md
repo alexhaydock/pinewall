@@ -10,7 +10,7 @@ Me. (But feel free to use it!)
 
 The core goals of this project are simplicity and minimalism. I want it to be my home router/gateway and nothing more. Pinewall is an opinionated project based on my own requirements. If I don't need something, I didn't include it.
 
-But with that in mind, I've tried to document things as well as I can in this public repo and you're very welcome to fork the project and use it for your own needs.
+But with that in mind, I've tried to document things as well as I can in this public repo. It's unlikely to fit your needs out-of-the box, but you're very welcome to fork the project and do whatever you like with it.
 
 ## Usage
 ### The image
@@ -18,12 +18,20 @@ Pinewall is built as a distribution of Alpine, with a set of router-optimised pa
 
 The image is signed for Secure Boot using Pinewall keys as part of the GitHub Actions build process. The `*_vars.json` file published alongside Pinewall releases contains the Secure Boot signing keychain.
 
+### Downloading image & JSON vars store
+The latest Pinewall base image and template JSON vars store can be downloaded or upgraded with:
+```sh
+just update
+```
+
 ### Custom config
 Custom config is applied to Pinewall at runtime by injecting it into the QEMU VM using paravirtualised EFI variables. This gets picked up by [pinewall-init](https://github.com/alexhaydock/pinewall-init), my terrible custom approximation of `cloud-init`.
 
-Config can be added to the `overlay/` directory in this repo, and built into the JSON-based EFI variable store with:
+Multiple configs can be added by adding a filesystem overlay directory into `config/namehere/`, with a corresponding `config/namehere.env` environment file which specifies some runtime variables like the OVMF firmware to use and the bridge interfaces to bind to.
+
+The config can then be compiled into a JSON vars store with:
 ```sh
-just efivars
+just efivars namehere
 ```
 
 Services can be enabled in Pinewall by adding them to the comma-separated list in the `SERVICES` environment variable in `scripts/efivars.sh`. Services can be disabled by removing them from the list.
@@ -31,10 +39,17 @@ Services can be enabled in Pinewall by adding them to the comma-separated list i
 ### Running
 Pinewall can be run with QEMU as follows:
 ```sh
-just qemu
+just qemu namehere
 ```
 
-You will probably want to update `scripts/qemu.sh` to bind to the appropriate bridge interfaces or pass the relevant NICs through for your setup if this is a production deployment.
+### Update config and run
+An all in one command that recompiles the JSON vars store from the current config and then launches the VM with QEMU is:
+```sh
+just run namehere
+```
+
+### Out-of-scope
+I will eventually write a blogpost about how this works and how I set up the hypervisor for this, but setting up the bridge interfaces that QEMU uses and finding the OVMF firmware that supports JSON EFI variables (hint: You can take the one from Fedora and just use it on other distros if needed) is left as an exercise to the reader.
 
 ### Inspiration and thanks
 * [alpine-make-rootfs](https://github.com/alpinelinux/alpine-make-rootfs)

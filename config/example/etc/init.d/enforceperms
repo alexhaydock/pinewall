@@ -6,10 +6,6 @@ description="Enforcing permissions on first boot"
 start() {
     ebegin "Enforcing permissions on first boot"
 
-    # This is not the nicest way of doing things, but since we want to
-    # mask the `bird` service for most deployments, we can do this:
-    chmod -x /etc/init.d/bird
-
     # Ensure Pinehole companion service for Unbound is executable
     # if we have it installed
     test -f /etc/periodic/daily/pinehole && chmod +x /etc/periodic/daily/pinehole
