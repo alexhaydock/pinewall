@@ -38,4 +38,5 @@ jq --arg data "$(echo ${SVC} | xxd -p -c 1000000 | tr -d '\n')" \
 mv "${VARS_TMP_B}" "${VARS_TMP_A}"
 
 # Copy out completed vars file to local dir
+[[ -f "pinewall-${VMSUFFIX}_config.json" ]] && mv "pinewall-${VMSUFFIX}_config.json" "pinewall-${VMSUFFIX}_config_prev.json"
 cp "${VARS_TMP_A}" "pinewall-${VMSUFFIX}_config.json"

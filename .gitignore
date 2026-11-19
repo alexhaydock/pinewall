@@ -1,3 +1,4 @@
 *.efi
 pinewall-*_config.json
+pinewall-*_prev.json
 pinewall-*_vars.json
